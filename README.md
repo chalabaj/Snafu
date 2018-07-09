@@ -1,6 +1,6 @@
 ## SNAFU 
 
-### SNAFU can do ab initio nonadiabatic MD withot calculating non-adiabatic couplings
+### * *ab initio* * nonadiabatic MD without calculating non-adiabatic couplings
 
 ### Theory
 Two scheme with/without diabatization
