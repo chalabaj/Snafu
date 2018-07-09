@@ -63,14 +63,38 @@ def verlet_step(x,y,z,m,t):
     # eq 3
     return()
 
-def read_geoms(natoms,geom_file_path):
+def read_geoms_veloc(geom_file_path,veloc_file_path):
     #if restart == 1 : read  last two geoms
+    # could be xyz matrix [natoms,3] as well, but this should be more clear reading
+    x = np.zeros(shape=(natoms,1)) 
+    y = np.zeros(shape=(natoms,1)) 
+    z = np.zeros(shape=(natoms,1)) 
+ # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
      atoms = igf.readline()  # first line in geom file is number of atoms
      if not (int(atoms) == natoms):  error_exit(2)                         
      garbage = igf.readline()  # comment 
-     xyz = np.zeros(shape=(natoms,1)) # inittial xyz, atoms = lines, row = x,yz
+     for iat in range(0,natoms)
+        line = igf.readline().split()
+        x[iat] = float(line[1])
+        y[iat] = float(line[2])
+        z[iat] = float(line[3])
      igf.close()
+ # READ INITIAL VELOCITIES:
+   if
+    vx = np.zeros(shape=(natoms,1)) 
+    vy = np.zeros(shape=(natoms,1)) 
+    vz = np.zeros(shape=(natoms,1)) 
+    with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
+     atoms = ivf.readline()  # first line in geom file is number of atoms
+     if not (int(atoms) == natoms):  error_exit(2)                         
+     garbage = ivf.readline()  # comment 
+     for iat in range(0,natoms)
+        line = ivf.readline().split()
+        vx[iat] = float(line[1])
+        vy[iat] = float(line[2])
+        vz[iat] = float(line[3])
+     ivf.close()
     return
 #return x_new, y_new, z_new, v_new, v_new, v_new,
     
@@ -84,8 +108,8 @@ if __name__ == "__main__":
     globals().update(input_vars)  #Make vars availible globally
     natoms = int(natoms)
     #read initial/restart geometry and velocities
-    xyz_init = read_geoms(natoms,geom_file_path)    
-    #vxvyvz_init = read_veloc(natoms,veloc_file_path) 
+    x,y,z,vx,vy,vz = read_geoms_veloc(geom_file_path,veloc_file_path)    
+   
     
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
     # create array  - pos, velocities, energies, gradients
