@@ -19,9 +19,10 @@ def file_check(cwd):
     geom_file_path  = os.path.join(cwd,geom_file)
     veloc_file_path = os.path.join(cwd,veloc_file)
     
-    if (not os.path.isfile(input_file_path)) or (not os.path.isfile(geom_file_path)):
-         print("File input.in or geom.in does not exist. Exiting... \n")
-         sys.exit(1)
+    if (not os.path.isfile(input_file_path)):
+         error_exit(0)
+    if (not os.path.isfile(geom_file_path)):
+         error_exit(1)
     if(not os.path.isfile(veloc_file_path)):
          print("File with initial velocities not found, continue with zero initial velocities.")
          veloc_init = 0
@@ -40,3 +41,13 @@ def read_input(input_file_path):
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
     return(par)
+    
+def error_exit(error_number):
+    err = ("0 - File input.in not found in folder.",
+           "1 - File geom.in not found in folder.\n",
+           "2 - Number of atoms in geoms.in and input.in is not consistent. Please check geom.in and input.in and check XYZ format.\n")
+    print("---------------------------------")
+    print("Program was terminated due to an error!")
+    print(err[error_number])
+    sys.exit(1)
+    return()

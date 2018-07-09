@@ -17,7 +17,7 @@ import time
 
 cwd = os.getcwd()
 sys.path.append(cwd)
-from check import file_check, read_input
+from check import file_check, read_input, error_exit
 
 # Constants
 au_fs = 0.02
@@ -29,22 +29,6 @@ cPE = 0.0   # current potential energy to save
 cKE = 0.0   # current kinetic energy to save
 
 
-if __name__ == "__main__":
-
-    print("Starting SNAFU.\n")
-    # File check
-    input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
-    # Read input parametrs and set them as variable  - all strings => must convert later
-    input_vars = read_input(input_file_path)
-    globals().update(input_vars)  #Make vars availible globally
-    
-    #read geometry and velocities
-    xyz_mat = read_geoms(natoms,geom_file_path)          # xyz matrix
-    vxvyvz_mat = read_veloc(natoms,veloc_file_path)      # vx vy vz matrix
-    
-
-    # create array  - pos, velocities, energies, gradients
-    # load initial pos, velocities
 
 def main_loop():
     """
@@ -79,14 +63,30 @@ def verlet_step(x,y,z,m,t):
     # eq 3
     return()
 
-def read_geom(natoms,geom_file_path):
-    #if restart == 1 : read two last geoms
-    with open(geom_file_path,'r') as igf:  # igf input geome file 
-     atoms = f.readline  # first line in geom file is number of atoms
-     if not int(atoms) == natoms: 
-       print("Number of atoms in geoms.in is not consistent with the number in the input.in file, or geom.in is not in XYZ format)      
-       sys.exit(1)                        
-     garbage = f.readline()  # comment 
-     
+def read_geoms(natoms,geom_file_path):
+    #if restart == 1 : read  last two geoms
+    with open(geom_file_path,'r') as igf:  # igf input geom file 
+     atoms = igf.readline()  # first line in geom file is number of atoms
+     if not (int(atoms) == natoms):  error_exit(2)                         
+     garbage = igf.readline()  # comment 
+     xyz = np.zeros(shape=(natoms,1)) # inittial xyz, atoms = lines, row = x,yz
+     igf.close()
     return
 #return x_new, y_new, z_new, v_new, v_new, v_new,
+    
+if __name__ == "__main__":
+
+    print("Starting SNAFU.\n")
+    # File check
+    input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
+    # Read input parametrs and set them as variable  - all strings => must convert later
+    input_vars = read_input(input_file_path)
+    globals().update(input_vars)  #Make vars availible globally
+    natoms = int(natoms)
+    #read initial/restart geometry and velocities
+    xyz_init = read_geoms(natoms,geom_file_path)    
+    #vxvyvz_init = read_veloc(natoms,veloc_file_path) 
+    
+    #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
+    # create array  - pos, velocities, energies, gradients
+    # load initial pos, velocities

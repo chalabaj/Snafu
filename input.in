@@ -1,5 +1,5 @@
 [Settings]
-natoms  = 1               # number of atoms in system
+natoms  = 3               # number of atoms in system
 nstates = 1               # number of electronic states
 init_state = 1            # initial electronic state
 timestep = 0.05           #
