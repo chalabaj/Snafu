@@ -15,13 +15,21 @@ import numpy as np
 import random
 import time
 
+#env layer on cluster to find module sys.path.append? /home/XXX/Snafu/snafu
 cwd = os.getcwd()
 sys.path.append(cwd)
-from check import file_check, read_input, error_exit
 
+from snafu.init   import file_check, read_input
+from snafu.init   import read_geoms, read_velocs 
+#from snafu.masses import assign_masses
+from snafu.errors import error_exit
+ 
 # Constants
-au_fs = 0.02
+au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
+amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
+ang_bohr = 1.889726132873     # agstroms to bohrs
+
 
 # Observed variable
 aEk = 0.0   # average kinetic energy
@@ -63,54 +71,36 @@ def verlet_step(x,y,z,m,t):
     # eq 3
     return()
 
-def read_geoms_veloc(geom_file_path,veloc_file_path):
-    #if restart == 1 : read  last two geoms
-    # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = np.zeros(shape=(natoms,1)) 
-    y = np.zeros(shape=(natoms,1)) 
-    z = np.zeros(shape=(natoms,1)) 
- # READ INITIAL POSITIONS:   
-    with open(geom_file_path,'r') as igf:  # igf input geom file 
-     atoms = igf.readline()  # first line in geom file is number of atoms
-     if not (int(atoms) == natoms):  error_exit(2)                         
-     garbage = igf.readline()  # comment 
-     for iat in range(0,natoms)
-        line = igf.readline().split()
-        x[iat] = float(line[1])
-        y[iat] = float(line[2])
-        z[iat] = float(line[3])
-     igf.close()
- # READ INITIAL VELOCITIES:
-   if
-    vx = np.zeros(shape=(natoms,1)) 
-    vy = np.zeros(shape=(natoms,1)) 
-    vz = np.zeros(shape=(natoms,1)) 
-    with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
-     atoms = ivf.readline()  # first line in geom file is number of atoms
-     if not (int(atoms) == natoms):  error_exit(2)                         
-     garbage = ivf.readline()  # comment 
-     for iat in range(0,natoms)
-        line = ivf.readline().split()
-        vx[iat] = float(line[1])
-        vy[iat] = float(line[2])
-        vz[iat] = float(line[3])
-     ivf.close()
-    return
+
 #return x_new, y_new, z_new, v_new, v_new, v_new,
     
 if __name__ == "__main__":
 
     print("Starting SNAFU.\n")
+    
     # File check
     input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
+    
     # Read input parametrs and set them as variable  - all strings => must convert later
     input_vars = read_input(input_file_path)
     globals().update(input_vars)  #Make vars availible globally
-    natoms = int(natoms)
-    #read initial/restart geometry and velocities
-    x,y,z,vx,vy,vz = read_geoms_veloc(geom_file_path,veloc_file_path)    
-   
     
+    natoms = int(natoms)
+   
+    #read initial/restart geometry and velocities
+    at_names,x,y,z = read_geoms(natoms,geom_file_path) 
+    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)
+    mass = assign_masses(at_names) 
+    mass = 
+    (m * amu for m in mass)
+    
+    print(at_names)
+    #masses = assign_mass(names,natoms)
+  
+def print_pos():
+    line = "  ".join("%1d" "%1d" "%1d" %(x[1], y[1], z[1]))
+    print(line)
+    return
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
-    # create array  - pos, velocities, energies, gradients
-    # load initial pos, velocities
+
+
