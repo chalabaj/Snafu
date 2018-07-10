@@ -13,9 +13,7 @@ def file_check(cwd):
     veloc_file = "veloc.in"
     geom_file  = "geom.in"
     input_file = "input.in"
-    
-    print("Cheking input files.\n")
-    
+       
     input_file_path = os.path.join(cwd,input_file)
     geom_file_path  = os.path.join(cwd,geom_file)
     veloc_file_path = os.path.join(cwd,veloc_file)
@@ -28,7 +26,7 @@ def file_check(cwd):
          print("No initial velocities, continue with zero initial velocities.")
          veloc_init = 0
     else: veloc_init = 1
-    print("Files check ok.\n")
+    
     return(input_file_path, geom_file_path, veloc_file_path, veloc_init)
     
 def read_input(input_file_path):
@@ -37,7 +35,7 @@ def read_input(input_file_path):
     par=dict(cfg.items("Settings",raw=False))
     
     # To get rid of inline comments [0] and strip spaces
-    print("Starting simulation with folowing parameters: ")
+    print("Simulation will start with parameters: ")
     print("\n".join("{}: {}".format(k.strip(), v.split("#")[0].strip()) for k, v in par.items()))
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
@@ -57,10 +55,11 @@ def read_geoms(natoms,geom_file_path):
      garbage = igf.readline()  # comment 
      for iat in range(0,natoms):
         line = igf.readline().split()
-        at_names.append(str(line[0]))
+        at_names.append(capitalize_2th(str(line[0])))
         x[iat] = float(line[1])
         y[iat] = float(line[2])
         z[iat] = float(line[3])
+     
      igf.close()
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
@@ -80,3 +79,7 @@ def read_velocs(veloc_init,natoms,veloc_file_path):
            vz[iat] = float(line[3])
      ivf.close()
     return(vx,vy,vz)
+
+# Capitalizace first letter, lower second - avoid problems with different name for atoms
+def capitalize_2th(s):
+    return s[:1].capitalize() + s[1:].lower()
