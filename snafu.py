@@ -21,8 +21,9 @@ sys.path.append(cwd)
 
 from snafu.init   import file_check, read_input
 from snafu.init   import read_geoms, read_velocs 
-#from snafu.masses import assign_masses
+from snafu.masses import assign_masses
 from snafu.errors import error_exit
+#from snafu.propagate import main_loop
  
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -30,49 +31,12 @@ au_eV = 27.21139
 amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
 
-
 # Observed variable
 aEk = 0.0   # average kinetic energy
 cPE = 0.0   # current potential energy to save
 cKE = 0.0   # current kinetic energy to save
 
 
-
-def main_loop():
-    """
-    Main rutine to propagate atoms
-    Calling external code to calc. force, energies
-    Calcul transition probabilities 
-    Readjust velocities
-    Check. energy conservation
-    """
-#  x_old  x(t-dt)
-#  x_     x(t)
-#  x_new  x(t+dt)
-    #cacl_force
-    for step in range (o,maxsteps):
-        print("verlet")
-        #verlet_step
-        #calc_hop
-        # vel_adjustment
-        #calc_energies
-        #print_info(step, pos, ener)
-        
-             
-        
-    return
-
-def verlet_step(x,y,z,m,t):
-    for iat in range(1,natoms+1):   # upper index excluded
-     print("for atom")   
-    #eq 1 px(iat,t + 1/2 dt) = px(iat,t) + 1/2*dt*fi(iatt))
-    #eq 2
-    #call forces
-    # eq 3
-    return()
-
-
-#return x_new, y_new, z_new, v_new, v_new, v_new,
     
 if __name__ == "__main__":
 
@@ -85,18 +49,26 @@ if __name__ == "__main__":
     input_vars = read_input(input_file_path)
     globals().update(input_vars)  #Make vars availible globally
     
-    natoms = int(natoms)
-   
+    natoms   = int(natoms)
+    maxsteps = int(maxsteps)
+    
     #read initial/restart geometry and velocities
     at_names,x,y,z = read_geoms(natoms,geom_file_path) 
     vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)
-    mass = assign_masses(at_names) 
-    mass = 
-    (m * amu for m in mass)
+    masses = assign_masses(at_names) 
+    am = [ mm * amu for mm in masses]
+    print("-----------------------------------------------")
+    print("Molecular systems:\nAt  Mass     X     Y     Z:")
+    for iat in range(0,natoms):
+        print("".join("%2s" " " "%2.3f"  %(at_names[iat], masses[iat]))," %2.3f %2.3f %2.3f"  %(x[iat],y[iat],z[iat]))
+           #masses = assign_mass(names,natoms)
+    #CREATE OUTPUT FILES
+    for step in range(1,maxsteps):
+        
+        vel
+        time = step * au_fs 
+        
     
-    print(at_names)
-    #masses = assign_mass(names,natoms)
-  
 def print_pos():
     line = "  ".join("%1d" "%1d" "%1d" %(x[1], y[1], z[1]))
     print(line)
