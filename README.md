@@ -13,6 +13,12 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.
 
 2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**
 
+
 ## Status
-development stage
+Still under development
+
+#Usage
+
+How to run:
+  Files geom.in input.in are mandatory to run the code. Geom.in is in XYZ format. Velocities are not obligatory but recomended.
 
