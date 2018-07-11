@@ -3,7 +3,7 @@ SNAFU code
 SNAFU can do ab initio nonadiabatic MD withot calculating non-adiabatic couplings
 Two scheme with/without diabatization
 
-1) adiabatic-potential-based formula derived within Landau-Zener:
+1) adiabatic-potential-based formula derived within Landau-Zener (APLZ):
 AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011),DOI: 10.1103/PhysRevA.84.014701
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); doi: 10.1063/1.5000718
 
@@ -70,20 +70,23 @@ if __name__ == "__main__":
     if debug == 1: print("atomic masses:\n",am)
     print("Molecular systems:\nAt  Mass     X     Y     Z:")
     for iat in range(0,natoms):
-        print("".join("%2s" " " "%2.3f"  %(at_names[iat], masses[iat]))," %2.3f %2.3f %2.3f"  %(x[iat],y[iat],z[iat]))  # just nice output print
+        print("".join("%2s" " " "%2.2f"  %(at_names[iat], masses[iat]))," %2.4f %2.4f %2.4f"  %(x[iat],y[iat],z[iat]))  # just nice output print
     print(liner)     
     
     #CREATE OUTPUT FILES
     files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  # where to store propagate position, velocities
     create_output_file(files)
- 
+    
+    # CALC INITIAL ENERGIES AND GRADIENTS
+      # calc_force
+      
     # MAIN LOOP
     #center of mass reduction TODO:
     for step in range(1,maxsteps):
         fx = np.zeros(shape=(natoms,1))+1  # TO DO CALL FORCES
-        if debug == 1: print("fx:\n",fx)
+        if debug == 1: print("fx:\n ",fx)
         #velocity verlet step
-        x_new = verlet_step(natoms,dt,am,x,vx,fx)
+        x,y,z,fx_new,fy_new,fz_new = verlet_step(natoms,dt,am,x,vx)
         #alcc_hop
         # vel_adjustment
         #calc_energies
