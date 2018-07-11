@@ -8,12 +8,17 @@ import os
 import configparser
 from snafu.errors import error_exit
 
+au_fs = 0.02418884326505      #atomic units to femtosecs
+au_eV = 27.21139
+amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
+ang_bohr = 1.889726132873     # agstroms to bohrs
+
 def file_check(cwd):
-    
+    # input files names - these are defaults otherwise not found
     veloc_file = "veloc.in"
     geom_file  = "geom.in"
     input_file = "input.in"
-       
+    # absolute path to the files  
     input_file_path = os.path.join(cwd,input_file)
     geom_file_path  = os.path.join(cwd,geom_file)
     veloc_file_path = os.path.join(cwd,veloc_file)
@@ -56,9 +61,9 @@ def read_geoms(natoms,geom_file_path):
      for iat in range(0,natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))
-        x[iat] = float(line[1])
-        y[iat] = float(line[2])
-        z[iat] = float(line[3])
+        x[iat] = float(line[1]) * ang_bohr  # atomic units : Bohr
+        y[iat] = float(line[2]) * ang_bohr
+        z[iat] = float(line[3]) * ang_bohr
      
      igf.close()
      return(at_names,x,y,z)
@@ -83,3 +88,15 @@ def read_velocs(veloc_init,natoms,veloc_file_path):
 # Capitalizace first letter, lower second - avoid problems with different name for atoms
 def capitalize_2th(s):
     return s[:1].capitalize() + s[1:].lower()
+
+def create_output_file(files):
+
+    try:
+        for x in files:
+          cmd = "touch {}".format(x)
+          os.system(cmd)
+    except OSError:
+       error_exit(3)
+    except WindowsError:
+       error_exit(3)
+    return()   

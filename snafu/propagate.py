@@ -1,39 +1,28 @@
-# -*- coding: utf-8 -*-
+import math
+import sys, os
+import numpy as np
+import random
+import time
+
+def verlet_step(natoms,dt,am,x,vx,fx):
+    
+    for iat in range(0,natoms):
+      x[iat] = x[iat] + vx[iat]*dt + fx[iat]/am[iat]*(dt**2)/2
+      print(iat,"x:",x[iat],"fx:",fx[iat]/am[iat])
+    return x    
+    
+    #x_new = x + vx*dt + a*(dt**2)/2
+	 #v_new = v + (a(r) + a(r_new))/2 * dt
+    #print(x_new)
+    #return(x_new)#y_new,z_new,vx_new,vy_new,vz_new,e_new)    
+
+#return x_new, y_new, z_new, v_new, v_new, v_new,
+    
 """
-Created on Tue Jul 10 14:07:22 2018
-
-@author: chalabaj
-"""
-
-
-def loop_step():
-    """
+        
     Main rutine to propagate atoms
     Calling external code to calc. force, energies
     Calcul transition probabilities 
     Readjust velocities
     Check. energy conservation
-    """
-#  x_old  x(t-dt)
-#  x_     x(t)
-#  x_new  x(t+dt)
-    #cacl_force
-    for step in range (o,maxsteps):
-        print("verlet")
-
-        
-             
-        
-    return
-
-def verlet_step(x,y,z,m,t):
-    for iat in range(1,natoms+1):   # upper index excluded
-     print("for atom")   
-    #eq 1 px(iat,t + 1/2 dt) = px(iat,t) + 1/2*dt*fi(iatt))
-    #eq 2
-    #call forces
-    # eq 3
-    return()
-
-
-#return x_new, y_new, z_new, v_new, v_new, v_new,
+"""
