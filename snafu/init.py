@@ -9,7 +9,7 @@ import configparser
 from snafu.errors import error_exit
 
 def file_check(cwd):
-    print("Working directory: ",cwd)
+    
     veloc_file = "veloc.in"
     geom_file  = "geom.in"
     input_file = "input.in"
