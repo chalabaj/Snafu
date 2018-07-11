@@ -9,7 +9,7 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); doi: 10.1063/1.5
 
 2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883
     
-TO DO: step back if hop, restart
+TO DO: step back if hop, restart file will contain geometry, velocities, curent state, timestep atd...
 """
 import math
 import sys, os
@@ -22,10 +22,10 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 
 from snafu.init   import file_check, read_input
-from snafu.init   import read_geoms, read_velocs 
+from snafu.init   import read_geoms, read_velocs,create_output_file 
 from snafu.masses import assign_masses
 from snafu.errors import error_exit
-#from snafu.propagate import main_loop
+from snafu.propagate import verlet_step
  
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -39,7 +39,7 @@ cPE = 0.0   # current potential energy to save
 cKE = 0.0   # current kinetic energy to save
 
 liner = ("_______________________________________________")
-    
+debug = 1   
 if __name__ == "__main__":
     
     print("Starting SNAFU.\n")
@@ -48,48 +48,43 @@ if __name__ == "__main__":
     print("Working directory: ",cwd)
     print(liner)
     
-    # File check
+    # FILE CHECK - OBTAIN PATH TO FILES
     input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
     
-    # Read input parametrs and set them as variable  - all strings => must convert later
+    #READ INPUT VARIABLE (read as strings) - SET THEM AS GLOBAL VARIABLES 
     input_vars = read_input(input_file_path)
-    globals().update(input_vars)  #Make vars availible globally
-    natoms   = int(natoms)
+    globals().update(input_vars)  
+    natoms   = int(natoms)                                     # load variable are all strings
     maxsteps = int(maxsteps)
+    state = int(init_state)                                    # current state during propagation (t =0 => init state)
+    dt = float(timestep)
     
-    #read initial/restart geometry and velocities
-    at_names,x,y,z = read_geoms(natoms,geom_file_path) 
-    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)
+    #READ INITIAL GEOMETRY AND VELOCITIES
+    at_names,x,y,z = read_geoms(natoms,geom_file_path)         # names of atomos, x,y,z position - vectors x[0] is x position of the 1st atom
+    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)  # vectors vx[0] is x velocity of the 1st atom
     
-    #obtain masss for each atom
+    #OBTAIN MASSES
     masses = assign_masses(at_names) 
-    am = [ mm * amu for mm in masses]  # atomic mass units conversion
+    am = [ mm * amu for mm in masses]                          # atomic mass units conversion
     print(liner)
+    if debug == 1: print("atomic masses:\n",am)
     print("Molecular systems:\nAt  Mass     X     Y     Z:")
     for iat in range(0,natoms):
-        print("".join("%2s" " " "%2.3f"  %(at_names[iat], masses[iat]))," %2.3f %2.3f %2.3f"  %(x[iat],y[iat],z[iat]))
+        print("".join("%2s" " " "%2.3f"  %(at_names[iat], masses[iat]))," %2.3f %2.3f %2.3f"  %(x[iat],y[iat],z[iat]))  # just nice output print
     print(liner)     
+    
     #CREATE OUTPUT FILES
-    
-    
-    # 'w' for only writing (an existing file with the same name will be erased)
-    #'a' opens the file for appending
-    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz" ]
-    try:
-        for x in files:
-          cmd = "touch {}".format(x)
-          os.system(cmd)
-    except OSError:
-       error_exit(3)
-    except WindowsError:
-       error_exit(3)
-
-    
-    # main loop
+    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  # where to store propagate position, velocities
+    create_output_file(files)
+ 
+    # MAIN LOOP
+    #center of mass reduction TODO:
     for step in range(1,maxsteps):
-        
-        #verlet_step
-        #calc_hop
+        fx = np.zeros(shape=(natoms,1))+1  # TO DO CALL FORCES
+        if debug == 1: print("fx:\n",fx)
+        #velocity verlet step
+        x_new = verlet_step(natoms,dt,am,x,vx,fx)
+        #alcc_hop
         # vel_adjustment
         #calc_energies
         #print_info(step, pos, ener)
