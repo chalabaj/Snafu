@@ -95,8 +95,7 @@ if __name__ == "__main__":
     #center of mass reduction TODO
     for step in range(1,maxsteps):
         
-        if debug == 1: print("fx:\n ",fx)
-        
+
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)   # new positions (t+dt)
         
         # fx_new, fy_new, fz_new = calc_force(x,y,z,state)                 # calc forces for new positions
@@ -112,7 +111,7 @@ if __name__ == "__main__":
         #calc_energies
         #print_info(step, pos, ener)
         time = step * au_fs 
-        # print_positions(step,time,natoms, at_names, x, y, z):   
+        print_positions(step,time,natoms, at_names, x, y, z)   
     
 
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
