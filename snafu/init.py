@@ -100,3 +100,17 @@ def create_output_file(files):
     except WindowsError:
        error_exit(3)
     return()   
+
+def init_forces(natoms):
+# Initialize empty forces array
+    
+    #f(t)
+    fx = np.zeros(shape=(natoms,1))  
+    fy = np.zeros(shape=(natoms,1))  
+    fz = np.zeros(shape=(natoms,1))  
+    #f_new(t+dt)
+    fx_new = np.zeros(shape=(natoms,1))  
+    fy_new = np.zeros(shape=(natoms,1))  
+    fz_new = np.zeros(shape=(natoms,1))  
+    
+    return(fx,fy,fz,fx_new,fy_new,fz_new)
