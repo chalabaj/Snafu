@@ -22,10 +22,12 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 
 from snafu.init   import file_check, read_input
-from snafu.init   import read_geoms, read_velocs,create_output_file 
+from snafu.init   import read_geoms, read_velocs
+from snafu.init   import create_output_file, init_forces
 from snafu.masses import assign_masses
 from snafu.errors import error_exit
-from snafu.propagate import verlet_step
+from snafu.propagate import update_velocities, update_positions
+from snafu.print import print_positions
  
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -40,6 +42,8 @@ cKE = 0.0   # current kinetic energy to save
 
 liner = ("_______________________________________________")
 debug = 1   
+#----------------INIT-------------------------------------------------------------------------------
+
 if __name__ == "__main__":
     
     print("Starting SNAFU.\n")
@@ -48,22 +52,25 @@ if __name__ == "__main__":
     print("Working directory: ",cwd)
     print(liner)
     
-    # FILE CHECK - OBTAIN PATH TO FILES
+# FILE CHECK - OBTAIN PATH TO FILES
     input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
     
-    #READ INPUT VARIABLE (read as strings) - SET THEM AS GLOBAL VARIABLES 
+#READ INPUT VARIABLE (read as strings) - SET THEM AS GLOBAL VARIABLES: 
     input_vars = read_input(input_file_path)
     globals().update(input_vars)  
-    natoms   = int(natoms)                                     # load variable are all strings
+    natoms   = int(natoms)                                     # loaded variable are all strings
     maxsteps = int(maxsteps)
-    state = int(init_state)                                    # current state during propagation (t =0 => init state)
+    state = int(init_state)                                    # Current state during propagation (for t =0 => init state)
     dt = float(timestep)
     
-    #READ INITIAL GEOMETRY AND VELOCITIES
-    at_names,x,y,z = read_geoms(natoms,geom_file_path)         # names of atomos, x,y,z position - vectors x[0] is x position of the 1st atom
-    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)  # vectors vx[0] is x velocity of the 1st atom
+#READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES:
+    # each array (x,y,z) hold NATOMS positions, 
+    # e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
+    at_names,x,y,z = read_geoms(natoms,geom_file_path)         # names of atomos, x,y,z positions (1D)
+    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)  # velocity array (1D) 
+    fx,fy,fz,fx_new,fy_new,fz_new = init_forces(natoms)         # Create empty forces array (1D)
     
-    #OBTAIN MASSES
+#OBTAIN MASSES:
     masses = assign_masses(at_names) 
     am = [ mm * amu for mm in masses]                          # atomic mass units conversion
     print(liner)
@@ -73,31 +80,41 @@ if __name__ == "__main__":
         print("".join("%2s" " " "%2.2f"  %(at_names[iat], masses[iat]))," %2.4f %2.4f %2.4f"  %(x[iat],y[iat],z[iat]))  # just nice output print
     print(liner)     
     
-    #CREATE OUTPUT FILES
-    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  # where to store propagate position, velocities
+#CREATE OUTPUT FILES:
+    # where to store propagated position, velocities, observables
+    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  
+   
     create_output_file(files)
-    
-    # CALC INITIAL ENERGIES AND GRADIENTS
-      # calc_force
-      
-    # MAIN LOOP
-    #center of mass reduction TODO:
+
+#---------------INIT DONE-------------------------------------------------------------------    
+# CALC INITIAL ENERGIES AND GRADIENTS
+    # fx,fy,fz = calc_force(state,) # position at current step
+ 
+     
+# MAIN LOOP 
+    #center of mass reduction TODO
     for step in range(1,maxsteps):
-        fx = np.zeros(shape=(natoms,1))+1  # TO DO CALL FORCES
+        
         if debug == 1: print("fx:\n ",fx)
-        #velocity verlet step
-        x,y,z,fx_new,fy_new,fz_new = verlet_step(natoms,dt,am,x,vx)
+        
+        x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)   # new positions (t+dt)
+        
+        # fx_new, fy_new, fz_new = calc_force(x,y,z,state)                 # calc forces for new positions
+        
+        vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new) # propagate velocities using new forces
+        
+        fx = fx_new
+        fy = fy_new
+        fz = fz_new
+        
         #alcc_hop
         # vel_adjustment
         #calc_energies
         #print_info(step, pos, ener)
         time = step * au_fs 
-        # store data   
+        # print_positions(step,time,natoms, at_names, x, y, z):   
     
-def print_pos():
-    line = "  ".join("%1d" "%1d" "%1d" %(x[1], y[1], z[1]))
-    print(line)
-    return
+
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 
 
