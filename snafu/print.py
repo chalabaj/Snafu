@@ -1,16 +1,17 @@
+import numpy as np
 
 def print_positions(step,time,natoms, at_names, x, y, z):
     
-    #line = "  ".join("%1s %1d" "%1d" "%1d" %(x[1], y[1], z[1]))
     with open ("movie.xyz", "w") as mov:
-    
-     mov.write(natoms,"\n")
-     mov.write("Step: ",step,"     ","Time_fs: ",time,"\n")
+     header = ("{} \n".format(natoms))
+     mov.write(header)
+     comment = ("Step: {}      Time_fs:{}".format(step,time))
+     mov.write(comment)
      for iat in range(0,natoms):
       
-      line = (' {0: }{0:2f.3} {0:2f.3} {0:2f.3}\n'.format(x[iat], y[iat], z[iat]))
-      line = "  ".join("%1s %1d" "%1d" "%1d" %(x[iat], y[iat], z[iat]))
-     mov.write(line)
+      line = ("".join("%2s %2.4f %2.4f %2.4f"  %(at_names[iat],x[iat],y[iat],z[iat])))
+      print(line)
+      mov.write(line)
     mov.closed
     return()
 
