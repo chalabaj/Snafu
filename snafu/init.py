@@ -18,11 +18,11 @@ def file_check(cwd):
     veloc_file = "veloc.in"
     geom_file  = "geom.in"
     input_file = "input.in"
+    
     # absolute path to the files  
     input_file_path = os.path.join(cwd,input_file)
     geom_file_path  = os.path.join(cwd,geom_file)
     veloc_file_path = os.path.join(cwd,veloc_file)
-    
     if (not os.path.isfile(input_file_path)):
          error_exit(0)
     if (not os.path.isfile(geom_file_path)):
@@ -34,7 +34,9 @@ def file_check(cwd):
     
     return(input_file_path, geom_file_path, veloc_file_path, veloc_init)
     
-def read_input(input_file_path):
+def read_input(cwd,input_file_path):
+    
+    # Read parameter from input.in file
     cfg = configparser.ConfigParser(delimiters=('=', ':'),comment_prefixes=('#', ';'))
     cfg.read(input_file_path)       # Read file
     par=dict(cfg.items("Settings",raw=False))
@@ -44,14 +46,22 @@ def read_input(input_file_path):
     print("\n".join("{}: {}".format(k.strip(), v.split("#")[0].strip()) for k, v in par.items()))
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
-    return(par)
+        
+    # Now that we know everything - check for ab initio interface
+    abinit_file = "ABINITIO/{}.sh".format(par['abinitio'])
+    ab_initio_file_path  = os.path.join(cwd,abinit_file)
+    
+    if (not os.path.isfile(ab_initio_file_path)):
+         error_exit(5)
+         
+    return(par,ab_initio_file_path)
 
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
     # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = np.zeros(shape=(natoms,1)) 
-    y = np.zeros(shape=(natoms,1)) 
-    z = np.zeros(shape=(natoms,1)) 
+    x = [ 0.0 ] * natoms 
+    y = [ 0.0 ] * natoms 
+    z = [ 0.0 ] * natoms
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -69,9 +79,9 @@ def read_geoms(natoms,geom_file_path):
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
 def read_velocs(veloc_init,natoms,veloc_file_path):  
-    vx = np.zeros(shape=(natoms,1)) 
-    vy = np.zeros(shape=(natoms,1)) 
-    vz = np.zeros(shape=(natoms,1)) 
+    vx = [ 0.0 ] * natoms
+    vy = [ 0.0 ] * natoms 
+    vz = [ 0.0 ] * natoms 
     if veloc_init == 1:
      with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
        atoms = ivf.readline()  # first line in geom file is number of atoms
@@ -105,12 +115,12 @@ def init_forces(natoms):
 # Initialize empty forces array
     
     #f(t)
-    fx = np.zeros(shape=(natoms,1))  
-    fy = np.zeros(shape=(natoms,1))  
-    fz = np.zeros(shape=(natoms,1))  
+    fx =([ 0.0 ] * natoms)  
+    fy =([ 0.0 ] * natoms)  
+    fz =([ 0.0 ] * natoms)
     #f_new(t+dt)
-    fx_new = np.zeros(shape=(natoms,1))  
-    fy_new = np.zeros(shape=(natoms,1))  
-    fz_new = np.zeros(shape=(natoms,1))  
+    fx_new = [ 0.0 ] * natoms  
+    fy_new = [ 0.0 ] * natoms
+    fz_new = [ 0.0 ] * natoms
     
     return(fx,fy,fz,fx_new,fy_new,fz_new)
