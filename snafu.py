@@ -16,7 +16,7 @@ import math
 import sys, os
 import random
 import time
-
+import re
 #env layer on cluster to find module sys.path.append? /home/XXX/Snafu/snafu
 cwd = os.getcwd()
 sys.path.append(cwd)
@@ -35,18 +35,18 @@ au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
 amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
-
+bohr_ang = 1/ang_bohr         # bohr to ang units
 # Observed variable
 aEk = 0.0   # average kinetic energy
 cPE = 0.0   # current potential energy to save
 cKE = 0.0   # current kinetic energy to save
 
-liner = ("_______________________________________________")
+liner = ("_")*50
 debug = 1   
 #----------------INIT-------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    
+    start_time = time.time()
     print("Starting SNAFU.\n")
     print("Python exec: ",sys.base_exec_prefix,"ver:",sys.version[:5])
     print("System platform: ",sys.platform)  
@@ -111,10 +111,12 @@ if __name__ == "__main__":
         #calc_energies
         #print_info(step, pos, ener)
         time = step * dt*  au_fs 
-        print(step)
+        #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # ff = print for forces to geom.xyz
-    
-
+  
+  
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
-
+    
+ 
+    print("--- {s} seconds ---".format(time.time() - start_time))
