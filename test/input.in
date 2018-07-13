@@ -5,5 +5,5 @@ init_state = 1            # initial electronic state
 timestep = 4              # in atomic unit au = 0.024 fs 
 maxsteps = 100            # total number of steps
 method  = adiabatic       # adiabatic / diabatization scheme
-abinitio  = test          # where to take gradients (gaussian, molpro...)
+abinitio  = molpro          # where to take gradients (gaussian, molpro...)
 restart = 0

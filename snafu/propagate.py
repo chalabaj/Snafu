@@ -28,9 +28,9 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + 1/(2*am[iat]) * (fx[iat] + fx_new[iat])
-     vy[iat] = vy[iat] + 1/(2*am[iat]) * (fy[iat] + fy_new[iat])
-     vz[iat] = vz[iat] + 1/(2*am[iat]) * (fz[iat] + fz_new[iat])
+     vx[iat] = vx[iat] + dt/(2*am[iat]) * (fx[iat] + fx_new[iat])
+     vy[iat] = vy[iat] + dt/(2*am[iat]) * (fy[iat] + fy_new[iat])
+     vz[iat] = vz[iat] + dt/(2*am[iat]) * (fz[iat] + fz_new[iat])
     return(vx,vy,vz)   
     
 
