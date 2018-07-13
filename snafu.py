@@ -10,10 +10,10 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); doi: 10.1063/1.5
 2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883
     
 TO DO: step back if hop, restart file will contain geometry, velocities, curent state, timestep atd...
+
 """
 import math
 import sys, os
-import numpy as np
 import random
 import time
 
@@ -27,6 +27,7 @@ from snafu.init   import create_output_file, init_forces
 from snafu.masses import assign_masses
 from snafu.errors import error_exit
 from snafu.propagate import update_velocities, update_positions
+from snafu.propagate import calc_forces
 from snafu.print import print_positions
  
 # Constants
@@ -56,7 +57,7 @@ if __name__ == "__main__":
     input_file_path, geom_file_path, veloc_file_path, veloc_init = file_check(cwd)
     
 #READ INPUT VARIABLE (read as strings) - SET THEM AS GLOBAL VARIABLES: 
-    input_vars = read_input(input_file_path)
+    input_vars, ab_initio_file_path = read_input(cwd,input_file_path)
     globals().update(input_vars)  
     natoms   = int(natoms)                                     # loaded variable are all strings
     maxsteps = int(maxsteps)
@@ -72,7 +73,7 @@ if __name__ == "__main__":
     
 #OBTAIN MASSES:
     masses = assign_masses(at_names) 
-    am = [ mm * amu for mm in masses]                          # atomic mass units conversion
+    am = [ mm *  amu for mm in masses]                          # atomic mass units conversion
     print(liner)
     if debug == 1: print("atomic masses:\n",am)
     print("Molecular systems:\nAt  Mass     X     Y     Z:")
@@ -82,20 +83,19 @@ if __name__ == "__main__":
     
 #CREATE OUTPUT FILES:
     # where to store propagated position, velocities, observables
-    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  
-   
+    #geom.dat hold current geometry for which to compute E, grads  
+    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat", "geom.dat" ]  
     create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
 # CALC INITIAL ENERGIES AND GRADIENTS
-    # fx,fy,fz = calc_force(state,) # position at current step
+    fx, fy, fz = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z) # position at current step
  
      
 # MAIN LOOP 
     #center of mass reduction TODO
-    for step in range(1,maxsteps):
+    for step in range(1,maxsteps+1):
         
-
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)   # new positions (t+dt)
         
         # fx_new, fy_new, fz_new = calc_force(x,y,z,state)                 # calc forces for new positions
@@ -105,15 +105,16 @@ if __name__ == "__main__":
         fx = fx_new
         fy = fy_new
         fz = fz_new
-        
+        #print(fx)
         #alcc_hop
         # vel_adjustment
         #calc_energies
         #print_info(step, pos, ener)
-        time = step * au_fs 
-        print_positions(step,time,natoms, at_names, x, y, z)   
+        time = step * dt*  au_fs 
+        print(step)
+        print_positions(step,time,natoms, at_names, x, y, z, ff = False)    # ff = print for forces to geom.xyz
     
 
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
-
+# print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
 

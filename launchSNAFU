@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU";
+echo " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U";
+echo "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F::::::::::::::::::::FU::::::U     U::::::U";
+echo "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF::::::FFFFFFFFF::::FUU:::::U     U:::::UU";
+echo "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F:::::F       FFFFFF U:::::U     U:::::U ";
+echo "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F:::::F              U:::::D     D:::::U ";
+echo " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F::::::FFFFFFFFFF    U:::::D     D:::::U ";
+echo "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F:::::::::::::::F    U:::::D     D:::::U ";
+echo "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F:::::::::::::::F    U:::::D     D:::::U ";
+echo "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F::::::FFFFFFFFFF    U:::::D     D:::::U ";
+echo "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F:::::F              U:::::D     D:::::U ";
+echo "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F:::::F              U::::::U   U::::::U ";
+echo "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF:::::::FF            U:::::::UUU:::::::U ";
+echo "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F::::::::FF             UU:::::::::::::UU  ";
+echo "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F::::::::FF               UU:::::::::UU    ";
+echo " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFFF                 UUUUUUUUU      ";
+
