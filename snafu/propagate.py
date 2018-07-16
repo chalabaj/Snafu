@@ -50,11 +50,14 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     # Windows installed ubuntu has rather complicated path
     testpath = "/mnt/c/Users/chalabaj/Documents/Coding/snafu-master/ABINITIO/test.sh" 
     
+    state = state + 1 # ab initio code starts from 1(ground state) while code starts from 0 index due to python 
+    
     if re.search(r'win',sys.platform):   
        abinit_inputs = "wsl {} {}  {}  {}  {}".format(testpath, abinit_geom_file, natoms, state, nstates)
     elif re.search(r'linux',sys.platform): 
        abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates)
        abinit_inputs = [ab_initio_file_path, abinit_geom_file, str(natoms), str(state), str(nstates)]
+    
     # CALL EXTERNAL SCRIPT WHICH WILL HANDLE AB INITIO CALCULATIONS       
     try:
         abinit_proc = subprocess.run(abinit_inputs, stdout= None, stderr= subprocess.PIPE, shell = True, check = True)	
@@ -72,16 +75,17 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
         pot_energies[eners] = gef.readline()  # comment 
      for iat in range(0,natoms):
         fx,fy,fz[iat] = gef.readline()   #  X Y Z format for each atoms
-    close(gef)
+    gef.closed
     return(fx , fy, fz, pot_eners)
 
 def calc_energies (natoms, am, state, pot_eners, vx, vy, vz):
      Ekin = 0.0
   for iat in range(0,natoms):
      Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
-     Etot = Ekin + pot_eners[state-1]  #state 1(GS), 2 ex. state,..... but pot_eners[0(GS),1(1.excited),2...]
+     Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
+     Etot = Ekin + Epot  
      
-return()  
+return(Ekin,Epot,Etot)  
     
 
 

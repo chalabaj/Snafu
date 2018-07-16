@@ -92,7 +92,7 @@ if __name__ == "__main__":
 # CALC INITIAL ENERGIES AND GRADIENTS
     fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners) # position at current step
  
-     
+    print("Step, Ener, Ekin, Epot, Etot") 
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
@@ -106,16 +106,17 @@ if __name__ == "__main__":
         fx = fx_new.copy() # hard copied list instead of just referencing
         fy = fy_new.copy()
         fz = fz_new.copy()
-        #print(fx)
-        #alcc_hop
+
+        #if hopping == "1":
+          #alcc_hop
         # vel_adjustment
-        calc_energies(natoms, am, pot_eners, vx,vy,vz)
-        #print_info(step, pos, ener)
+        Ekin, Epot, Etot = calc_energies(natoms, am, pot_eners, vx,vy,vz)
+        print_info(step, ener, Ekin, Epot, Etot)
         time = step * dt*  au_fs 
         #print(step)
-        print_positions(step,time,natoms, at_names, x, y, z)    # ff = print for forces to geom.xyz
+        print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels
         print_velocties(step,time,natoms, at_names, vx, vy, vz)
-  
+      
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
     
