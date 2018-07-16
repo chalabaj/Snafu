@@ -1,14 +1,5 @@
 Linux n01 3.2.55-client #1 SMP Tue Mar 11 15:23:16 CET 2014 x86_64 GNU/Linux
-Fri Jul 13 21:48:23 CEST 2018
+Mon Jul 16 08:56:39 CEST 2018
 
-
-===================================================================================
-=   BAD TERMINATION OF ONE OF YOUR APPLICATION PROCESSES
-=   PID 7496 RUNNING AT n01.vscht.cz
-=   EXIT CODE: 255
-=   CLEANING UP REMAINING PROCESSES
-=   YOU CAN IGNORE THE BELOW CLEANUP MESSAGES
-===================================================================================
-Command exited with non-zero status 255
-0.00user 0.15system 0:00.14elapsed 104%CPU (0avgtext+0avgdata 61928maxresident)k
-8inputs+168outputs (0major+29468minor)pagefaults 0swaps
+2.38user 2.41system 0:01.37elapsed 349%CPU (0avgtext+0avgdata 2145720maxresident)k
+8inputs+175304outputs (0major+44488minor)pagefaults 0swaps

@@ -11,7 +11,7 @@ basis="6-31g"  # for Pople basis sets and df-casscf, fitting DF basis must be sp
                # don't use Dunning basis sets, you won't get NACME
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.
-nocc=6         # occupied orbitals
+nocc=5         # occupied orbitals
 nclosed=3      # closed orbitals
 memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
@@ -28,10 +28,11 @@ memory, $memory, m;
 file, 2, $input.wfu, unknown
 PUNCH, $input.pun, new
 gprint, orbital, civector
+orient,noorient;
+symmetry,nosym;
 Angstrom
 
-!geometry=../$abinit_geom_file
-geometry=mini.dat
+geometry=../$abinit_geom_file
 basis=$basis
 
 !-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
@@ -51,7 +52,7 @@ if (lastorb.ne.MCSCF)then
      state,$nstate;
      maxiter,40;
      orbital,2101.2 !Orbital dumprecord at reference geometry
-     save,ci=2501.2
+     save,ci=2501.2}
 endif
 
 data, copy, 2101.2, 3000.2
@@ -166,4 +167,5 @@ grep "GRADIENT," $input.pun | awk -F" " '{print $5,$6,$7}'>>../engrad.dat
 echo "TIMESTEP = $timestep" >> $input.com.out.all
 echo "####################" >> $input.com.out.all
 cat $input.com.out >> $input.com.out.all
+
 

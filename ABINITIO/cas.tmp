@@ -1,7 +1,7 @@
 
 TEXT, Calculating gradients. 
 multi;
-occ,6;
+occ,5;
 closed,3;
 WF,9,0,1;
 state,2;
