@@ -27,8 +27,8 @@ from snafu.init   import create_output_file, init_forces
 from snafu.masses import assign_masses
 from snafu.errors import error_exit
 from snafu.propagate import update_velocities, update_positions
-from snafu.propagate import calc_forces
-from snafu.print import print_positions
+from snafu.propagate import calc_forces, calc_energies
+from snafu.prints import print_positions, print_velocities
  
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -63,13 +63,14 @@ if __name__ == "__main__":
     maxsteps = int(maxsteps)
     state = int(init_state)                                    # Current state during propagation (for t =0 => init state)
     dt = float(timestep)
+    nstates = int(nstates)
     
 #READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES:
     # each array (x,y,z) hold NATOMS positions, 
     # e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
-    at_names,x,y,z = read_geoms(natoms,geom_file_path)         # names of atomos, x,y,z positions (1D)
-    vx,vy,vz = read_velocs(veloc_init,natoms,veloc_file_path)  # velocity array (1D) 
-    fx,fy,fz,fx_new,fy_new,fz_new = init_forces(natoms)         # Create empty forces array (1D)
+    at_names, x, y, z = read_geoms(natoms,geom_file_path)                           # names of atomos, x,y,z positions (1D)
+    vx, vy, vz = read_velocs(veloc_init,natoms,veloc_file_path)                    # velocity array (1D) 
+    fx, fy, fz, fx_new, fy_new,fz_new, pot_eners = init_forces_potenergs(natoms,nstates)         # Create empty forces and potential energy arrays (1D)
     
 #OBTAIN MASSES:
     masses = assign_masses(at_names) 
@@ -83,40 +84,40 @@ if __name__ == "__main__":
     
 #CREATE OUTPUT FILES:
     # where to store propagated position, velocities, observables
-    #geom.dat hold current geometry for which to compute E, grads  
+    # geom.dat hold current geometry for which to compute E, grads  
     files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat", "geom.dat" ]  
     create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
 # CALC INITIAL ENERGIES AND GRADIENTS
-    fx, fy, fz = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z) # position at current step
+    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners) # position at current step
  
      
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
         
-        x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)   # new positions (t+dt)
+        x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
-        # fx_new, fy_new, fz_new = calc_force(x,y,z,state)                 # calc forces for new positions
+        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners)        # calc forces for new positions
         
-        vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new) # propagate velocities using new forces
+        vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new)                                               # propagate velocities using new forces
         
-        fx = fx_new
-        fy = fy_new
-        fz = fz_new
+        fx = fx_new.copy() # hard copied list instead of just referencing
+        fy = fy_new.copy()
+        fz = fz_new.copy()
         #print(fx)
         #alcc_hop
         # vel_adjustment
-        #calc_energies
+        calc_energies(natoms, am, pot_eners, vx,vy,vz)
         #print_info(step, pos, ener)
         time = step * dt*  au_fs 
         #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # ff = print for forces to geom.xyz
-  
+        print_velocties(step,time,natoms, at_names, vx, vy, vz)
   
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
     
  
-    print("--- {s} seconds ---".format(time.time() - start_time))
+  #  print("--- {s} seconds ---".format(time.time() - start_time))

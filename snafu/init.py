@@ -111,7 +111,7 @@ def create_output_file(files):
        error_exit(3)
     return()   
 
-def init_forces(natoms):
+def init_forces_potenergs(natoms,nstates):
 # Initialize empty forces array
     
     #f(t)
@@ -122,5 +122,6 @@ def init_forces(natoms):
     fx_new = [ 0.0 ] * natoms  
     fy_new = [ 0.0 ] * natoms
     fz_new = [ 0.0 ] * natoms
+    pot_eners = [0.0] * nstates # potential energy from ab initio calculations
     
-    return(fx,fy,fz,fx_new,fy_new,fz_new)
+    return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)

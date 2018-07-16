@@ -1,5 +1,5 @@
 #!/bin/bash
-source SetEnvironment.sh MOLPRO
+source SetEnvironment.sh MOLPRO 2015
 ##########SNAFU INPUTS###########################################
 abinit_geom_file=$1
 natoms=$2
@@ -19,6 +19,7 @@ multi="multi"  # use  "df-casscf" for density fitting version
 if [ -e ../gradients.dat ];then
 rm -f ../gradients.dat
 fi
+
 # MOLPRO-CASSCF
 # wavefunction passed between steps via input.wfu
 # 3rd line is needed, we take forces from input.pun
@@ -132,6 +133,7 @@ echo "pop; density,2101.2,state=$ist1.1" >> $input.com
 
 #----------MOLPRO JOB-------------------------
 export TMPDIR=$PWD/scratch
+mkdir $TMPDIR
 #$MOLPROEXE -s --no-xml-output -W $PWD/scratch >& $input.com.out <$input.com
 
 # Check whether all is OK.
@@ -152,20 +154,21 @@ if [[ $? -ne 0 ]];then
    fi
 fi
 
-exit 0
+
 #####################################################################
 
 # NOW IT'S TIME TO COLLECT ALL THE DATA FOR ABIN
 
-# Extracting energy. This should work even for CASPT2 energies.
-grep 'Energy          ' $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> ../engrad.dat.$ibead
+# Extracting energy  repair
+grep grep  "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> ../gradients.dat
 
 # Extracting GRADIENT
 # Should work for both CASPT2 and CASSCF gradients
-grep "GRADIENT," $input.pun | awk -F" " '{print $5,$6,$7}'>>../engrad.dat
+grep "GRADIENT," $input.pun | awk -F" " '{print $5,$6,$7}'>> ../gradients.dat
 
-echo "TIMESTEP = $timestep" >> $input.com.out.all
-echo "####################" >> $input.com.out.all
-cat $input.com.out >> $input.com.out.all
-
-
+if [[ $? -ne 0 ]];then
+exit 0
+else 
+echo "Could not extract energies"
+exit 4
+fi

@@ -34,9 +34,10 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
     return(vx,vy,vz)   
     
 
-def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z):
+def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
+    state = current state - PES for the forcess calc 
     """
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
@@ -66,10 +67,21 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z):
     # Check return status of the process:     # not necesarry  exception handle this: if abinit_call.returncode = 0:     error_exit(4)   
     
     # COLLECT DATA
-    fx =([ 0.0 ] * natoms)  
-    fy =([ 0.0 ] * natoms)  
-    fz =([ 0.0 ] * natoms)
-    return(fx , fy, fz)
+    with open ("gradients.dat") as gef:   # gradient energy file
+     for eners in range(0,nstates):
+        pot_energies[eners] = gef.readline()  # comment 
+     for iat in range(0,natoms):
+        fx,fy,fz[iat] = gef.readline()   #  X Y Z format for each atoms
+    close(gef)
+    return(fx , fy, fz, pot_eners)
+
+def calc_energies (natoms, am, state, pot_eners, vx, vy, vz):
+     Ekin = 0.0
+  for iat in range(0,natoms):
+     Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
+     Etot = Ekin + pot_eners[state-1]  #state 1(GS), 2 ex. state,..... but pot_eners[0(GS),1(1.excited),2...]
+     
+return()  
     
 
 

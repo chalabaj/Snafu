@@ -1,8 +1,19 @@
 ***  gradie        nts                                                                                                                             
-TIME      16-Jul-18  08:56:39 
+TIME      16-Jul-18  09:02:54 
 ATOM  1  O      8.00        -0.00012094     0.00000000    -0.00009449
 ATOM  2  H      1.00        -0.00185004     0.00000000     1.81662963
 ATOM  3  H      1.00         1.76222063     0.00000000    -0.44127751
+RHF STATE 1.1 Energy       -75.57857822
+RHF STATE 1.1 Dipole mom     1.04905190     0.00000000     0.81960909
+MCSCF STATE 1.1 Energy     -75.57751006
+MCSCF STATE 1.1 Dipole m     1.05367737     0.00000000     0.82322290
+MCSCF STATE 2.1 Energy     -75.50637900
+MCSCF STATE 2.1 Dipole m     0.84655387     0.00000000     0.66140027
+MCSCF STATES 1.1  1.1 MATR.EL. FOR OPER. DMX                    1.05367737  COORD:    0.00000000    0.00000000    0.00000000
+MCSCF STATES 2.1  2.1 MATR.EL. FOR OPER. DMX                    0.84655387  COORD:    0.00000000    0.00000000    0.00000000
+MCSCF STATES 2.1  1.1 MATR.EL. FOR OPER. DMY                   -0.19644840  COORD:    0.00000000    0.00000000    0.00000000
+MCSCF STATES 1.1  1.1 MATR.EL. FOR OPER. DMZ                    0.82322290  COORD:    0.00000000    0.00000000    0.00000000
+MCSCF STATES 2.1  2.1 MATR.EL. FOR OPER. DMZ                    0.66140027  COORD:    0.00000000    0.00000000    0.00000000
 MCSCF STATE 1.1 Energy     -75.57751006
 MCSCF STATE 1.1 Dipole m     1.05367737     0.00000000     0.82322290
 MCSCF STATE 2.1 Energy     -75.50637900

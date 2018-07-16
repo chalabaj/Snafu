@@ -13,7 +13,7 @@ def error_exit(error_number):
            "1 - File geom.in not found in folder.\n",
            "2 - Number of atoms in geoms.in and input.in is not consistent. Please check geom.in and input.in and check XYZ format.\n",
            "3 - OS error: {0}".format("Could not create necessarry files."),
-           "4 - Ab initio code failed.",
+           "4 - Ab initio calculations failed.",
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.")
     print("---------------------------------")
     print("Program was terminated due to an error! Exiting")
