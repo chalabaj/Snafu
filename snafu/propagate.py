@@ -17,6 +17,7 @@ bohr_ang = 1/ang_bohr     # bohr to ang units
 def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 # update positions: Rn(t + Δt) = Rn(t) + Δt*Vn(t) +Δt^2/(2Mn)*Fn(t)  - for n atom at time t
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
+
     for iat in range(0,natoms):   
       x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt**2)
       y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt**2)
@@ -27,6 +28,7 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 
 def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
+
     for iat in range(0,natoms):
      vx[iat] = vx[iat] + dt/(2*am[iat]) * (fx[iat] + fx_new[iat])
      vy[iat] = vy[iat] + dt/(2*am[iat]) * (fy[iat] + fy_new[iat])
@@ -92,7 +94,7 @@ def calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz):
     with open ("energies.dat") as ef:
        
        line = "{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot)
-       ef.write(line)
+       ef.write(str(line))
     ef.closed
     return(Ekin,Epot,Etot)  
     

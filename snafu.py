@@ -12,6 +12,7 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); doi: 10.1063/1.5
 TO DO: step back if hop, restart file will contain geometry, velocities, curent state, timestep atd...
 
 """
+
 import math
 import sys, os
 import random
@@ -112,7 +113,8 @@ if __name__ == "__main__":
           #alcc_hop
         # vel_adjustment
         Ekin, Epot, Etot = calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz)
-        print(step, Ekin, Epot, Etot)
+        
+        print("{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot))
         time = step * dt*  au_fs 
         #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels

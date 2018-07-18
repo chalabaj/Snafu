@@ -7,7 +7,7 @@ orient,noorient;
 symmetry,nosym;
 Angstrom
 
-geometry=../mini.dat
+geometry=../abinit_geom.xyz
 basis=6-31g
 
 !-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
