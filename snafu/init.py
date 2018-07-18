@@ -2,7 +2,7 @@
 Check input file: input.in, geom.in (input geometry), veloc.in pab initio program file,
 Read input.in
 """
-import numpy as np
+
 import sys
 import os
 import configparser

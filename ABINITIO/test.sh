@@ -7,9 +7,10 @@ nstates=$4
 
 echo "la" > abinit.out
 
-# testing error function: grep "la" out
+grep "la" out
 if [ "$?" == "0" ]; then
  exit 0
 else
  exit 6
 fi
+

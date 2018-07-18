@@ -1,0 +1,9 @@
+[Settings]
+natoms  = 3               # number of atoms in system
+nstates = 2               # number of electronic states
+init_state = 1            # initial electronic state
+timestep = 4              # in atomic unit au = 0.024 fs 
+maxsteps = 3            # total number of steps
+method  = adiabatic       # adiabatic / diabatization scheme
+abinitio  = molpro          # where to take gradients (gaussian, molpro...)
+restart = 0

@@ -23,7 +23,7 @@ sys.path.append(cwd)
 
 from snafu.init   import file_check, read_input
 from snafu.init   import read_geoms, read_velocs
-from snafu.init   import create_output_file, init_forces
+from snafu.init   import create_output_file, init_forces_potenergs
 from snafu.masses import assign_masses
 from snafu.errors import error_exit
 from snafu.propagate import update_velocities, update_positions
@@ -85,12 +85,13 @@ if __name__ == "__main__":
 #CREATE OUTPUT FILES:
     # where to store propagated position, velocities, observables
     # geom.dat hold current geometry for which to compute E, grads  
-    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat", "geom.dat" ]  
+    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  
     create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
 # CALC INITIAL ENERGIES AND GRADIENTS
-    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners) # position at current step
+    print("Calculating initial gradients.")
+    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
  
     print("Step, Ener, Ekin, Epot, Etot") 
 # MAIN LOOP 
@@ -99,7 +100,7 @@ if __name__ == "__main__":
         
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
-        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners)        # calc forces for new positions
+        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners)  # calc forces for new positions
         
         vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new)                                               # propagate velocities using new forces
         
@@ -110,8 +111,8 @@ if __name__ == "__main__":
         #if hopping == "1":
           #alcc_hop
         # vel_adjustment
-        Ekin, Epot, Etot = calc_energies(natoms, am, pot_eners, vx,vy,vz)
-        print_info(step, ener, Ekin, Epot, Etot)
+        Ekin, Epot, Etot = calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz)
+        print(step, Ekin, Epot, Etot)
         time = step * dt*  au_fs 
         #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels
@@ -119,6 +120,6 @@ if __name__ == "__main__":
       
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
-    
- 
+         
+    print("JOB completed.") 
   #  print("--- {s} seconds ---".format(time.time() - start_time))

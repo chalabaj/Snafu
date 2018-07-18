@@ -34,7 +34,7 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
     return(vx,vy,vz)   
     
 
-def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, pot_eners):
+def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
@@ -44,7 +44,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     with open (abinit_geom_file, "w") as agf: #ab init geom file
          for iat in range(0,natoms):
              line = ("".join("%2s %3.8f %3.8f %3.8f\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
-         agf.write(line)
+             agf.write(line)
     agf.closed
     
     # Windows installed ubuntu has rather complicated path
@@ -56,8 +56,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
        abinit_inputs = "wsl {} {}  {}  {}  {}".format(testpath, abinit_geom_file, natoms, state, nstates)
     elif re.search(r'linux',sys.platform): 
        abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates)
-       abinit_inputs = [ab_initio_file_path, abinit_geom_file, str(natoms), str(state), str(nstates)]
-    
+       
     # CALL EXTERNAL SCRIPT WHICH WILL HANDLE AB INITIO CALCULATIONS       
     try:
         abinit_proc = subprocess.run(abinit_inputs, stdout= None, stderr= subprocess.PIPE, shell = True, check = True)	
@@ -70,22 +69,30 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     # Check return status of the process:     # not necesarry  exception handle this: if abinit_call.returncode = 0:     error_exit(4)   
     
     # COLLECT DATA
+    #TODO: diabatization - need more forces
     with open ("gradients.dat") as gef:   # gradient energy file
-     for eners in range(0,nstates):
-        pot_energies[eners] = gef.readline()  # comment 
+     for st in range(0,nstates):
+        pot_eners[st] = float(gef.readline())  # comment 
      for iat in range(0,natoms):
-        fx,fy,fz[iat] = gef.readline()   #  X Y Z format for each atoms
+        line = gef.readline().split()
+        fx[iat] = float(line[0])
+        fy[iat] = float(line[1])
+        fz[iat] = float(line[2])   #  X Y Z format for each atoms
     gef.closed
     return(fx , fy, fz, pot_eners)
 
-def calc_energies (natoms, am, state, pot_eners, vx, vy, vz):
-     Ekin = 0.0
-  for iat in range(0,natoms):
-     Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
-     Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
-     Etot = Ekin + Epot  
-     
-return(Ekin,Epot,Etot)  
+def calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz):
+    Ekin = 0.0
+    for iat in range(0,natoms):
+         
+         Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
+         Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
+         Etot = Ekin + Epot  
+         
+    with open ("energies.dat") as ef:
+       
+       line = "{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot)
+       ef.write(line)
+    ef.closed
+    return(Ekin,Epot,Etot)  
     
-
-

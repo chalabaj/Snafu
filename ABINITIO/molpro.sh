@@ -1,5 +1,7 @@
 #!/bin/bash
-source SetEnvironment.sh MOLPRO 2015
+source SetEnvironment.sh MOLPRO 2015   # export MOLPROEXE=$molproroot/bin/molpro
+cd ABINITIO
+
 ##########SNAFU INPUTS###########################################
 abinit_geom_file=$1
 natoms=$2
@@ -117,7 +119,7 @@ DM;  ! calculate dipole moments
 EOF
 
 cat cas.tmp >> $input.com
-
+rm cas.tmp
 istate=0
 rec=5100
 # Store corresponding cpmscf and forces commands
@@ -133,8 +135,12 @@ echo "pop; density,2101.2,state=$ist1.1" >> $input.com
 
 #----------MOLPRO JOB-------------------------
 export TMPDIR=$PWD/scratch
+
+if [[ ! -d TMPDIR ]]; then
 mkdir $TMPDIR
-#$MOLPROEXE -s --no-xml-output -W $PWD/scratch >& $input.com.out <$input.com
+fi
+
+$MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 
 # Check whether all is OK.
 # If it is some other error, do nothing. It's up to ABIN to decide what to do.
@@ -160,15 +166,16 @@ fi
 # NOW IT'S TIME TO COLLECT ALL THE DATA FOR ABIN
 
 # Extracting energy  repair
-grep grep  "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> ../gradients.dat
+grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> ../gradients.dat
+#grep "MCSCF STATE $state.1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> lal
 
 # Extracting GRADIENT
 # Should work for both CASPT2 and CASSCF gradients
 grep "GRADIENT," $input.pun | awk -F" " '{print $5,$6,$7}'>> ../gradients.dat
 
-if [[ $? -ne 0 ]];then
+if [[ $? -eq 0 ]];then
 exit 0
 else 
-echo "Could not extract energies"
+echo "$? Could not extract energies or gradients."
 exit 4
 fi
