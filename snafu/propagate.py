@@ -22,7 +22,7 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
       x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt**2)
       y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt**2)
       z[iat] = z[iat] + vz[iat] * dt + 1/(2*am[iat]) * fz[iat] * (dt**2)
-      #print(x[iat],vx[iat],dt,(1/(2*float(am[iat]))),float(fx[iat]*dt**2))
+      print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
     return(x,y,z)
 
 
@@ -33,6 +33,7 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
      vx[iat] = vx[iat] + dt/(2*am[iat]) * (fx[iat] + fx_new[iat])
      vy[iat] = vy[iat] + dt/(2*am[iat]) * (fy[iat] + fy_new[iat])
      vz[iat] = vz[iat] + dt/(2*am[iat]) * (fz[iat] + fz_new[iat])
+     print(vz[iat])
     return(vx,vy,vz)   
     
 
@@ -88,10 +89,11 @@ def calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz):
     for iat in range(0,natoms):
          
          Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
+         print(Ekin)
          Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
          Etot = Ekin + Epot  
          
-    with open ("energies.dat") as ef:
+    with open ("energies.dat", "a") as ef:
        
        line = "{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot)
        ef.write(str(line))

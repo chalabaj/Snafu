@@ -166,7 +166,7 @@ fi
 # NOW IT'S TIME TO COLLECT ALL THE DATA FOR ABIN
 
 # Extracting energy  repair
-grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
+grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> ../gradients.dat
 #grep "MCSCF STATE $state.1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate >> lal
 
 # Extracting GRADIENT

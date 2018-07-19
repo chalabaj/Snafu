@@ -94,7 +94,7 @@ if __name__ == "__main__":
     print("Calculating initial gradients.")
     fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
  
-    print("Step, Ener, Ekin, Epot, Etot") 
+    print("Step, Ekin, Epot, Etot") 
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
@@ -118,7 +118,7 @@ if __name__ == "__main__":
         time = step * dt*  au_fs 
         #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels
-        print_velocties(step,time,natoms, at_names, vx, vy, vz)
+        print_velocities(step,time,natoms, at_names, vx, vy, vz)
       
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)

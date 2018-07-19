@@ -83,7 +83,7 @@ ciguess,2501.2
 save,ci=2501.2
 diab,3000.2,save=2101.2,method=-1
 DM;  ! calculate dipole moments
-cpmcscf, grad, 2.1, save=5100.2, accu=1d-;
+cpmcscf, grad, 1.1, save=5100.2, accu=1d-;
 forces; samc, 5100.2;
 pop; density,2101.2,state=1.1
 pop; density,2101.2,state=2.1
