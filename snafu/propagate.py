@@ -19,9 +19,9 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
 
     for iat in range(0,natoms):   
-      x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt**2)
-      y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt**2)
-      z[iat] = z[iat] + vz[iat] * dt + 1/(2*am[iat]) * fz[iat] * (dt**2)
+      x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt ** 2)
+      y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt ** 2)
+      z[iat] = z[iat] + vz[iat] * dt + 1/(2*am[iat]) * fz[iat] * (dt ** 2)
       #print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
     return(x,y,z)
 
@@ -30,9 +30,9 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
 
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + dt/(2*am[iat]) * (fx[iat] + fx_new[iat])
-     vy[iat] = vy[iat] + dt/(2*am[iat]) * (fy[iat] + fy_new[iat])
-     vz[iat] = vz[iat] + dt/(2*am[iat]) * (fz[iat] + fz_new[iat])
+     vx[iat] = vx[iat] + dt / (2 * am[iat]) * (fx[iat] + fx_new[iat])
+     vy[iat] = vy[iat] + dt / (2 * am[iat]) * (fy[iat] + fy_new[iat])
+     vz[iat] = vz[iat] + dt / (2 * am[iat]) * (fz[iat] + fz_new[iat])
      #print(vz[iat])
     return(vx,vy,vz)   
     
@@ -46,7 +46,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf: #ab init geom file
          for iat in range(0,natoms):
-             line = ("".join("%2s %3.8f %3.8f %3.8f\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
+             line = ("".join("%2s %3.9e %3.9e %3.9e\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
              agf.write(line)
     agf.closed
     
@@ -96,12 +96,12 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
 
     with open ("energies.dat", "a") as ef:
        if step == 1:
-        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV"
+        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
         ef.write(str(line))
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}".format(time,Ekin,Epot,Etot,dE)
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
         ef.write(str(line))
        else:
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}".format(time,Ekin,Epot,Etot,dE)
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
        ef.write(str(line))
     ef.closed
 
