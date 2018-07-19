@@ -22,7 +22,7 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
       x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt**2)
       y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt**2)
       z[iat] = z[iat] + vz[iat] * dt + 1/(2*am[iat]) * fz[iat] * (dt**2)
-      print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
+      #print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
     return(x,y,z)
 
 
@@ -33,7 +33,7 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
      vx[iat] = vx[iat] + dt/(2*am[iat]) * (fx[iat] + fx_new[iat])
      vy[iat] = vy[iat] + dt/(2*am[iat]) * (fy[iat] + fy_new[iat])
      vz[iat] = vz[iat] + dt/(2*am[iat]) * (fz[iat] + fz_new[iat])
-     print(vz[iat])
+     #print(vz[iat])
     return(vx,vy,vz)   
     
 
@@ -73,7 +73,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     
     # COLLECT DATA
     #TODO: diabatization - need more forces
-    with open ("gradients.dat") as gef:   # gradient energy file
+    with open ("gradients.dat", "r") as gef:   # gradient energy file
      for st in range(0,nstates):
         pot_eners[st] = float(gef.readline())  # comment 
      for iat in range(0,natoms):

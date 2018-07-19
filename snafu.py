@@ -86,7 +86,7 @@ if __name__ == "__main__":
 #CREATE OUTPUT FILES:
     # where to store propagated position, velocities, observables
     # geom.dat hold current geometry for which to compute E, grads  
-    files = [ "energies.dat", "velocities.dat", "gradients.dat", "movie.xyz", "restart.dat" ]  
+    files = [ "energies.dat", "velocities.xyz", "gradients.dat", "movie.xyz", "restart.dat" ]  
     create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
