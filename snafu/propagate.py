@@ -84,19 +84,27 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     gef.closed
     return(fx , fy, fz, pot_eners)
 
-def calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz):
+def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):
     Ekin = 0.0
     for iat in range(0,natoms):
-         
-         Ekin = Ekin + 1/(2*am[iat]) * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2)
-         print(Ekin)
+
+         Ekin = Ekin + (0.5*am[iat] * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2))
+         #print(Ekin)
          Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
-         Etot = Ekin + Epot  
-         
+         Etot = Ekin + Epot
+         dE = (Etot - Etot_init) * au_eV
+
     with open ("energies.dat", "a") as ef:
-       
-       line = "{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot)
+       if step == 1:
+        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV"
+        ef.write(str(line))
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}".format(time,Ekin,Epot,Etot,dE)
+        ef.write(str(line))
+       else:
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}".format(time,Ekin,Epot,Etot,dE)
        ef.write(str(line))
     ef.closed
-    return(Ekin,Epot,Etot)  
+
+    return(Ekin,Epot,Etot,dE)
+
     

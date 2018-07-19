@@ -2,8 +2,8 @@
  Input=input.com
  Output=input.log
  Initial command:
- /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/snafu/ABINITIO/scratch/Gau-10096.inp" -scrdir="/home/chalabaj/snafu/ABINITIO/scratch/"
- Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=     10098.
+ /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/snafu/ABINITIO/scratch/Gau-5181.inp" -scrdir="/home/chalabaj/snafu/ABINITIO/scratch/"
+ Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=      5183.
   
  Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2013,
             Gaussian, Inc.  All Rights Reserved.
@@ -265,9 +265,9 @@
  ITU=  0
      Eigenvalues ---    0.14317   0.84771   0.97200
  Angle between quadratic step and forces=  24.17 degrees.
- ClnCor:  largest displacement from symmetrization is 5.83D-15 for atom     3.
+ ClnCor:  largest displacement from symmetrization is 5.69D-15 for atom     3.
  Linear search not attempted -- first point.
- ClnCor:  largest displacement from symmetrization is 4.52D-16 for atom     2.
+ ClnCor:  largest displacement from symmetrization is 6.75D-16 for atom     3.
  TrRot= -0.004832  0.000000 -0.003775  0.000000  0.000000  0.000000
  Variable       Old X    -DE/DX   Delta X   Delta X   Delta X     New X
                                  (Linear)    (Quad)   (Total)
@@ -296,7 +296,12 @@
  938042,0.6477918,0.,-0.6051864,0.\PG=C02V [C2(O1),SGV(H2)]\\@
 
 
- YOU ARE IN A MAZE OF TWISTY LITTLE PASSAGES.
+ MATERIAL COPIED FROM ONE SCHOLARLY BOOK WITHOUT CREDIT COMPRISES PLAGIARISM.
+ MATERIAL COPIED FROM TWO SCHOLARLY BOOKS COMPRISES AN ESSAY.
+ MATERIAL COPIED FROM THREE SCHOLARLY BOOKS COMPRISES A DISSERTATION.
+ MATERIAL COPIED FROM FOUR SCHOLARLY BOOKS COMPRISES A FIFTH SCHOLARLY BOOK.
+
+                               -- C&EN, 25 FEB 1980
  Job cpu time:       0 days  0 hours  0 minutes  1.2 seconds.
  File lengths (MBytes):  RWF=      5 Int=      0 D2E=      0 Chk=      1 Scr=      1
- Normal termination of Gaussian 09 at Thu Jul 19 10:42:45 2018.
+ Normal termination of Gaussian 09 at Thu Jul 19 11:53:04 2018.

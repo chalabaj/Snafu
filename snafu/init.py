@@ -59,9 +59,9 @@ def read_input(cwd,input_file_path):
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
     # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = [ 0.0 ] * natoms 
-    y = [ 0.0 ] * natoms 
-    z = [ 0.0 ] * natoms
+    x = [ 0.00000000 ] * natoms 
+    y = [ 0.00000000 ] * natoms 
+    z = [ 0.00000000 ] * natoms
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -79,9 +79,9 @@ def read_geoms(natoms,geom_file_path):
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
 def read_velocs(veloc_init,natoms,veloc_file_path):  
-    vx = [ 0.0 ] * natoms
-    vy = [ 0.0 ] * natoms 
-    vz = [ 0.0 ] * natoms 
+    vx = [ 0.00000000 ] * natoms
+    vy = [ 0.00000000 ] * natoms 
+    vz = [ 0.00000000 ] * natoms 
     if veloc_init == 1:
      with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
        atoms = ivf.readline()  # first line in geom file is number of atoms
@@ -115,13 +115,13 @@ def init_forces_potenergs(natoms,nstates):
 # Initialize empty forces array
     
     #f(t)
-    fx =([ 0.0 ] * natoms)  
-    fy =([ 0.0 ] * natoms)  
-    fz =([ 0.0 ] * natoms)
+    fx =([ 0.00000000 ] * natoms)  
+    fy =([ 0.00000000 ] * natoms)  
+    fz =([ 0.00000000 ] * natoms)
     #f_new(t+dt)
-    fx_new = [ 0.0 ] * natoms  
-    fy_new = [ 0.0 ] * natoms
-    fz_new = [ 0.0 ] * natoms
-    pot_eners = [0.0] * nstates # potential energy from ab initio calculations
+    fx_new = [ 0.00000000 ] * natoms  
+    fy_new = [ 0.00000000 ] * natoms
+    fz_new = [ 0.00000000 ] * natoms
+    pot_eners = [0.00000000 ] * nstates # potential energy from ab initio calculations
     
     return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)

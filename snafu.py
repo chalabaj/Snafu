@@ -39,11 +39,12 @@ au_eV = 27.21139
 amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
 bohr_ang = 1/ang_bohr         # bohr to ang units
-# Observed variable
-aEk = 0.0   # average kinetic energy
-cPE = 0.0   # current potential energy to save
-cKE = 0.0   # current kinetic energy to save
 
+# Observed variable
+step = 0
+dE = 0.0   # energy change since initial energies
+Etot_init = 0.0  # setting variable , total energy at the beginning 
+time = 0.0
 liner = ("_")*50
 debug = 1   
 #----------------INIT-------------------------------------------------------------------------------
@@ -95,13 +96,17 @@ if __name__ == "__main__":
 
 #---------------INIT DONE-------------------------------------------------------------------    
 # CALC INITIAL ENERGIES AND GRADIENTS
-    print("Calculating initial gradients.")
+    
     fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
- 
-    print("Step, Ekin, Epot, Etot") 
+    
+    Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
+    Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
+    print("Step,  Time,  Energy Change from start") 
+    
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
+        time = step * dt*  au_fs 
         
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
@@ -116,10 +121,10 @@ if __name__ == "__main__":
         #if hopping == "1":
           #alcc_hop
         # vel_adjustment
-        Ekin, Epot, Etot = calc_energies(step, natoms, am, state, pot_eners, vx, vy, vz)
+        Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init)
         
-        print("{:10.6f} {:20.6f} {:20.6f} {:20.6f}".format(step,Ekin,Epot,Etot))
-        time = step * dt*  au_fs 
+        print("{:d} {:10.2e} {:20.8e}".format(step,time,dE))
+        
         #print(step)
         print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels
         print_velocities(step,time,natoms, at_names, vx, vy, vz)
