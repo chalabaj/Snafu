@@ -8,7 +8,7 @@ import re
 # CONSTANTS
 au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
+amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
 bohr_ang = 1/ang_bohr     # bohr to ang units
 #====================================================================================================
@@ -19,9 +19,9 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
 
     for iat in range(0,natoms):   
-      x[iat] = x[iat] + vx[iat] * dt + 1/(2*am[iat]) * fx[iat] * (dt ** 2)
-      y[iat] = y[iat] + vy[iat] * dt + 1/(2*am[iat]) * fy[iat] * (dt ** 2)
-      z[iat] = z[iat] + vz[iat] * dt + 1/(2*am[iat]) * fz[iat] * (dt ** 2)
+      x[iat] = x[iat] + vx[iat] * dt + 0.5 * fx[iat] * (dt ** 2) / (am[iat])
+      y[iat] = y[iat] + vy[iat] * dt + 0.5 * fy[iat] * (dt ** 2) / (am[iat])
+      z[iat] = z[iat] + vz[iat] * dt + 0.5 * fz[iat] * (dt ** 2) / (am[iat])
       #print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
     return(x,y,z)
 
@@ -30,14 +30,14 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
 
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + dt / (2 * am[iat]) * (fx[iat] + fx_new[iat])
-     vy[iat] = vy[iat] + dt / (2 * am[iat]) * (fy[iat] + fy_new[iat])
-     vz[iat] = vz[iat] + dt / (2 * am[iat]) * (fz[iat] + fz_new[iat])
+     vx[iat] = vx[iat] + 0.5 * dt * (fx[iat] + fx_new[iat]) / am[iat]
+     vy[iat] = vy[iat] + 0.5 * dt * (fy[iat] + fy_new[iat]) / am[iat]
+     vz[iat] = vz[iat] + 0.5 * dt * (fz[iat] + fz_new[iat]) / am[iat]
      #print(vz[iat])
     return(vx,vy,vz)   
     
 
-def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners):
+def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
@@ -78,11 +78,11 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
         pot_eners[st] = float(gef.readline())  # comment 
      for iat in range(0,natoms):
         line = gef.readline().split()
-        fx[iat] = float(line[0])
-        fy[iat] = float(line[1])
-        fz[iat] = float(line[2])   #  X Y Z format for each atoms
+        fx_new[iat] = float(line[0])
+        fy_new[iat] = float(line[1])
+        fz_new[iat] = float(line[2])   #  X Y Z format for each atoms
     gef.closed
-    return(fx , fy, fz, pot_eners)
+    return(fx_new , fy_new, fz_new, pot_eners)
 
 def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):
     Ekin = 0.0

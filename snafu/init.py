@@ -10,8 +10,9 @@ from snafu.errors import error_exit
 
 au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
+amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
+bohr_ang = 1/ang_bohr     # bohr to ang unitsq
 
 def file_check(cwd):
     # input files names - these are defaults otherwise not found
@@ -127,19 +128,21 @@ def init_forces_potenergs(natoms,nstates):
     return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)
     
 def com_removal(x,y,z,am):
-    for iat in (0,len(x)):
+    totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0
+    for iat in range(0,len(x)):
         xsum += x[iat] * am[iat] 
         ysum += y[iat] * am[iat] 
         zsum += z[iat] * am[iat] 
         totmass += am[iat] 
         
-     xcom = xsum / totmass
-     ycom = xsum / totmass
-     zcom = xsum / totmass
+    xcom = xsum / totmass
+    ycom = xsum / totmass
+    zcom = xsum / totmass
      
-    for iat in (0,len(x)):
+    for iat in range(0,len(x)):
         x[iat] = x[iat] - xcom
         y[iat] = y[iat] - ycom
         z[iat] = z[iat] - zcom 
+    
     return(x,y,z)
 

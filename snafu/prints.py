@@ -7,7 +7,7 @@ def print_positions(step,time,natoms, at_names, x, y, z):
      comment = ("Step: {}      Time_fs:{}\n".format(step,time))
      mov.write(comment)
      for iat in range(0,natoms):     
-      line = ("".join("%2s %3.8e %3.8e %3.8e\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
+      line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
       mov.write(line)
     mov.closed
     return()
@@ -20,7 +20,7 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
      comment = ("Step: {}      Time_fs:{}\n".format(step,time))
      vel.write(comment)
      for iat in range(0,natoms):
-       line = ("".join("%2s %3.8e %3.8e %3.8e\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
+       line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
        vel.write(line)
     vel.closed
     return()

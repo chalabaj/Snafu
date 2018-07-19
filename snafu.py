@@ -37,9 +37,9 @@ from snafu.init import com_removal
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.8885             # atomic mass unit  me = 1 AMU*atomic weight
+amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
-bohr_ang = 1/ang_bohr         # bohr to ang units
+bohr_ang = 1/ang_bohr     # bohr to ang units
 
 # Observed variable
 step = 0
@@ -97,8 +97,9 @@ if __name__ == "__main__":
 
 #---------------INIT DONE-------------------------------------------------------------------    
 
-# Center of mass removal 
-    x, y, z = com_removal(x,y,z)
+# CENTER OF MASS REMOVAL
+    x, y, z = com_removal(x,y,z,am)
+    
 # CALC INITIAL ENERGIES AND GRADIENTS
     
     fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
@@ -111,18 +112,19 @@ if __name__ == "__main__":
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
         time = step * dt*  au_fs 
-        
+        print(fx)
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
-        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners)  # calc forces for new positions
+        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
+        print(fx,fx_new)
         
         vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new)                                               # propagate velocities using new forces
         
-        fx = fx_new.copy() # hard copied list instead of just referencing
-        fy = fy_new.copy()
-        fz = fz_new.copy()
+        fx = fx_new[:] # hard copied list instead of just referencing
+        fy = fy_new[:]
+        fz = fz_new[:]
         
-        #print(fx,fx_new)
+        
 
         #if hopping == "1":
           #alcc_hop
