@@ -125,3 +125,21 @@ def init_forces_potenergs(natoms,nstates):
     pot_eners = [0.00000000 ] * nstates # potential energy from ab initio calculations
     
     return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)
+    
+def com_removal(x,y,z,am):
+    for iat in (0,len(x)):
+        xsum += x[iat] * am[iat] 
+        ysum += y[iat] * am[iat] 
+        zsum += z[iat] * am[iat] 
+        totmass += am[iat] 
+        
+     xcom = xsum / totmass
+     ycom = xsum / totmass
+     zcom = xsum / totmass
+     
+    for iat in (0,len(x)):
+        x[iat] = x[iat] - xcom
+        y[iat] = y[iat] - ycom
+        z[iat] = z[iat] - zcom 
+    return(x,y,z)
+

@@ -32,6 +32,7 @@ from snafu.errors import error_exit
 from snafu.propagate import update_velocities, update_positions
 from snafu.propagate import calc_forces, calc_energies
 from snafu.prints import print_positions, print_velocities
+from snafu.init import com_removal
  
 # Constants
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -95,6 +96,9 @@ if __name__ == "__main__":
     create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
+
+# Center of mass removal 
+    x, y, z = com_removal(x,y,z)
 # CALC INITIAL ENERGIES AND GRADIENTS
     
     fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
@@ -118,7 +122,7 @@ if __name__ == "__main__":
         fy = fy_new.copy()
         fz = fz_new.copy()
         
-        print(fx,fx_new)
+        #print(fx,fx_new)
 
         #if hopping == "1":
           #alcc_hop
