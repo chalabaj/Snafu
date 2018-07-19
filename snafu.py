@@ -117,6 +117,8 @@ if __name__ == "__main__":
         fx = fx_new.copy() # hard copied list instead of just referencing
         fy = fy_new.copy()
         fz = fz_new.copy()
+        
+        print(fx,fx_new)
 
         #if hopping == "1":
           #alcc_hop
