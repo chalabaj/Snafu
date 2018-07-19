@@ -126,7 +126,7 @@ if __name__ == "__main__":
       
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
-    simtime = datetime.now() - startTime)
+    simtime = (datetime.now() - startTime)
     print("Overall simulation time (hh:mm:ss): {}".format(simtime))     
     print("JOB completed.") 
   #  print("--- {s} seconds ---".format(time.time() - start_time))
