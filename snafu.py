@@ -18,6 +18,8 @@ import sys, os
 import random
 import time
 import re
+from datetime import datetime
+
 #env layer on cluster to find module sys.path.append? /home/XXX/Snafu/snafu
 cwd = os.getcwd()
 sys.path.append(cwd)
@@ -47,8 +49,10 @@ debug = 1
 #----------------INIT-------------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    start_time = time.time()
+
     print("Starting SNAFU.\n")
+    startTime = datetime.now()
+    print("Simulation started at: {}".format(startTime))
     print("Python exec: ",sys.base_exec_prefix,"ver:",sys.version[:5])
     print("System platform: ",sys.platform)  
     print("Working directory: ",cwd)
@@ -122,6 +126,7 @@ if __name__ == "__main__":
       
     #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
 # print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
-         
+    simtime = datetime.now() - startTime)
+    print("Overall simulation time (hh:mm:ss): {}".format(simtime))     
     print("JOB completed.") 
   #  print("--- {s} seconds ---".format(time.time() - start_time))

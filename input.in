@@ -3,7 +3,7 @@ natoms  = 3               # number of atoms in system
 nstates = 1               # number of electronic states
 init_state = 0            # initial electronic state
 timestep = 4              # in atomic unit au = 0.024 fs 
-maxsteps = 10             # total number of steps
+maxsteps = 11             # total number of steps
 method  = adiabatic       # adiabatic / diabatization scheme
 abinitio  = g09-tddft        # where to take gradients (g09-tddft, molpro-casscf...), file should be e.g. molpro.sh, g09-tddft
 restart = 0
