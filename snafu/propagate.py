@@ -66,8 +66,8 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     except subprocess.CalledProcessError as cpe: 
         print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
         error_exit(4)
-    else:
-        print("Calculating forces.")    # {}".format(abinit_proc.stdout))
+    #else:
+     #   print("Calculating forces.")    # {}".format(abinit_proc.stdout))
         
     # Check return status of the process:     # not necesarry  exception handle this: if abinit_call.returncode = 0:     error_exit(4)   
     
@@ -92,16 +92,16 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
          #print(Ekin)
          Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
          Etot = Ekin + Epot
-         dE = (Etot - Etot_init) * au_eV
+         dE = (Etot - Etot_init) 
 
     with open ("energies.dat", "a") as ef:
        if step == 1:
         line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
         ef.write(str(line))
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
         ef.write(str(line))
        else:
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
        ef.write(str(line))
     ef.closed
 

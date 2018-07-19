@@ -2,8 +2,8 @@
  Input=input.com
  Output=input.log
  Initial command:
- /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/snafu/ABINITIO/scratch/Gau-26339.inp" -scrdir="/home/chalabaj/snafu/ABINITIO/scratch/"
- Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=     26341.
+ /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/snafu/ABINITIO/scratch/Gau-21211.inp" -scrdir="/home/chalabaj/snafu/ABINITIO/scratch/"
+ Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=     21213.
   
  Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2013,
             Gaussian, Inc.  All Rights Reserved.
@@ -99,132 +99,7 @@
  -------
  Symbolic Z-matrix:
  Charge =  0 Multiplicity = 1
- O                    -0.05217  -0.05206  -0.05215 
- H                    -0.053    -0.05206   0.90986 
- H                     0.88106  -0.05206  -0.28569 
+ O                    -0.05215  -0.05206  -0.05213 
+ H                    -0.05302  -0.05206   0.9096 
+ H                     0.8808   -0.05206  -0.28564 
  
-
- GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
- Berny optimization.
- Initialization pass.
- Trust Radius=3.00D-01 FncErr=1.00D-07 GrdErr=1.00D-07
- Number of steps in this run=      2 maximum allowed number of steps=      2.
- GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
-
-                          Input orientation:                          
- ---------------------------------------------------------------------
- Center     Atomic      Atomic             Coordinates (Angstroms)
- Number     Number       Type             X           Y           Z
- ---------------------------------------------------------------------
-      1          8           0       -0.052168   -0.052064   -0.052145
-      2          1           0       -0.053002   -0.052064    0.909863
-      3          1           0        0.881063   -0.052064   -0.285686
- ---------------------------------------------------------------------
-                    Distance matrix (angstroms):
-                    1          2          3
-     1  O    0.000000
-     2  H    0.962009   0.000000
-     3  H    0.962009   1.517174   0.000000
- Stoichiometry    H2O
- Framework group  C2V[C2(O),SGV(H2)]
- Deg. of freedom     2
- Full point group                 C2V     NOp   4
- Largest Abelian subgroup         C2V     NOp   4
- Largest concise Abelian subgroup C2      NOp   2
-                         Standard orientation:                         
- ---------------------------------------------------------------------
- Center     Atomic      Atomic             Coordinates (Angstroms)
- Number     Number       Type             X           Y           Z
- ---------------------------------------------------------------------
-      1          8           0        0.000000    0.000000    0.118323
-      2          1           0        0.000000   -0.758587   -0.473291
-      3          1           0        0.000000    0.758587   -0.473291
- ---------------------------------------------------------------------
- Rotational constants (GHZ):    806.6219950    435.7040210    282.8955058
- Standard basis: 6-31G(d) (6D, 7F)
- There are    10 symmetry adapted cartesian basis functions of A1  symmetry.
- There are     1 symmetry adapted cartesian basis functions of A2  symmetry.
- There are     3 symmetry adapted cartesian basis functions of B1  symmetry.
- There are     5 symmetry adapted cartesian basis functions of B2  symmetry.
- There are    10 symmetry adapted basis functions of A1  symmetry.
- There are     1 symmetry adapted basis functions of A2  symmetry.
- There are     3 symmetry adapted basis functions of B1  symmetry.
- There are     5 symmetry adapted basis functions of B2  symmetry.
-    19 basis functions,    36 primitive gaussians,    19 cartesian basis functions
-     5 alpha electrons        5 beta electrons
-       nuclear repulsion energy         9.1499930086 Hartrees.
- NAtoms=    3 NActive=    3 NUniq=    2 SFac= 2.25D+00 NAtFMM=   60 NAOKFM=F Big=F
- Integral buffers will be    131072 words long.
- Raffenetti 2 integral format.
- Two-electron integral symmetry is turned on.
- One-electron integrals computed using PRISM.
- NBasis=    19 RedAO= T EigKep=  4.18D-02  NBF=    10     1     3     5
- NBsUse=    19 1.00D-06 EigRej= -1.00D+00 NBFU=    10     1     3     5
- Initial guess from the checkpoint file:  "/home/chalabaj/snafu/ABINITIO/checkpoint.chk"
- B after Tr=     0.000000    0.000000    0.000000
-         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
- Initial guess orbital symmetries:
-       Occupied  (A1) (A1) (B2) (A1) (B1)
-       Virtual   (A1) (B2) (B2) (A1) (B1) (A1) (B2) (A1) (A1) (A2)
-                 (B1) (A1) (B2) (A1)
- Keep J ints in memory in symmetry-blocked form, NReq=898557.
- Requested convergence on RMS density matrix=1.00D-08 within 128 cycles.
- Requested convergence on MAX density matrix=1.00D-06.
- Requested convergence on             energy=1.00D-06.
- No special actions if energy rises.
- SCF Done:  E(RB-LYP) =  -76.3879913564     A.U. after    6 cycles
-            NFock=  6  Conv=0.14D-08     -V/T= 2.0071
-
- **********************************************************************
-
-            Population analysis using the SCF density.
-
- **********************************************************************
-
- Orbital symmetries:
-       Occupied  (A1) (A1) (B2) (A1) (B1)
-       Virtual   (A1) (B2) (B2) (A1) (B1) (A1) (B2) (A1) (A1) (A2)
-                 (B1) (A1) (B2) (A1)
- The electronic state is 1-A1.
- Alpha  occ. eigenvalues --  -18.78177  -0.90079  -0.45900  -0.30629  -0.22401
- Alpha virt. eigenvalues --    0.03870   0.12258   0.72940   0.80515   0.83694
- Alpha virt. eigenvalues --    0.84956   1.00762   1.14842   1.67249   1.68832
- Alpha virt. eigenvalues --    1.72325   2.22236   2.51725   3.46789
-          Condensed to atoms (all electrons):
-               1          2          3
-     1  O    8.269346   0.235781   0.235781
-     2  H    0.235781   0.418959  -0.025193
-     3  H    0.235781  -0.025193   0.418959
- Mulliken charges:
-               1
-     1  O   -0.740907
-     2  H    0.370454
-     3  H    0.370454
- Sum of Mulliken charges =   0.00000
- Mulliken charges with hydrogens summed into heavy atoms:
-               1
-     1  O    0.000000
- Electronic spatial extent (au):  <R**2>=             19.1784
- Charge=              0.0000 electrons
- Dipole moment (field-independent basis, Debye):
-    X=              0.0000    Y=              0.0000    Z=             -2.0165  Tot=              2.0165
- Quadrupole moment (field-independent basis, Debye-Ang):
-   XX=             -7.1904   YY=             -4.3558   ZZ=             -6.0316
-   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
- Traceless Quadrupole moment (field-independent basis, Debye-Ang):
-   XX=             -1.3311   YY=              1.5035   ZZ=             -0.1723
-   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
- Octapole moment (field-independent basis, Debye-Ang**2):
-  XXX=              0.0000  YYY=              0.0000  ZZZ=             -1.1179  XYY=              0.0000
-  XXY=              0.0000  XXZ=             -0.3041  XZZ=              0.0000  YZZ=              0.0000
-  YYZ=             -1.1159  XYZ=              0.0000
- Hexadecapole moment (field-independent basis, Debye-Ang**3):
- XXXX=             -5.2125 YYYY=             -6.2228 ZZZZ=             -6.3290 XXXY=              0.0000
- XXXZ=              0.0000 YYYX=              0.0000 YYYZ=              0.0000 ZZZX=              0.0000
- ZZZY=              0.0000 XXYY=             -2.1291 XXZZ=             -1.9695 YYZZ=             -1.8035
- XXYZ=              0.0000 YYXZ=              0.0000 ZZXY=              0.0000
- N-N= 9.149993008595D+00 E-N=-1.988825611108D+02  KE= 7.585029168652D+01
- Symmetry A1   KE= 6.766522490156D+01
- Symmetry A2   KE= 6.284790582419D-35
- Symmetry B1   KE= 4.604968488442D+00
- Symmetry B2   KE= 3.580098296518D+00

@@ -31,7 +31,7 @@ from snafu.masses import assign_masses
 from snafu.errors import error_exit
 from snafu.propagate import update_velocities, update_positions
 from snafu.propagate import calc_forces, calc_energies
-from snafu.prints import print_positions, print_velocities
+from snafu.prints import print_positions, print_velocities,print_snafu
 from snafu.init import com_removal
  
 # Constants
@@ -46,13 +46,14 @@ step = 0
 dE = 0.0   # energy change since initial energies
 Etot_init = 0.0  # setting variable , total energy at the beginning 
 time = 0.0
-liner = ("_")*50
+liner = ("_")*70
 debug = 1   
 #----------------INIT-------------------------------------------------------------------------------
 
 if __name__ == "__main__":
 
-    print("Starting SNAFU.\n")
+    print("Starting:\n")
+    print_snafu()
     startTime = datetime.now()
     print("Simulation started at: {}".format(startTime))
     print("Python exec: ",sys.base_exec_prefix,"ver:",sys.version[:5])
@@ -83,10 +84,10 @@ if __name__ == "__main__":
     masses = assign_masses(at_names) 
     am = [ mm *  amu for mm in masses]                          # atomic mass units conversion
     print(liner)
-    if debug == 1: print("atomic masses:\n",am)
-    print("Molecular systems:\nAt  Mass     X     Y     Z:")
+    #if debug == 1: print("atomic masses:\n",am)
+    #print("Molecular systems:\nAt  Mass     X     Y     Z:")
     for iat in range(0,natoms):
-        print("".join("%2s" " " "%2.2f"  %(at_names[iat], masses[iat]))," %2.4f %2.4f %2.4f"  %(x[iat],y[iat],z[iat]))  # just nice output print
+        print("".join("%3s" " " "%3.3f"  %(at_names[iat], masses[iat]))," %3.4f %2.4f %2.4f"  %(x[iat],y[iat],z[iat]))  # just nice output print
     print(liner)     
     
 #CREATE OUTPUT FILES:
@@ -106,40 +107,42 @@ if __name__ == "__main__":
     
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
     Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
-    print("Step,  Time,  Energy Change from start") 
+    print("Step      Time/fs     Energy change from start/eV  Hoppping") 
     
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
         time = step * dt*  au_fs 
-        print(fx)
+        #print(fx)
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
         fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
-        print(fx,fx_new)
+        #print(fx,fx_new)
         
         vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new)                                               # propagate velocities using new forces
         
-        fx = fx_new[:] # hard copied list instead of just referencing
+        fx = fx_new[:] # copied list instead of just referencing
         fy = fy_new[:]
         fz = fz_new[:]
         
-        
-
         #if hopping == "1":
           #alcc_hop
         # vel_adjustment
+        hop = "No"
         Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init)
         
-        print("{:d} {:10.2e} {:20.8e}".format(step,time,dE))
+        print(" {:<3d} {:>10.2f} {:>20.4e} {:>20s}".format(step,time,dE* au_eV, hop))
         
-        #print(step)
-        print_positions(step,time,natoms, at_names, x, y, z)    # save positions and velocities to movies a velocities fiels
+     # save positions and velocities to movie and velocity file
+        print_positions(step,time,natoms, at_names, x, y, z)   
         print_velocities(step,time,natoms, at_names, vx, vy, vz)
       
-    #prepare files - energies, vel, xyz pos for production data, if exists and rstart = 0 then crash.
-# print ' Init  %7.1f  %10.5f  %10.5f  %10.5f' % (time, ekin, epot, ekin+epot)
-    simtime = (datetime.now() - startTime)
-    print("Overall simulation time (hh:mm:ss): {}".format(simtime))     
+    
     print("JOB completed.") 
-  #  print("--- {s} seconds ---".format(time.time() - start_time))
+    print(liner)
+    
+    stopTime = datetime.now()
+    simtime = (datetime.now() - startTime)
+    print("Simulation ended at: {}".format(stopTime))
+    print("Overall simulation time (hh:mm:ss): {}".format(simtime))     
+

@@ -24,6 +24,25 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
        vel.write(line)
     vel.closed
     return()
+    
+def print_snafu():
+ print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU")
+ print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U")
+ print( "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F::::::::::::::::::::FU::::::U     U::::::U")
+ print( "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF::::::FFFFFFFFF::::FUU:::::U     U:::::UU")
+ print( "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F:::::F       FFFFFF U:::::U     U:::::U ")
+ print( "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F:::::F              U:::::D     D:::::U ")
+ print( " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F::::::FFFFFFFFFF    U:::::D     D:::::U ")
+ print( "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F:::::::::::::::F    U:::::D     D:::::U ")
+ print( "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F:::::::::::::::F    U:::::D     D:::::U ")
+ print( "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F::::::FFFFFFFFFF    U:::::D     D:::::U ")
+ print( "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F:::::F              U:::::D     D:::::U ")
+ print( "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F:::::F              U::::::U   U::::::U ")
+ print( "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF:::::::FF            U:::::::UUU:::::::U ")
+ print( "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F::::::::FF             UU:::::::::::::UU  ")
+ print( "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F::::::::FF               UU:::::::::UU    ")
+ print( " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFFF                 UUUUUUUUU      \n")
+ 
 """
 ______________$$$$$$$$$$____________________
 _____________$$__$_____$$$$$________________
