@@ -19,9 +19,9 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
 
     for iat in range(0,natoms):   
-      x[iat] = x[iat] + vx[iat] * dt + 0.5 * fx[iat] * (dt ** 2) / (am[iat])
-      y[iat] = y[iat] + vy[iat] * dt + 0.5 * fy[iat] * (dt ** 2) / (am[iat])
-      z[iat] = z[iat] + vz[iat] * dt + 0.5 * fz[iat] * (dt ** 2) / (am[iat])
+      x[iat] = x[iat] + vx[iat] * dt + ( 0.5 * fx[iat] * (dt ** 2) / (am[iat]) )
+      y[iat] = y[iat] + vy[iat] * dt + ( 0.5 * fy[iat] * (dt ** 2) / (am[iat]) )
+      z[iat] = z[iat] + vz[iat] * dt + ( 0.5 * fz[iat] * (dt ** 2) / (am[iat]) )
       #print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
     return(x,y,z)
 
@@ -30,9 +30,9 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
 
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + 0.5 * dt * (fx[iat] + fx_new[iat]) / am[iat]
-     vy[iat] = vy[iat] + 0.5 * dt * (fy[iat] + fy_new[iat]) / am[iat]
-     vz[iat] = vz[iat] + 0.5 * dt * (fz[iat] + fz_new[iat]) / am[iat]
+     vx[iat] = vx[iat] + ( 0.5 * dt * (fx[iat] + fx_new[iat]) / am[iat] )
+     vy[iat] = vy[iat] + ( 0.5 * dt * (fy[iat] + fy_new[iat]) / am[iat] )
+     vz[iat] = vz[iat] + ( 0.5 * dt * (fz[iat] + fz_new[iat]) / am[iat] )
      #print(vz[iat])
     return(vx,vy,vz)   
     
@@ -46,7 +46,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf: #ab init geom file
          for iat in range(0,natoms):
-             line = ("".join("%2s %3.9e %3.9e %3.9e\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
+             line = ("".join("%2s %4.18e %4.18e %4.18e\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
              agf.write(line)
     agf.closed
     
@@ -81,6 +81,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
         fx_new[iat] = float(line[0])
         fy_new[iat] = float(line[1])
         fz_new[iat] = float(line[2])   #  X Y Z format for each atoms
+       
     gef.closed
     return(fx_new , fy_new, fz_new, pot_eners)
 

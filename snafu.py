@@ -93,8 +93,8 @@ if __name__ == "__main__":
 #CREATE OUTPUT FILES:
     # where to store propagated position, velocities, observables
     # geom.dat hold current geometry for which to compute E, grads  
-    files = [ "energies.dat", "velocities.xyz", "gradients.dat", "movie.xyz", "restart.dat" ]  
-    create_output_file(files)
+    #files = [ "energies.dat", "velocities.xyz", "gradients.dat", "movie.xyz" ]  
+    #create_output_file(files)
 
 #---------------INIT DONE-------------------------------------------------------------------    
 
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
         time = step * dt*  au_fs 
-        #print(fx)
+        print(fx,fy,fz)
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
         
         fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
