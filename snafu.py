@@ -102,12 +102,12 @@ if __name__ == "__main__":
     x, y, z = com_removal(x,y,z,am)
     
 # CALC INITIAL ENERGIES AND GRADIENTS
+    print("Step      Time/fs     Energy change from start/eV  Hoppping") 
     
-    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step
-    
+    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step    
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
     Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
-    print("Step      Time/fs     Energy change from start/eV  Hoppping") 
+    
     
 # MAIN LOOP 
     #center of mass reduction TODO

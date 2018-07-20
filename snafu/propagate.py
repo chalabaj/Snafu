@@ -95,11 +95,11 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
          dE = (Etot - Etot_init) 
 
     with open ("energies.dat", "a") as ef:
-       if step == 1:
+       if step == 0:
         line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
         ef.write(str(line))
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
-        ef.write(str(line))
+        #line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
+        #ef.write(str(line))
        else:
         line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
        ef.write(str(line))
