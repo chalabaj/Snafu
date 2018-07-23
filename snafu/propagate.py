@@ -18,33 +18,12 @@ ang_bohr = 1.889726132873     # agstroms to bohrs
 def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 # update positions: Rn(t + Δt) = Rn(t) + Δt*Vn(t) +Δt^2/(2Mn)*Fn(t)  - for n atom at time t
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
-    print("forces:")
-    print(fx)
-    print(fy)
-    print(fz)
-    print("------------------------------")
-    #print(am)
-    print(x)
-    print(y)
-    print(z)
-    #print(vy,vy,vz)
-    print
-    for iat in range(0,natoms): 
 
-      x_old = x[iat]
-      y_old = y[iat]
-      z_old = z[iat]
+    for iat in range(0,natoms): 
         
       x[iat] = x[iat] + vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2 )
       y[iat] = y[iat] + vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2 )
       z[iat] = z[iat] + vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2 )
-      #print("------------------------------------------------------------")
-      
-      print( vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2) , x[iat]-x_old)
-      print( vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2) , y[iat]-y_old)
-      print( vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2) , z[iat]-z_old)
-    
-    print(x,y,z)
       
     return(x,y,z)
 
@@ -60,7 +39,7 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
     return(vx,vy,vz)   
     
 
-def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners):
+def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
@@ -108,8 +87,7 @@ def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, 
         fz_new[iat] = -1 * np.float64(line[2])   
        
     gef.closed
-    print(fx_new , fy_new, fz_new)
-    return(fx_new , fy_new, fz_new, pot_eners)
+    return(fx , fy, fz, pot_eners)
 
 def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):
     Ekin = 0.0

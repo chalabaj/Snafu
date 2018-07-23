@@ -106,11 +106,7 @@ if __name__ == "__main__":
 # CALC INITIAL ENERGIES AND GRADIENTS
     print("Step      Time/fs     Energy change from start/eV  Hoppping") 
     
-    fx_new, fy_new, fz_new, pot_eners = calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners) # position at current step   
-
-    fx = np.copy(fx_new) # copied list instead of just referencing
-    fy = np.copy(fy_new)
-    fz = np.copy(fz_new)
+    fx, fy, fz, pot_eners = calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step   
     
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
     Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
