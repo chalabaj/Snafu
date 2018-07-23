@@ -5,24 +5,48 @@ import random
 import time
 from snafu.errors import error_exit
 import re
+import numpy as np
 # CONSTANTS
 au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
 amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873     # agstroms to bohrs
-bohr_ang = 1/ang_bohr     # bohr to ang units
+
 #====================================================================================================
 
 
 def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 # update positions: Rn(t + Δt) = Rn(t) + Δt*Vn(t) +Δt^2/(2Mn)*Fn(t)  - for n atom at time t
     #print(x,y,z)    print(vx,vy,vz)    print(fx,fy,fz)
+    print("forces:")
+    print(fx)
+    print(fy)
+    print(fz)
+    print("------------------------------")
+    #print(am)
+    print(x)
+    print(y)
+    print(z)
+    #print(vy,vy,vz)
+    print
+    print("0.5 * f[iat] / (am[iat]) * (dt ** 2), r[(t+dt)-r(t)")
+    for iat in range(0,natoms): 
 
-    for iat in range(0,natoms):   
-      x[iat] = x[iat] + vx[iat] * dt + ( 0.5 * fx[iat] * (dt ** 2) / (am[iat]) )
-      y[iat] = y[iat] + vy[iat] * dt + ( 0.5 * fy[iat] * (dt ** 2) / (am[iat]) )
-      z[iat] = z[iat] + vz[iat] * dt + ( 0.5 * fz[iat] * (dt ** 2) / (am[iat]) )
-      #print(x[iat],vx[iat] * dt,(1/(2*am[iat]) * fx[iat] * (dt**2)))
+      xx= x[iat]
+      yy= y[iat]
+      zz= z[iat]
+        
+      x[iat] = x[iat] + vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2 )
+      y[iat] = y[iat] + vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2 )
+      z[iat] = z[iat] + vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2 )
+      #print("------------------------------------------------------------")
+      
+      print( vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2) , x[iat]-xx)
+      print( vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2) , y[iat]-yy)
+      print( vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2) , z[iat]-zz)
+    
+    print(x,y,z)
+      
     return(x,y,z)
 
 
@@ -30,14 +54,14 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
 
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + ( 0.5 * dt * (fx[iat] + fx_new[iat]) / am[iat] )
-     vy[iat] = vy[iat] + ( 0.5 * dt * (fy[iat] + fy_new[iat]) / am[iat] )
-     vz[iat] = vz[iat] + ( 0.5 * dt * (fz[iat] + fz_new[iat]) / am[iat] )
+     vx[iat] = vx[iat] + ( 0.5 * dt * (fx[iat] + fx_new[iat])/am[iat] )
+     vy[iat] = vy[iat] + ( 0.5 * dt * (fy[iat] + fy_new[iat])/am[iat] )
+     vz[iat] = vz[iat] + ( 0.5 * dt * (fz[iat] + fz_new[iat])/am[iat] )
      #print(vz[iat])
     return(vx,vy,vz)   
     
 
-def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners):
+def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
@@ -46,7 +70,7 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf: #ab init geom file
          for iat in range(0,natoms):
-             line = ("".join("%2s %4.18e %4.18e %4.18e\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
+             line = ("".join("%2s %2.16e %2.16e %2.16e\n"  %(at_names[iat],x[iat]/ang_bohr,y[iat]/ang_bohr,z[iat]/ang_bohr)))
              agf.write(line)
     agf.closed
     
@@ -56,9 +80,9 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
     state = state + 1 # ab initio code starts from 1(ground state) while code starts from 0 index due to python 
     
     if re.search(r'win',sys.platform):   
-       abinit_inputs = "wsl {} {}  {}  {}  {}".format(testpath, abinit_geom_file, natoms, state, nstates)
+       abinit_inputs = "wsl {} {}  {}  {}  {}".format(testpath, abinit_geom_file, natoms, state, nstates, step)
     elif re.search(r'linux',sys.platform): 
-       abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates)
+       abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
        
     # CALL EXTERNAL SCRIPT WHICH WILL HANDLE AB INITIO CALCULATIONS       
     try:
@@ -77,10 +101,11 @@ def calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, 
      for st in range(0,nstates):
         pot_eners[st] = float(gef.readline())  # comment 
      for iat in range(0,natoms):
-        line = gef.readline().split()
-        fx_new[iat] = float(line[0])
-        fy_new[iat] = float(line[1])
-        fz_new[iat] = float(line[2])   #  X Y Z format for each atoms
+        line = gef.readline().split(" ")
+        #  X Y Z format for each atoms
+        fx_new[iat] = np.float128(line[0])
+        fy_new[iat] = np.float128(line[1])
+        fz_new[iat] = np.float128(line[2])   
        
     gef.closed
     return(fx_new , fy_new, fz_new, pot_eners)

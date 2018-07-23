@@ -27,8 +27,6 @@ multi="multi"  # use  "df-casscf" for density fitting version
 ###################################################################################
 cat > $input.com << EOF
 memory, $memory,m;
-file, 2, $input.wfu,unknown
-PUNCH, $input.pun,new
 gprint, orbital,civector
 symmetry,nosym
 Angstrom
@@ -37,31 +35,10 @@ geometry=../$abinit_geom_file
 
 basis=$basis
 
-!-for simple CASSCF, you don't need to modify anything below this
-
-!-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
-!-otherwise, the forces and NACME are wrong for the following reason
-!-cpmscf will not rewrite itself it but ather write into following records
-!-but the subsequent call to forces would read from old records -> wrong numbers
-!-we use file 2 for forces and NACME due to df-casscf
-
-data,truncate,2,5101
-
-if (lastorb.ne.MCSCF)then
-   {hf;wf,$nelectrons,0,$spin}
-endif
-
-$multi;
-occ,$nocc;
-closed,$nclosed;
-WF,$nelectrons,0,$spin;
-state,$nstate;
-maxiter,40;
-ORBITAL,2140.2;
-NOEXTRA;
-
-cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2; 
-forces;samc,5101.2;
+charge=1;
+uhf;
+ump2;
+forces;
 
 EOF
 
@@ -91,10 +68,8 @@ fi
 cp $input.com.out $input.com.out.old
 echo "$step" >> grads.dat
 ################### Extracting energy 
-grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
-grep "GRADIENT," $input.pun | awk -F" " '{print $5" "$6" "$7" "}'>> ../gradients.dat #need space at the end for numpy float reading
-
-cat ../gradients.dat >> grads.dat
+grep "!UMP2 STATE 1.1 Energy " $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
+grep "Numerical gradient for UMP2" -A7 $input.com.out | tail -n$natoms  | awk  '{print $2, $3, $4}'>>  ../gradients.dat
 
 if [[ $? -eq 0 ]];then
 exit 0

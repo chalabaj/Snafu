@@ -7,12 +7,12 @@ import sys
 import os
 import configparser
 from snafu.errors import error_exit
+import numpy as np
 
-au_fs = 0.02418884326505      #atomic units to femtosecs
+au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873     # agstroms to bohrs
-bohr_ang = 1/ang_bohr     # bohr to ang unitsq
+amu   = 1822.888484264545e0             # atomic mass unit  me = 1 AMU*atomic weight
+ang_bohr = 1.889726132873e0     # agstroms to bohrs
 
 def file_check(cwd):
     # input files names - these are defaults otherwise not found
@@ -60,9 +60,9 @@ def read_input(cwd,input_file_path):
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
     # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = [ 0.00000000 ] * natoms 
-    y = [ 0.00000000 ] * natoms 
-    z = [ 0.00000000 ] * natoms
+    x = np.zeros(natoms,dtype=np.float128)  
+    y = np.zeros(natoms,dtype=np.float128)  
+    z = np.zeros(natoms,dtype=np.float128)  
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -80,9 +80,9 @@ def read_geoms(natoms,geom_file_path):
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
 def read_velocs(veloc_init,natoms,veloc_file_path):  
-    vx = [ 0.00000000 ] * natoms
-    vy = [ 0.00000000 ] * natoms 
-    vz = [ 0.00000000 ] * natoms 
+    vx = np.zeros(natoms,dtype=np.float128)  
+    vy = np.zeros(natoms,dtype=np.float128)  
+    vz = np.zeros(natoms,dtype=np.float128)  
     if veloc_init == 1:
      with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
        atoms = ivf.readline()  # first line in geom file is number of atoms
@@ -116,13 +116,13 @@ def init_forces_potenergs(natoms,nstates):
 # Initialize empty forces array
     
     #f(t)
-    fx =([ 0.00000000 ] * natoms)  
-    fy =([ 0.00000000 ] * natoms)  
-    fz =([ 0.00000000 ] * natoms)
+    fx = np.zeros(natoms,dtype=np.float128)  
+    fy = np.zeros(natoms,dtype=np.float128)   
+    fz = np.zeros(natoms,dtype=np.float128)  
     #f_new(t+dt)
-    fx_new = [ 0.00000000 ] * natoms  
-    fy_new = [ 0.00000000 ] * natoms
-    fz_new = [ 0.00000000 ] * natoms
+    fx_new = np.zeros(natoms,dtype=np.float128)    
+    fy_new = np.zeros(natoms,dtype=np.float128)  
+    fz_new = np.zeros(natoms,dtype=np.float128)  
     pot_eners = [0.00000000 ] * nstates # potential energy from ab initio calculations
     
     return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)

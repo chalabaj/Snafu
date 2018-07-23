@@ -1,5 +1,8 @@
+
+ang_bohr = 1.889726132873e0     # agstroms to bohrs
+
 def print_positions(step,time,natoms, at_names, x, y, z):
-    bohr_ang =1/1.889726132873     # bohr to ang units
+    bohr_ang =1/ang_bohr     # bohr to ang units
     
     with open ("movie.xyz", "a") as mov:
      header = ("{} \n".format(natoms))

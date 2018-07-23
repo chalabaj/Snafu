@@ -19,6 +19,7 @@ import random
 import time
 import re
 from datetime import datetime
+import numpy as np
 
 #env layer on cluster to find module sys.path.append? /home/XXX/Snafu/snafu
 cwd = os.getcwd()
@@ -35,11 +36,11 @@ from snafu.prints import print_positions, print_velocities,print_snafu
 from snafu.init import com_removal
  
 # Constants
-au_fs = 0.02418884326505      #atomic units to femtosecs
+au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.888484264545             # atomic mass unit  me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873     # agstroms to bohrs
-bohr_ang = 1/ang_bohr     # bohr to ang units
+amu   = 1822.888484264545e0             # atomic mass unit  me = 1 AMU*atomic weight
+ang_bohr = 1.889726132873e0     # agstroms to bohrs
+
 
 # Observed variable
 step = 0
@@ -87,7 +88,7 @@ if __name__ == "__main__":
     #if debug == 1: print("atomic masses:\n",am)
     #print("Molecular systems:\nAt  Mass     X     Y     Z:")
     for iat in range(0,natoms):
-        print("".join("%3s" " " "%3.3f"  %(at_names[iat], masses[iat]))," %3.4f %2.4f %2.4f"  %(x[iat],y[iat],z[iat]))  # just nice output print
+        print("".join("%3s" " " "%3.3f"  %(at_names[iat], masses[iat]))," %3.6f %2.6f %2.6f"  %(x[iat],y[iat],z[iat]))  # just nice output print
     print(liner)     
     
 #CREATE OUTPUT FILES:
@@ -99,12 +100,16 @@ if __name__ == "__main__":
 #---------------INIT DONE-------------------------------------------------------------------    
 
 # CENTER OF MASS REMOVAL
-    x, y, z = com_removal(x,y,z,am)
+    #x, y, z = com_removal(x,y,z,am)
     
 # CALC INITIAL ENERGIES AND GRADIENTS
     print("Step      Time/fs     Energy change from start/eV  Hoppping") 
     
-    fx, fy, fz, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx, fy, fz, pot_eners) # position at current step    
+    fx_new, fy_new, fz_new, pot_eners = calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners) # position at current step   
+    fx = np.copy(fx_new) # copied list instead of just referencing
+    fy = np.copy(fy_new)
+    fz = np.copy(fz_new)
+     
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
     Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
     
@@ -112,18 +117,18 @@ if __name__ == "__main__":
 # MAIN LOOP 
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
+        
         time = step * dt*  au_fs 
-        print(fx,fy,fz)
+
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
+       
+        fx_new, fy_new, fz_new, pot_eners = calc_forces(step,natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
+       
+        vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new) # propagate velocities using new forces
         
-        fx_new, fy_new, fz_new, pot_eners = calc_forces(natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
-        #print(fx,fx_new)
-        
-        vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new)                                               # propagate velocities using new forces
-        
-        fx = fx_new[:] # copied list instead of just referencing
-        fy = fy_new[:]
-        fz = fz_new[:]
+        fx = np.copy(fx_new) # copied list instead of just referencing
+        fy = np.copy(fy_new)
+        fz = np.copy(fz_new)
         
         #if hopping == "1":
           #alcc_hop

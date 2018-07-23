@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#$ -cwd
+#$ -e .
+#$ -o .
+#$ -V
+
+
+MOLPRO input.com 2015
