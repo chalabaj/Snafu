@@ -29,21 +29,20 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
     print(z)
     #print(vy,vy,vz)
     print
-    print("0.5 * f[iat] / (am[iat]) * (dt ** 2), r[(t+dt)-r(t)")
     for iat in range(0,natoms): 
 
-      xx= x[iat]
-      yy= y[iat]
-      zz= z[iat]
+      x_old = x[iat]
+      y_old = y[iat]
+      z_old = z[iat]
         
       x[iat] = x[iat] + vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2 )
       y[iat] = y[iat] + vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2 )
       z[iat] = z[iat] + vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2 )
       #print("------------------------------------------------------------")
       
-      print( vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2) , x[iat]-xx)
-      print( vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2) , y[iat]-yy)
-      print( vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2) , z[iat]-zz)
+      print( vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2) , x[iat]-x_old)
+      print( vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2) , y[iat]-y_old)
+      print( vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2) , z[iat]-z_old)
     
     print(x,y,z)
       
@@ -103,11 +102,13 @@ def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, 
      for iat in range(0,natoms):
         line = gef.readline().split(" ")
         #  X Y Z format for each atoms
-        fx_new[iat] = np.float128(line[0])
-        fy_new[iat] = np.float128(line[1])
-        fz_new[iat] = np.float128(line[2])   
+        # gradient to forces -
+        fx_new[iat] = -1 * np.float64(line[0])
+        fy_new[iat] = -1 * np.float64(line[1])
+        fz_new[iat] = -1 * np.float64(line[2])   
        
     gef.closed
+    print(fx_new , fy_new, fz_new)
     return(fx_new , fy_new, fz_new, pot_eners)
 
 def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):

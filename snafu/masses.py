@@ -4,7 +4,7 @@ Created on Tue Jul 10 11:29:42 2018
 
 @author: chalabaj
 """
-
+import numpy as np
     
 def assign_masses(at_names):
     """
@@ -70,7 +70,7 @@ def assign_masses(at_names):
                         'Cs'		:	132.90543	,
                         'Ba'		:	137.327	}
 
-    mass = [ 0.0 for x in range(0,len(at_names))]  
+    mass = np.zeros(len(at_names),dtype=np.float128)  
     
     for iat in range(0,len(at_names)):
        mass[iat] = (atomic_masses[at_names[iat]]) 

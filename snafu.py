@@ -35,6 +35,7 @@ from snafu.propagate import calc_forces, calc_energies
 from snafu.prints import print_positions, print_velocities,print_snafu
 from snafu.init import com_removal
  
+np.set_printoptions(precision=12)
 # Constants
 au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139
@@ -106,10 +107,11 @@ if __name__ == "__main__":
     print("Step      Time/fs     Energy change from start/eV  Hoppping") 
     
     fx_new, fy_new, fz_new, pot_eners = calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners) # position at current step   
+
     fx = np.copy(fx_new) # copied list instead of just referencing
     fy = np.copy(fy_new)
     fz = np.copy(fz_new)
-     
+    
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init) #Etot_init = 0
     Etot_init = Etot  # Total energy at the beginning to calc. energy changes during propagation
     

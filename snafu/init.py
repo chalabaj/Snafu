@@ -72,9 +72,9 @@ def read_geoms(natoms,geom_file_path):
      for iat in range(0,natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))
-        x[iat] = float(line[1]) * ang_bohr  # atomic units : Bohr
-        y[iat] = float(line[2]) * ang_bohr
-        z[iat] = float(line[3]) * ang_bohr
+        x[iat] = np.float128(line[1]) * ang_bohr  # atomic units : Bohr
+        y[iat] = np.float128(line[2]) * ang_bohr
+        z[iat] = np.float128(line[3]) * ang_bohr
      
      igf.close()
      return(at_names,x,y,z)
@@ -116,16 +116,16 @@ def init_forces_potenergs(natoms,nstates):
 # Initialize empty forces array
     
     #f(t)
-    fx = np.zeros(natoms,dtype=np.float128)  
-    fy = np.zeros(natoms,dtype=np.float128)   
-    fz = np.zeros(natoms,dtype=np.float128)  
+    fx = np.zeros(natoms,dtype=np.float64)  
+    fy = np.zeros(natoms,dtype=np.float64)   
+    fz = np.zeros(natoms,dtype=np.float64)  
     #f_new(t+dt)
-    fx_new = np.zeros(natoms,dtype=np.float128)    
-    fy_new = np.zeros(natoms,dtype=np.float128)  
-    fz_new = np.zeros(natoms,dtype=np.float128)  
+    fx_new = np.zeros(natoms,dtype=np.float64)    
+    fy_new = np.zeros(natoms,dtype=np.float64)  
+    fz_new = np.zeros(natoms,dtype=np.float64)  
     pot_eners = [0.00000000 ] * nstates # potential energy from ab initio calculations
     
-    return(fx,fy,fz,fx_new,fy_new,fz_new, pot_eners)
+    return(fx, fy, fz, fx_new, fy_new, fz_new, pot_eners)
     
 def com_removal(x,y,z,am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0
