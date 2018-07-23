@@ -70,7 +70,7 @@ def assign_masses(at_names):
                         'Cs'		:	132.90543	,
                         'Ba'		:	137.327	}
 
-    mass = np.zeros(len(at_names),dtype=np.float128)  
+    mass = np.zeros(len(at_names),dtype=np.float64)  
     
     for iat in range(0,len(at_names)):
        mass[iat] = (atomic_masses[at_names[iat]]) 

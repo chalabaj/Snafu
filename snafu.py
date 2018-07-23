@@ -116,8 +116,6 @@ if __name__ == "__main__":
     #center of mass reduction TODO
     for step in range(1,maxsteps+1):
         
-        time = step * dt*  au_fs 
-
         x, y, z = update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz)                                                                  # new positions (t+dt)
        
         fx_new, fy_new, fz_new, pot_eners = calc_forces(step,natoms, at_names, state, nstates, ab_initio_file_path, x, y, z, fx_new, fy_new, fz_new, pot_eners)  # calc forces for new positions
@@ -131,10 +129,12 @@ if __name__ == "__main__":
         #if hopping == "1":
           #alcc_hop
         # vel_adjustment
+        
         hop = "No"
+        time = step * dt*  au_fs 
         Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init)
         
-        print(" {:<3d} {:>10.2f} {:>20.4e} {:>20s}".format(step,time,dE* au_eV, hop))
+        print(" {:<3d} {:>10.2f} {:>20.4e} {:>20s}\n".format(step,time,dE* au_eV, hop))
         
      # save positions and velocities to movie and velocity file
         print_positions(step,time,natoms, at_names, x, y, z)   

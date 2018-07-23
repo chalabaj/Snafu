@@ -82,9 +82,9 @@ def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, 
         line = gef.readline().split(" ")
         #  X Y Z format for each atoms
         # gradient to forces -
-        fx_new[iat] = -1 * np.float64(line[0])
-        fy_new[iat] = -1 * np.float64(line[1])
-        fz_new[iat] = -1 * np.float64(line[2])   
+        fx[iat] = -1 * np.float64(line[0])
+        fy[iat] = -1 * np.float64(line[1])
+        fz[iat] = -1 * np.float64(line[2])   
        
     gef.closed
     return(fx , fy, fz, pot_eners)
