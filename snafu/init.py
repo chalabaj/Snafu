@@ -6,7 +6,7 @@ Read input.in
 import sys
 import os
 import configparser
-from snafu.errors import error_exit
+from errors import error_exit
 import numpy as np
 
 au_fs = 0.02418884326505e0      #atomic units to femtosecs

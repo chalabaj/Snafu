@@ -1,41 +1,63 @@
 """
-SNAFU code
-SNAFU can do ab initio nonadiabatic MD withot calculating non-adiabatic couplings
-Two scheme with/without diabatization
-
-1) adiabatic-potential-based formula derived within Landau-Zener (APLZ):
-AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011),DOI: 10.1103/PhysRevA.84.014701
-AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); doi: 10.1063/1.5000718
-
-2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883
-    
-TO DO: step back if hop, restart file will contain geometry, velocities, curent state, timestep atd...
-
+Main code. Calls: initialization routines (geometry, velocities)
+calls for files check
+calls for array init
+main iteration loop over stepsr
 """
 
+# SYSTEM IMPORTS:
 import math
-import sys, os
+import sys
+import os
 import random
 import time
 import re
-from datetime import datetime
 import numpy as np
+np.set_printoptions(precision=8) # needed for accuracy and stability testing only
 
-#env layer on cluster to find module sys.path.append? /home/XXX/Snafu/snafu
+from datetime import datetime
+
+# ENVIRONMENT LAYER to find local modules
+# .bashrc should contain PYTHONPATH=/path/to/SNAFU/snafu
+# or sys.path.append("/path/to/SNAFU")
+# or export PYTHONPATH=/path/to/SNAFU/snafu before code calls
+
 cwd = os.getcwd()
-sys.path.append(cwd)
+#sys.path.append(cwd)
+#sys.path.append('/home/chalabaj/SNAFU/snafu')
+#sys.path.append('/home/chalabaj/SNAFU')
 
-from snafu.init   import file_check, read_input
-from snafu.init   import read_geoms, read_velocs
-from snafu.init   import create_output_file, init_forces_potenergs
-from snafu.masses import assign_masses
-from snafu.errors import error_exit
-from snafu.propagate import update_velocities, update_positions
-from snafu.propagate import calc_forces, calc_energies
-from snafu.prints import print_positions, print_velocities,print_snafu
-from snafu.init import com_removal
- 
-np.set_printoptions(precision=12)
+# LOCAL IMPORT
+modules_files = [
+    'init.py',
+    'masses.py',
+    'errors.py',
+    'prints.py',
+    'propagate.py',
+]
+def load_local_modules():
+    from init import file_check, read_input
+    from init import read_geoms, read_velocs
+    from init import create_output_file, init_forces_potenergs
+    from init import com_removal
+    from masses import assign_masses
+    from errors import error_exit
+    from prints import print_positions, print_velocities
+    from prints import print_snafu
+    from propagate import update_velocities, update_positions
+    from propagate import calc_forces, calc_energies
+    return()
+    
+try:
+    env_set = True
+    env_set = False for pathline in sys.path for mod_file in modules_files if os.path.isfile(os.path.join(pathline,
+    
+    load_local_modules() 
+except:    
+else:
+    print("All modules loaded succesfully.")
+
+
 # Constants
 au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139

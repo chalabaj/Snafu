@@ -1,11 +1,15 @@
+
 import math
-import sys, os
-import subprocess
+import sys
+import os
 import random
 import time
-from snafu.errors import error_exit
+import subprocess
 import re
 import numpy as np
+
+from errors import error_exit
+
 # CONSTANTS
 au_fs = 0.02418884326505      #atomic units to femtosecs
 au_eV = 27.21139
