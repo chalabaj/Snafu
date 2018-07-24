@@ -105,7 +105,7 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
          Etot = Ekin + Epot
          dE = (Etot - Etot_init) 
 
-    print_energies(time,Ekin,Epot,Etot,dE * au_eV)
+    print_energies(step,time,Ekin,Epot,Etot,dE * au_eV)
 
     return(Ekin,Epot,Etot,dE)
 
