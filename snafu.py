@@ -38,16 +38,16 @@ try:
     SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE,"snafu"))
     sys.path.append(SNAFU_EXE)
-    from snafu.init import file_check, read_input
-    from snafu.init import read_geoms, read_velocs
-    from snafu.init import create_output_file, init_forces_potenergs
-    from snafu.init import com_removal
-    from snafu.masses import assign_masses
-    from snafu.errors import error_exit
-    from snafu.prints import print_positions, print_velocities
-    from snafu.prints import print_snafu
-    from snafu.propagates import update_velocities, update_positions
-    from snafu.propagates import calc_forces, calc_energies
+    from inits import file_check, read_input
+    from inits import read_geoms, read_velocs
+    from inits import create_output_file, init_forces_potenergs
+    from inits import com_removal
+    from masses import assign_masses
+    from errors import error_exit
+    from prints import print_positions, print_velocities
+    from prints import print_snafu
+    from propagates import update_velocities, update_positions
+    from propagates import calc_forces, calc_energies
 except ImportError as ime: # some module file is missing or was renamed
     print("Module {} not found.".format(ime.name),
           "Make sure that {} dir contains snafu folder".format(SNAFU_EXE),
