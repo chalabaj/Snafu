@@ -1,6 +1,10 @@
 """
 Check input file: input.in, geom.in (input geometry), veloc.in pab initio program file,
 Read input.in
+
+each array (x,y,z) or (vx,vy,vz) or (fx,fy,fz)
+holds NATOMS elements 
+e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
 """
 
 import sys
