@@ -19,7 +19,10 @@ from datetime import datetime
 # ENVIRONMENT LAYER & LOCAL IMPORT 
 # find local modules
 # .bashrc should contain SNAFU_DIR=/path/to/SNAFU/snafu
+# or launcher exports SNAFU_DIR
 
+# launcher enter to scratch dir with copied:
+# geom.in, input.in ABINITIO folder etc. which are read by init.py
 cwd = os.getcwd()
 sys.path.append(cwd)
 
@@ -32,25 +35,25 @@ modules_files = [
 ]
 
 try:
-    SNAFU_EXE=os.environ['SNAFU_DIR']
+    SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE,"snafu"))
     sys.path.append(SNAFU_EXE)
-    from init import file_check, read_input
-    from init import read_geoms, read_velocs
-    from init import create_output_file, init_forces_potenergs
-    from init import com_removal
-    from masses import assign_masses
-    from errors import error_exit
-    from prints import print_positions, print_velocities
-    from prints import print_snafu
-    from propagates import update_velocities, update_positions
-    from propagates import calc_forces, calc_energies
-except ImportError as ime:
+    from snafu.init import file_check, read_input
+    from snafu.init import read_geoms, read_velocs
+    from snafu.init import create_output_file, init_forces_potenergs
+    from snafu.init import com_removal
+    from snafu.masses import assign_masses
+    from snafu.errors import error_exit
+    from snafu.prints import print_positions, print_velocities
+    from snafu.prints import print_snafu
+    from snafu.propagates import update_velocities, update_positions
+    from snafu.propagates import calc_forces, calc_energies
+except ImportError as ime: # some module file is missing or was renamed
     print("Module {} not found.".format(ime.name),
-          "Make sure that SNAFU/snafu folder",
+          "Make sure that {} dir contains snafu folder".format(SNAFU_EXE),
           "contains: {}".format('\n'.join(modules_files)))
     exit(1)
-except KeyError as ke:
+except KeyError as ke: # if SNADU_DIR is not exported into env vars
     print("SNAFU_DIR is not set.",
           "See '.bashrc' file in your home directory", 
           "or use 'env' command and make sure $SNAFU_DIR is exported.",
@@ -66,7 +69,6 @@ au_eV = 27.21139
 amu   = 1822.888484264545e0     # atomic mass unit  me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873e0     # agstroms to bohrs
 
-
 # RUN VARIABLES
 step = 0
 dE = 0.0   # energy change since initial energies
@@ -79,24 +81,31 @@ debug = 1
 if __name__ == "__main__":
     print_snafu()
     startTime = datetime.now()
-    print("Simulation started at:{}".format(startTime))
-    print("Python base:",sys.base_exec_prefix,
-          "version: ",sys.version[:5])
-    print("System platform:",sys.platform)  
-    print("SNAFU_EXE taken from:{}".format(sys.path[-1])) 
-    print("Working directory:",cwd)
+    
+    print("Simulation started at: {}\n".format(startTime),
+          "Python base: {}".format(sys.base_exec_prefix),
+          "version: {}\n".format(sys.version[:5]),
+          "System platform: {}\n".format(sys.platform),
+          "Running executable: {}\n".format(sys.path[-1])
+          )
+    # local runs doent creat HOST env var, qsub SGE system does
+    try: 
+        print("Working directory: {} on {}.".format(cwd,os.environ['HOSTNAME']))
+    except KeyError: 
+        print("Working directory: {}".format(cwd))
     print(liner)
     
 # FILE CHECK - OBTAIN PATH TO FILES
     input_file_path,geom_file_path,veloc_file_path,veloc_init = file_check(cwd)
     
 #READ INPUT VARIABLE (read as strings) - SET THEM AS GLOBAL VARIABLES: 
+ 
     input_vars, ab_initio_file_path = read_input(cwd,input_file_path)
     globals().update(input_vars)  
-    natoms   = int(natoms)                                     # loaded variable are all strings
+    natoms   = int(natoms)                                    
     maxsteps = int(maxsteps)
-    state = int(init_state)                                    # Current state during propagation (for t =0 => init state)
-    dt = float(timestep)
+    state = int(init_state)   # initial or restart state
+    dt = float(timestep)      
     nstates = int(nstates)
     
 #READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES:
@@ -121,8 +130,9 @@ if __name__ == "__main__":
               " %3.6f %2.6f %2.6f"  %(y[iat],z[iat],masses[iat]))  
     print(liner)     
     
-#CREATE OUTPUT FILES:  TO DO file check, if these files exist and not restart then error!!!!
-    # where to store propagated position, velocities, observables
+#CREATE OUTPUT FILES: 
+   # TO DO file check, if these files exist and not restart then error!!!!
+   # where to store propagated position, velocities, observables
     # geom.dat hold current geometry for which to compute E, grads  
     #files = [ "energies.dat", "velocities.xyz", "gradients.dat", "movie.xyz" ]  
     #create_output_file(files)
@@ -160,7 +170,8 @@ if __name__ == "__main__":
         vx, vy, vz = update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,
             fx_new,fy_new,fz_new) 
         
-        fx = np.copy(fx_new) # copied list instead of just referencing
+        # copied list instead of just referencing | or slice it
+        fx = np.copy(fx_new) 
         fy = np.copy(fy_new)
         fz = np.copy(fz_new)
         

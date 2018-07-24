@@ -9,6 +9,7 @@ import re
 import numpy as np
 
 from errors import error_exit
+from prints import print_energy
 
 # CONSTANTS
 au_fs = 0.02418884326505      #atomic units to femtosecs
@@ -25,9 +26,9 @@ def update_positions(natoms,dt,am,x,y,z,vx,vy,vz,fx,fy,fz):
 
     for iat in range(0,natoms): 
         
-      x[iat] = x[iat] + vx[iat] * dt + ( fx[iat]/(2*am[iat]) * dt**2 )
-      y[iat] = y[iat] + vy[iat] * dt + ( fy[iat]/(2*am[iat]) * dt**2 )
-      z[iat] = z[iat] + vz[iat] * dt + ( fz[iat]/(2*am[iat]) * dt**2 )
+      x[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2*am[iat]) * dt**2 )
+      y[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2*am[iat]) * dt**2 )
+      z[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2*am[iat]) * dt**2 )
       
     return(x,y,z)
 
@@ -36,9 +37,9 @@ def update_velocities(natoms,dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
 # update_velocities: Vn(t+dt) Vn(t + Δt) = Vn(t) + Δt/(2Mn)*(Fn(t) + Fn(t + Δt))
 
     for iat in range(0,natoms):
-     vx[iat] = vx[iat] + ( 0.5 * dt * (fx[iat] + fx_new[iat])/am[iat] )
-     vy[iat] = vy[iat] + ( 0.5 * dt * (fy[iat] + fy_new[iat])/am[iat] )
-     vz[iat] = vz[iat] + ( 0.5 * dt * (fz[iat] + fz_new[iat])/am[iat] )
+     vx[iat] = vx[iat] + ( 0.5 * dt * (fx[iat] + fx_new[iat]) / am[iat] )
+     vy[iat] = vy[iat] + ( 0.5 * dt * (fy[iat] + fy_new[iat]) / am[iat] )
+     vz[iat] = vz[iat] + ( 0.5 * dt * (fz[iat] + fz_new[iat]) / am[iat] )
      #print(vz[iat])
     return(vx,vy,vz)   
     
@@ -94,25 +95,17 @@ def calc_forces(step, natoms, at_names, state, nstates, ab_initio_file_path, x, 
     return(fx , fy, fz, pot_eners)
 
 def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):
-    Ekin = 0.0
+     
+    Ekin = 0.000
     for iat in range(0,natoms):
 
-         Ekin = Ekin + (0.5*am[iat] * (vx[iat] **2 + vy[iat]**2 + vz[iat]**2))
+         Ekin = Ekin + (0.5 * am[iat] * (vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2))
          #print(Ekin)
          Epot = pot_eners[state] #state 0(GS), 1 (1.ex. state),.....
          Etot = Ekin + Epot
          dE = (Etot - Etot_init) 
 
-    with open ("energies.dat", "a") as ef:
-       if step == 0:
-        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
-        ef.write(str(line))
-        #line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
-        #ef.write(str(line))
-       else:
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
-       ef.write(str(line))
-    ef.closed
+    print_energies(time,Ekin,Epot,Etot,dE * au_eV)
 
     return(Ekin,Epot,Etot,dE)
 

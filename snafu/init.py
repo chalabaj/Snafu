@@ -10,8 +10,9 @@ e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
 import sys
 import os
 import configparser
-from errors import error_exit
 import numpy as np
+from errors import error_exit
+
 
 au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139

@@ -27,7 +27,20 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
        vel.write(line)
     vel.closed
     return()
-    
+ 
+def print_energies(time,Ekin,Epot,Etot,dE):
+    with open ("energies.dat", "a") as ef:
+       if step == 0:
+        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
+        ef.write(str(line))
+        #line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
+        #ef.write(str(line))
+       else:
+        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
+       ef.write(str(line))
+    ef.closed
+    return()  
+     
 def print_snafu():
  print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU")
  print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U")
