@@ -9,7 +9,7 @@ import re
 import numpy as np
 
 from errors import error_exit
-from prints import print_energy
+from prints import print_energies
 
 # CONSTANTS
 au_fs = 0.02418884326505      #atomic units to femtosecs

@@ -27,13 +27,14 @@ cwd = os.getcwd()
 sys.path.append(cwd)
 
 modules_files = [
-    'init.py',
+    'inits.py',
     'masses.py',
     'errors.py',
     'prints.py',
     'propagates.py',
 ]
-
+# if some if the import doesnt work in other modules
+# ImportError will be raised with None module
 try:
     SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE,"snafu"))
@@ -45,13 +46,16 @@ try:
     from masses import assign_masses
     from errors import error_exit
     from prints import print_positions, print_velocities
-    from prints import print_snafu
+    from prints import print_snafu, print_energies
     from propagates import update_velocities, update_positions
     from propagates import calc_forces, calc_energies
 except ImportError as ime: # some module file is missing or was renamed
-    print("Module {} not found.".format(ime.name),
-          "Make sure that {} dir contains snafu folder".format(SNAFU_EXE),
-          "contains: {}".format('\n'.join(modules_files)))
+    if ime.name == None:
+       print("Import in some of the modules in snadu dir failed")
+    else:
+       print("Module {} not found.".format(ime.name),
+             "Make sure that {} contains snafu folder".format(SNAFU_EXE),
+             "with: {}".format('\n'.join(modules_files)))
     exit(1)
 except KeyError as ke: # if SNADU_DIR is not exported into env vars
     print("SNAFU_DIR is not set.",
