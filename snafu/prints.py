@@ -30,68 +30,43 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
  
 def print_energies(step,time,Ekin,Epot,Etot,dE):
     with open ("energies.dat", "a") as ef:
-       if step == 0:
-        line = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
-        ef.write(str(line))
-        #line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE*au_eV)
-        #ef.write(str(line))
-       else:
+        if step == 0:
+            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
+            ef.write(str(headline))
         line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
-       ef.write(str(line))
+        ef.write(str(line))
     ef.closed
     return()  
-     
+    
+def print_pes(time, step, pot_eners):
+    with open ("PES.dat", "a") as pesf:
+        if step == 0:
+            headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
+            pesf.write(str(headline))
+
+        line = ("{:10.10f}".format(time)
+                + ' '.join('{:20.10f}'.format(pot_eners[st]) 
+                for st in range(0, len(pot_eners)))
+                + "\n")
+        pesf.write(str(line))
+    pesf.closed
+    return()
+    
 def print_snafu():
- print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU")
- print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U")
- print( "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F::::::::::::::::::::FU::::::U     U::::::U")
- print( "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF::::::FFFFFFFFF::::FUU:::::U     U:::::UU")
- print( "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F:::::F       FFFFFF U:::::U     U:::::U ")
- print( "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F:::::F              U:::::D     D:::::U ")
- print( " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F::::::FFFFFFFFFF    U:::::D     D:::::U ")
- print( "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F:::::::::::::::F    U:::::D     D:::::U ")
- print( "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F:::::::::::::::F    U:::::D     D:::::U ")
- print( "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F::::::FFFFFFFFFF    U:::::D     D:::::U ")
- print( "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F:::::F              U:::::D     D:::::U ")
- print( "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F:::::F              U::::::U   U::::::U ")
- print( "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF:::::::FF            U:::::::UUU:::::::U ")
- print( "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F::::::::FF             UU:::::::::::::UU  ")
- print( "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F::::::::FF               UU:::::::::UU    ")
- print( " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFFF                 UUUUUUUUU      \n")
- 
-"""
-______________$$$$$$$$$$____________________
-_____________$$__$_____$$$$$________________
-_____________$$_$$__$$____$$$$$$$$__________
-____________$$_$$__$$$$$________$$$_________
-___________$$_$$__$$__$$_$$$__$$__$$________
-___________$$_$$__$__$$__$$$$$$$$__$$_______
-____________$$$$$_$$_$$$_$$$$$$$$_$$$_______
-_____________$$$$$$$$$$$$$_$$___$_$$$$______
-________________$$_$$$______$$$$$_$$$$______
-_________________$$$$_______$$$$$___$$$_____
-___________________________$$_$$____$$$$____
-___________________________$$_$$____$$$$$___
-__________________________$$$$$_____$$$$$$__
-_________________________$__$$_______$$$$$__
-________________________$$$_$$________$$$$$_
-________________________$$$___________$$$$$_
-_________________$$$$___$$____________$$$$$$
-__$$$$$$$$____$$$$$$$$$$_$____________$$$_$$
-_$$$$$$$$$$$$$$$______$$$$$$$___$$____$$_$$$
-$$________$$$$__________$_$$$___$$$_____$$$$
-$$______$$$_____________$$$$$$$$$$$$$$$$$_$$
-$$______$$_______________$$_$$$$$$$$$$$$$$$_
-$$_____$_$$$$$__________$$$_$$$$$$$$$$$$$$$_
-$$___$$$__$$$$$$$$$$$$$$$$$__$$$$$$$$$$$$$__
-$$_$$$$_____$$$$$$$$$$$$________$$$$$$__$___
-$$$$$$$$$$$$$$_________$$$$$______$$$$$$$___
-$$$$_$$$$$______________$$$$$$$$$$$$$$$$____
-$$__$$$$_____$$___________$$$$$$$$$$$$$_____
-$$_$$$$$$$$$$$$____________$$$$$$$$$$_______
-$$_$$$$$$$hg$$$____$$$$$$$$__$$$____________
-$$$$__$$$$$$$$$$$$$$$$$$$$$$$$______________
-$$_________$$$$$$$$$$$$$$$__________________
-
-
-"""
+   print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFF FFFFFFFFFFFUUUUUUUU     UUUUUUUU")
+   print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F:::::::::::::::::::FU::::::U     U::::::U")
+   print( "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F:::::::::::::::::::FU::::::U     U::::::U")
+   print( "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF:::::FFFFFFFFF::::FUU:::::U     U:::::UU")
+   print( "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F::::F       FFFFFF U:::::U     U:::::U ")
+   print( "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F::::F              U:::::D     D:::::U ")
+   print( " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F:::::FFFFFFFFFF    U:::::D     D:::::U ")
+   print( "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F::::::::::::::F    U:::::D     D:::::U ")
+   print( "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F::::::::::::::F    U:::::D     D:::::U ")
+   print( "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F:::::FFFFFFFFFF    U:::::D     D:::::U ")
+   print( "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F::::F              U:::::D     D:::::U ")
+   print( "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F::::F              U::::::U   U::::::U ")
+   print( "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF::::::FF            U:::::::UUU:::::::U ")
+   print( "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F:::::::FF             UU:::::::::::::UU  ")
+   print( "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F:::::::FF               UU:::::::::UU    ")
+   print( " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFF                 UUUUUUUUU      \n")
+   return()

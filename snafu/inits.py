@@ -68,9 +68,9 @@ def read_input(cwd,input_file_path):
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
     # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = np.zeros(natoms,dtype=np.float128)  
-    y = np.zeros(natoms,dtype=np.float128)  
-    z = np.zeros(natoms,dtype=np.float128)  
+    x = np.zeros(natoms,dtype=np.float64)  
+    y = np.zeros(natoms,dtype=np.float64)  
+    z = np.zeros(natoms,dtype=np.float64)  
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -80,17 +80,17 @@ def read_geoms(natoms,geom_file_path):
      for iat in range(0,natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))
-        x[iat] = np.float128(line[1]) * ang_bohr  # atomic units : Bohr
-        y[iat] = np.float128(line[2]) * ang_bohr
-        z[iat] = np.float128(line[3]) * ang_bohr
+        x[iat] = np.float64(line[1]) * ang_bohr  # atomic units : Bohr
+        y[iat] = np.float64(line[2]) * ang_bohr
+        z[iat] = np.float64(line[3]) * ang_bohr
      
      igf.close()
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
 def read_velocs(init_vel, natoms, vel_file_path):  
-    vx = np.zeros(natoms,dtype=np.float128)  
-    vy = np.zeros(natoms,dtype=np.float128)  
-    vz = np.zeros(natoms,dtype=np.float128)  
+    vx = np.zeros(natoms,dtype=np.float64)  
+    vy = np.zeros(natoms,dtype=np.float64)  
+    vz = np.zeros(natoms,dtype=np.float64)  
     if init_vel:
         with open(vel_file_path,'r') as ivf:  
             atoms = ivf.readline()  # first line is number of atoms
@@ -108,18 +108,6 @@ def read_velocs(init_vel, natoms, vel_file_path):
 # Capitalizace first letter, lower second - avoid problems with different name for atoms
 def capitalize_2th(s):
     return s[:1].capitalize() + s[1:].lower()
-
-def create_output_file(files):
-
-    try:
-        for x in files:
-          cmd = "touch {}".format(x)
-          os.system(cmd)
-    except OSError:
-       error_exit(3)
-    except WindowsError:
-       error_exit(3)
-    return()   
 
 def init_forces_energs(natoms,nstates):
 # Initialize empty forces array

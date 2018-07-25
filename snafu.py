@@ -39,8 +39,7 @@ try:
     from masses import assign_masses
     from errors import error_exit
     from prints import (
-        print_positions, print_velocities,
-        print_snafu, print_energies
+        print_positions, print_velocities,print_snafu
     )
     from propagates import (
         calc_forces, calc_energies,
@@ -81,16 +80,17 @@ liner = ("_") * 70
 
 if __name__ == "__main__":
 
-    print("Simulation started at: {}\n".format(startTime),
-          "Python base: {}".format(sys.base_exec_prefix),
-          "version: {}\n".format(sys.version[:5]),
-          "System platform: {}\n".format(sys.platform),
-          "Running executable: {}\n".format(sys.path[-1])
+    print("Simulation started at: {}".format(startTime),
+          "\nPython base: {}".format(sys.base_exec_prefix),
+          "version: {}".format(sys.version[:5]),
+          "\nSystem platform: {}".format(sys.platform),
+          "\nRunning executable: {}".format(sys.path[-1])
           )
     # local runs dont create HOST env var, qsub SGE system does
     try:
-        print("Working directory: {} on {}.".format(cwd,
-                                                    os.environ['HOSTNAME']))
+        print("Working directory: {}".format(cwd),
+              "on {}.".format(os.environ['HOSTNAME'])
+             )
     except KeyError:
         print("Working directory: {}".format(cwd))
     print(liner)
@@ -133,7 +133,7 @@ if __name__ == "__main__":
     x, y, z = com_removal(x, y, z, am)
 
     # CALC INITIAL ENERGIES AND GRADIENTS
-    print("Step      Time/fs     Energy change from start/eV  Hoppping")
+    print("Step      Time/fs      E-E_initial/eV      Hoppping")
 
     fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
                                         x, y, z, fx, fy, fz, pot_eners,
@@ -162,8 +162,9 @@ if __name__ == "__main__":
         fy = np.copy(fy_new)
         fz = np.copy(fz_new)
 
+        shift_eners
         # if hopping == "1": vel_adjustment
-
+        hopping(pot_eners)
         hop = "No"
         time = step * dt * au_fs
         Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am,
@@ -171,7 +172,7 @@ if __name__ == "__main__":
                                              vx, vy, vz, Etot_init)
 
         print(" {:<3d} {:>10.2f} {:>20.4e}".format(step, time, dE * au_eV),
-              " {:>20s}".format(hop))
+              " {:>15s}".format(hop))
 
         # save positions and velocities
         print_positions(step, time, natoms, at_names, x, y, z)
