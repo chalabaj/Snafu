@@ -28,22 +28,25 @@ def file_check(cwd):
     # absolute path to the files  
     input_file_path = os.path.join(cwd,input_file)
     geom_file_path  = os.path.join(cwd,geom_file)
-    veloc_file_path = os.path.join(cwd,veloc_file)
+    vel_file_path = os.path.join(cwd,veloc_file)
     if (not os.path.isfile(input_file_path)):
          error_exit(0)
     if (not os.path.isfile(geom_file_path)):
          error_exit(1)
-    if(not os.path.isfile(veloc_file_path)):
-         print("No initial velocities, continue with zero initial velocities.")
-         veloc_init = 0
-    else: veloc_init = 1
+    if (not os.path.isfile(vel_file_path)):
+        print("No initial velocities.")
+        init_vel = 0
+    else:
+        print("Initial velocities read from {}".format(veloc_file)) 
+        init_vel = 1
     
-    return(input_file_path, geom_file_path, veloc_file_path, veloc_init)
+    return(input_file_path, geom_file_path, vel_file_path, init_vel)
     
 def read_input(cwd,input_file_path):
     
     # Read parameter from input.in file
-    cfg = configparser.ConfigParser(delimiters=('=', ':'),comment_prefixes=('#', ';'))
+    cfg = configparser.ConfigParser(delimiters=('=', ':'),
+        comment_prefixes=('#', ';'))
     cfg.read(input_file_path)       # Read file
     par=dict(cfg.items("Settings",raw=False))
     
@@ -84,21 +87,22 @@ def read_geoms(natoms,geom_file_path):
      igf.close()
      return(at_names,x,y,z)
  # READ INITIAL VELOCITIES:
-def read_velocs(veloc_init,natoms,veloc_file_path):  
+def read_velocs(init_vel, natoms, vel_file_path):  
     vx = np.zeros(natoms,dtype=np.float128)  
     vy = np.zeros(natoms,dtype=np.float128)  
     vz = np.zeros(natoms,dtype=np.float128)  
-    if veloc_init == 1:
-     with open(veloc_file_path,'r') as ivf:  # ivf input veloc file 
-       atoms = ivf.readline()  # first line in geom file is number of atoms
-       if not (int(atoms) == natoms):  error_exit(2)                         
-       garbage = ivf.readline()  # comment in file
-       for iat in range(0,natoms):
-           line = ivf.readline().split()
-           vx[iat] = float(line[1])
-           vy[iat] = float(line[2])
-           vz[iat] = float(line[3])
-     ivf.close()
+    if init_vel:
+        with open(vel_file_path,'r') as ivf:  
+            atoms = ivf.readline()  # first line is number of atoms
+            if not (int(atoms) == natoms):  
+                error_exit(2)                         
+            garbage = ivf.readline()  # second comment line
+            for iat in range(0,natoms):
+                line = ivf.readline().split()
+                vx[iat] = float(line[1])
+                vy[iat] = float(line[2])
+                vz[iat] = float(line[3])
+        ivf.close()
     return(vx,vy,vz)
 
 # Capitalizace first letter, lower second - avoid problems with different name for atoms
@@ -117,7 +121,7 @@ def create_output_file(files):
        error_exit(3)
     return()   
 
-def init_forces_potenergs(natoms,nstates):
+def init_forces_energs(natoms,nstates):
 # Initialize empty forces array
     
     #f(t)
