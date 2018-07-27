@@ -1,4 +1,6 @@
 
+import numpy as np
+
 ang_bohr = 1.889726132873e0     # agstroms to bohrs
 
 def print_positions(step,time,natoms, at_names, x, y, z):
@@ -29,6 +31,7 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
     return()
  
 def print_energies(step,time,Ekin,Epot,Etot,dE):
+    
     with open ("energies.dat", "a") as ef:
         if step == 0:
             headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
@@ -39,6 +42,7 @@ def print_energies(step,time,Ekin,Epot,Etot,dE):
     return()  
     
 def print_pes(time, step, pot_eners):
+    
     with open ("PES.dat", "a") as pesf:
         if step == 0:
             headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"

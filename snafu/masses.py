@@ -74,5 +74,4 @@ def assign_masses(at_names):
     
     for iat in range(0,len(at_names)):
        mass[iat] = (atomic_masses[at_names[iat]]) 
-    
     return(mass)

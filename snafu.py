@@ -34,20 +34,21 @@ try:
     sys.path.append(SNAFU_EXE)
     from inits import (
         file_check, read_input, read_geoms, read_velocs,
-        create_output_file, com_removal, init_forces_energs
+        com_removal, init_forces, init_energies
     )
     from masses import assign_masses
     from errors import error_exit
     from prints import (
-        print_positions, print_velocities,print_snafu
+        print_positions, print_velocities, print_snafu
     )
     from propagates import (
         calc_forces, calc_energies,
         update_velocities, update_positions
     )
 except ImportError as ime:
-    if ime.name is None:
-        print("Import in some of the modules in snadu dir failed")
+    if ime.name is None:  # module could have been removed or module file renamed
+        print("Import in some of the modules ({}) in snafu dir failed. Exiting...".format(ime.name))
+        exit(1)
     else:
         print("Module {} not found.".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
@@ -69,11 +70,6 @@ au_eV = 27.21139
 amu = 1822.888484264545e0    # atomic mass unit me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
-# RUN VARIABLES
-step = 0
-dE = 0.0  # energy change since initial energies
-Etot_init = 0.0  # setting variable , total energy at the beginning
-time = 0.0
 liner = ("_") * 70
 
 # ---------------INIT---------------------------------------------------------
@@ -111,12 +107,14 @@ if __name__ == "__main__":
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
     # (1D array)
 
-    at_names, x, y, z = read_geoms(natoms, geom_file_path)
+    at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
+                                                        geom_file_path)
 
     vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 
-    fx, fy, fz, fx_new, fy_new, fz_new, pot_eners = init_forces_energs(
-        natoms, nstates)
+    fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
+
+    pot_eners, pot_eners_array = init_energies(natoms, nstates)
 
     # OBTAIN ATOMIC MASSES:
     masses = assign_masses(at_names)
@@ -133,27 +131,34 @@ if __name__ == "__main__":
     x, y, z = com_removal(x, y, z, am)
 
     # CALC INITIAL ENERGIES AND GRADIENTS
-    print("Step      Time/fs      E-E_initial/eV      Hoppping")
+    step = 0
 
     fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
                                         x, y, z, fx, fy, fz, pot_eners,
                                         ab_initio_file_path)
-
+                                        
+    dE = 0.0  # energy change since initial energies
+    Etot_init = 0.0  # setting variable , total energy at the beginning
+    time = 0.0
     Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state,
                                          pot_eners, vx, vy, vz, Etot_init)
     Etot_init = Etot
-
+    
+    print("Step      Time/fs      E-E_initial/eV      Hoppping")
     # MAIN LOOP
     for step in range(1, maxsteps + 1):
 
-        x, y, z = update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz)
+        x_new, y_new, z_new = update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz)
 
         fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, state,
-                                                        nstates, x, y, z,
-                                                        fx_new, fy_new, fz_new,
-                                                        pot_eners,
+                                                        nstates, x_new, y_new,
+                                                        z_new, fx_new, fy_new,
+                                                        fz_new, pot_eners,
                                                         ab_initio_file_path)
-
+                                                        
+        # landau zener before updating position since position might be rejected
+        # lz_hopp(pot_eners, pot_eners_array) # no hop x_new
+        
         vx, vy, vz = update_velocities(dt, am, vx, vy, vz, fx, fy, fz,
                                        fx_new, fy_new, fz_new)
 
@@ -161,10 +166,13 @@ if __name__ == "__main__":
         fx = np.copy(fx_new)
         fy = np.copy(fy_new)
         fz = np.copy(fz_new)
+        x = np.copy(x_new)
+        y = np.copy(y_new)
+        z = np.copy(z_new)
 
-        shift_eners
+        #shift_eners
         # if hopping == "1": vel_adjustment
-        hopping(pot_eners)
+        #hopping(pot_eners)
         hop = "No"
         time = step * dt * au_fs
         Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am,

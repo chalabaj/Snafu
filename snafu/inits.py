@@ -11,8 +11,12 @@ import sys
 import os
 import configparser
 import numpy as np
-from errors import error_exit
 
+try:
+    from errors import error_exit
+except ImportError as ime:
+    print("Module {} not found.".format(ime.name))
+    exit(1)
 
 au_fs = 0.02418884326505e0      #atomic units to femtosecs
 au_eV = 27.21139
@@ -71,6 +75,10 @@ def read_geoms(natoms,geom_file_path):
     x = np.zeros(natoms,dtype=np.float64)  
     y = np.zeros(natoms,dtype=np.float64)  
     z = np.zeros(natoms,dtype=np.float64)  
+    
+    x_new = np.zeros(natoms,dtype=np.float64)  
+    y_new = np.zeros(natoms,dtype=np.float64)  
+    z_new = np.zeros(natoms,dtype=np.float64)  
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -85,7 +93,7 @@ def read_geoms(natoms,geom_file_path):
         z[iat] = np.float64(line[3]) * ang_bohr
      
      igf.close()
-     return(at_names,x,y,z)
+     return(at_names, x, y, z, x_new, y_new, z_new)
  # READ INITIAL VELOCITIES:
 def read_velocs(init_vel, natoms, vel_file_path):  
     vx = np.zeros(natoms,dtype=np.float64)  
@@ -105,24 +113,35 @@ def read_velocs(init_vel, natoms, vel_file_path):
         ivf.close()
     return(vx,vy,vz)
 
-# Capitalizace first letter, lower second - avoid problems with different name for atoms
+    
 def capitalize_2th(s):
+    # Capitalizace first letter, lower second -
+    # avoid problems with different name for atoms in ab initio codes
     return s[:1].capitalize() + s[1:].lower()
 
-def init_forces_energs(natoms,nstates):
-# Initialize empty forces array
+def init_forces(natoms,nstates):
+    # Initialize empty forces array
     
     #f(t)
     fx = np.zeros(natoms,dtype=np.float64)  
     fy = np.zeros(natoms,dtype=np.float64)   
     fz = np.zeros(natoms,dtype=np.float64)  
+    
     #f_new(t+dt)
     fx_new = np.zeros(natoms,dtype=np.float64)    
     fy_new = np.zeros(natoms,dtype=np.float64)  
     fz_new = np.zeros(natoms,dtype=np.float64)  
-    pot_eners = [0.00000000 ] * nstates # potential energy from ab initio calculations
+        
+    return(fx, fy, fz, fx_new, fy_new, fz_new)
     
-    return(fx, fy, fz, fx_new, fy_new, fz_new, pot_eners)
+def init_energies(natoms,nstates):
+    # Initialize empty energies array
+    # valculated potential energy from ab initio calculations
+    pot_eners = np.zeros(nstates,dtype=np.float64) 
+    # 3 lines of NSTATES energies for minimum energy search
+    pot_eners_array = np.zeros((3, nstates),dtype=np.float64) 
+    
+    return(pot_eners, pot_eners_array)
     
 def com_removal(x,y,z,am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0

@@ -1,6 +1,7 @@
 """
 Velocity verlet integrator scheme
 """
+
 import math
 import sys
 import os
@@ -9,9 +10,14 @@ import time
 import subprocess
 import re
 import numpy as np
-from errors import error_exit
-from prints import print_energies, print_pes
 
+try:
+    from errors import error_exit
+    from prints import print_energies, print_pes
+except ImportError as ime:
+    print("Module {} not found.".format(ime.name))
+    exit(1)
+        
 # CONSTANTS
 au_fs = 0.02418884326505    #atomic units to femtosecs
 au_eV = 27.21139
