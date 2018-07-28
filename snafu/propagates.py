@@ -67,15 +67,21 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
         error_exit(4)
 
     # COLLECT DATA (TODO: diabatization - needs more forces)
+    if  re.search(r'g09',ab_initio_file_path):
+            grad = 1   # gaus exports forces -1
+    elif re.search(r'molpro',ab_initio_file_path):
+            grad = -1  #molpro export gradient
     with open ("gradients.dat", "r") as gef:
+           
         for st in range(0, nstates):
             pot_eners[st] = float(gef.readline()) 
         for iat in range(0, natoms):
             line = gef.readline().split(" ")
             # FX FY FZ, gradient to forces 
-            fx[iat] = -1 * np.float64(line[0])
-            fy[iat] = -1 * np.float64(line[1])
-            fz[iat] = -1 * np.float64(line[2])    
+            # TO DO Gaussian has forces, molpro gradients
+            fx[iat] = grad * np.float64(line[0])
+            fy[iat] = grad * np.float64(line[1])
+            fz[iat] = grad * np.float64(line[2])    
     gef.closed
     return(fx , fy, fz, pot_eners)
 

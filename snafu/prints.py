@@ -36,7 +36,7 @@ def print_energies(step,time,Ekin,Epot,Etot,dE):
         if step == 0:
             headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
             ef.write(str(headline))
-        line = "{:10.10f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
+        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
         ef.write(str(line))
     ef.closed
     return()  

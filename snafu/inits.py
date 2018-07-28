@@ -123,14 +123,14 @@ def init_forces(natoms,nstates):
     # Initialize empty forces array
     
     #f(t)
-    fx = np.zeros(natoms,dtype=np.float64)  
-    fy = np.zeros(natoms,dtype=np.float64)   
-    fz = np.zeros(natoms,dtype=np.float64)  
+    fx = np.zeros(natoms, dtype=np.float64)  
+    fy = np.zeros(natoms, dtype=np.float64)   
+    fz = np.zeros(natoms, dtype=np.float64)  
     
     #f_new(t+dt)
-    fx_new = np.zeros(natoms,dtype=np.float64)    
-    fy_new = np.zeros(natoms,dtype=np.float64)  
-    fz_new = np.zeros(natoms,dtype=np.float64)  
+    fx_new = np.zeros(natoms, dtype=np.float64)    
+    fy_new = np.zeros(natoms, dtype=np.float64)  
+    fz_new = np.zeros(natoms, dtype=np.float64)  
         
     return(fx, fy, fz, fx_new, fy_new, fz_new)
     

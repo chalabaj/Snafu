@@ -1,9 +1,9 @@
 [Settings]
 natoms  = 3               # number of atoms in system
-nstates = 2               # number of electronic states
+nstates = 1               # number of electronic states
 init_state = 0            # initial electronic state
 timestep = 4              # in atomic unit au = 0.024 fs 
-maxsteps = 20        # total number of steps
-method  = adiabatic       # adiabatic / diabatization scheme
-abinitio  = molpro-casscf        # where to take gradients (g09-tddft, molpro-casscf...), file should be e.g. molpro.sh, g09-tddft
+maxsteps = 20             # total number of steps
+method  = lz-adibatic     # lz-adibatic (Belyaev)/ lz-diabatic scheme
+abinitio  = g09-dft        # where to take gradients,file has to start  g09 or molpro to distinguish between forces and gradients
 restart = 0
