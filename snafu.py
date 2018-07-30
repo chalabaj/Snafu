@@ -165,7 +165,7 @@ if __name__ == "__main__":
         # lz_hopp(pot_eners, pot_eners_array) # no hop x_new
         #if method == "lz-adibatic":
             #hop, pot_eners_array = calc_lz_hopp(method, state, pot_eners,
-             #                                   pot_eners_array, Ekin)
+             #                                   pot_eners_array, Ekin, dT)
 
 
         # copied list instead of just referencing | or slice it
