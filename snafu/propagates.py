@@ -19,10 +19,10 @@ except ImportError as ime:
     exit(1)
         
 # CONSTANTS
-au_fs = 0.02418884326505    #atomic units to femtosecs
+au_fs = 0.02418884326505e0   # atomic units to femtosecs
 au_eV = 27.21139
-amu   = 1822.888484264545   # atomic mass unit  me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873   # agstroms to bohrs
+amu = 1822.888484264545e0    # atomic mass unit me = 1 AMU*atomic weight
+ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
 def update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz):
     for iat in range(0,len(am)): 
