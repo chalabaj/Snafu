@@ -24,8 +24,11 @@ def calc_lz_hopp(method, state, pot_eners,
     
     
     max_prob = (np.argmax(prob, axis = 0)[3]) # find row with max probaBILITY 
-    if prob[max_prob] > random.random()
-        if prob[2] < Ekin   # TODO depend if instateou <> outstate???
+    outstate = prob[max_prob][1]
+    
+    if prob[max_prob][3] > random.random()
+      dEpot = pot_eners_array[2][outstate] - pot_eners_array[2][instate]
+        if prob[max_prob][2] < Ekin  
             hop = True
      
     if conservation
