@@ -24,7 +24,8 @@ modules_files = [
     'errors.py',
     'prints.py',
     'propagates.py',
-    'landauzener.py'
+    'landauzener.py',
+    'constants.py'
 ]
 
 # if some of the imports dont work in other modules
@@ -49,6 +50,7 @@ try:
     from landauzener import (
         calc_lz_hopp
     )
+    from constants import *
 except ImportError as ime:
     if ime.name is None:  # module could have been removed or module file renamed
         print("Import in some of the modules ({}) in snafu dir failed. Exiting...".format(ime.name))
@@ -68,11 +70,7 @@ else:
     print("All modules loaded succesfully. Starting...\n \n")
     print_snafu()
 
-# CONVERSION CONSTANTS
-au_fs = 0.02418884326505e0   # atomic units to femtosecs
-au_eV = 27.21139
-amu = 1822.888484264545e0    # atomic mass unit me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873e0  # agstroms to bohrs
+
 
 liner = ("_") * 70
 
@@ -118,12 +116,12 @@ if __name__ == "__main__":
 
     fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
 
-    pot_eners, pot_eners_array = init_energies(natoms, nstates)
-
+    pot_eners = init_energies(nstates)
+    
     # OBTAIN ATOMIC MASSES:
     masses = assign_masses(at_names)
-    am = [mm * amu for mm in masses]  # atomic mass units conversion
-    print("At  X     Y     Z   MASS:")
+    am = [mm * AMU for mm in masses]  # atomic mass units conversion
+    print("At    X      Y      Z    MASS:")
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], x[iat])),
               " %3.6f %2.6f %2.6f" % (y[iat], z[iat], masses[iat]))
@@ -140,7 +138,7 @@ if __name__ == "__main__":
     fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
                                         x, y, z, fx, fy, fz, pot_eners,
                                         ab_initio_file_path)
-                                        
+    pot_eners_array = np.copy(pot_eners)                                    
     dE = 0.0  # energy change since initial energies
     Etot_init = 0.0  # setting variable , total energy at the beginning
     time = 0.0
@@ -151,8 +149,8 @@ if __name__ == "__main__":
     print("Step      Time/fs      E-E_initial/eV      Hoppping")
     # MAIN LOOP
     for step in range(1, maxsteps + 1):
-        hop = False 
         
+            
         x_new, y_new, z_new = update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz)
 
         fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, state,
@@ -160,13 +158,20 @@ if __name__ == "__main__":
                                                         z_new, fx_new, fy_new,
                                                         fz_new, pot_eners,
                                                         ab_initio_file_path)
-                                                        
-        # landau zener before updating position since position might be rejected
-        # lz_hopp(pot_eners, pot_eners_array) # no hop x_new
-        #if method == "lz-adibatic":
-            #hop, pot_eners_array = calc_lz_hopp(method, state, pot_eners,
-             #                                   pot_eners_array, Ekin, dT)
-
+        
+        if step >= 2:
+            hop, outstate, pot_eners_array = calc_lz_hopp(method, state, pot_eners,
+                                                          pot_eners_array, Ekin, dt)
+            if hop:
+               state = outstate
+               rescale vel
+               cacl f for old R in new state
+               get new R
+               calc F for new T
+               vstacka pot eners               
+                
+        else:
+            pot_eners_array = np.append(pot_eners_array, pot_eners, axis = 0)
 
         # copied list instead of just referencing | or slice it
         #if hop: 
@@ -185,12 +190,13 @@ if __name__ == "__main__":
         # if hopping == "1": vel_adjustment
         #hopping(pot_eners)
         
-        time = step * dt * au_fs
+        time = step * dt * AU_FS
+        # Should be called for previous step 
         Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am,
                                              state, pot_eners,
                                              vx, vy, vz, Etot_init)
 
-        print(" {:<4d} {:>10.2f} {:>20.4e}".format(step, time, dE * au_eV),
+        print(" {:<4d} {:>10.2f} {:>20.4e}".format(step, time, dE * AU_EV),
               " {:>15s}".format(str(hop)))
 
         # save positions and velocities

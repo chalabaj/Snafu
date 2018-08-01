@@ -134,14 +134,10 @@ def init_forces(natoms,nstates):
         
     return(fx, fy, fz, fx_new, fy_new, fz_new)
     
-def init_energies(natoms,nstates):
-    # Initialize empty energies array
-    # valculated potential energy from ab initio calculations
-    pot_eners = np.zeros(nstates,dtype=np.float64) 
-    # 3 lines of NSTATES energies for minimum energy search
-    pot_eners_array = np.zeros((3, nstates),dtype=np.float64) 
-    
-    return(pot_eners, pot_eners_array)
+def init_energies(nstates):
+    # Initialize empty potential energies array
+    pot_eners = np.zeros(nstates,dtype=np.float64)     
+    return(pot_eners)
     
 def com_removal(x,y,z,am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0

@@ -14,6 +14,7 @@ import numpy as np
 try:
     from errors import error_exit
     from prints import print_energies, print_pes
+    from constants import *
 except ImportError as ime:
     print("Module {} not found.".format(ime.name))
     exit(1)
@@ -50,7 +51,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:
          for iat in range(0,len(x)):
-             line = ("".join("%2s %2.16e %2.16e %2.16e\n" % (at_names[iat],x[iat]/ang_bohr,y[iat]/ang_bohr,z[iat]/ang_bohr)))
+             line = ("".join("%2s %2.16e %2.16e %2.16e\n" % (at_names[iat],x[iat]/ANG_BOHR,y[iat]/ANG_BOHR,z[iat]/ANG_BOHR)))
              agf.write(line)
     agf.closed
 
@@ -95,7 +96,7 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
         Etot = Ekin + Epot
         dE = (Etot - Etot_init) 
 
-    print_energies(step, time, Ekin, Epot, Etot, dE * au_eV)
+    print_energies(step, time, Ekin, Epot, Etot, dE * AU_EV)
     print_pes(time, step, pot_eners)
 
     return(Ekin,Epot,Etot,dE)
