@@ -34,16 +34,21 @@ def calc_lz_hopp(method, state, pot_eners,
         if dEpot < Ekin: 
             hop = True
             print("dEpot {}  < Ekin: {} , Hop = {}, Instate: {}, Outstate: {}".format(dEpot, Ekin, hop, instate, outstate))
-            pot_eners_array = np.delete(pot_eners_array, obj = -1, axis = 0) # hop to another PES, remove appended energies from last propagation
+            pot_eners_array = np.delete(pot_eners_array, obj = -1, axis = 0) # hop to another PES, remove appended energies from last propagation comment for test
             
     if not hop:
         pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
         outstate = instate
-        
+    # uncoment for test pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)    
     return(hop, outstate, pot_eners_array)
    
 def calc_prob(instate, outstate, pot_eners_array, dt):
-
+    """
+    PHYSICAL REVIEW A 84, 014701 (2011)
+    Nonadiabatic nuclear dynamics of atomic 
+    collisions based on branching classical trajectories
+    Andrey K. Belyaev1,2 and Oleg V. Lebedev1
+    """
     minima = False
     # three point minima
     Z = [ (abs(pot_eners_array[step][instate] - pot_eners_array[step][outstate])) for step in range(0,3)]  # 1: T-DT, 2: T, 3: T+DT
@@ -51,14 +56,13 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
     print("Z[t-dt]: {}\nZ[t]: {}\nZ[t+dt]: {}".format(Z[0],Z[1],Z[2]))
     if Z[0] > Z[1] and Z[1] < Z[2]:
         minima = True      
-        print("Calculating hop prob. between {} - {} state with dE/a.u. = {} ".format(instate, outstate, Z[1]))
+        print("Z({}->{} minimum -  with dE/a.u. = {} ".format(instate, outstate, Z[1]))
         sec_der = ((Z[2] - 2 * Z[1] + Z[0]) / (dt ** 2))
-        print("sec_derivative: {}".format(sec_der))
+        print("Second derivative at minima: {}, Z**3: {}".format(sec_der, Z[1]**3))
         prob = math.exp(-math.pi/(2 * HBAR_AU) * (math.sqrt(Z[1]**3 / sec_der) ))
         if prob > 1:
-            print("prob larger than 1, somthing wrong")
-            exit(1)
-        print(prob)
+            error_exit(6)
+        print("Hopping probability: {}".format(prob))
     else:
         prob = 0.0
     return([instate, outstate, Z[1], prob])

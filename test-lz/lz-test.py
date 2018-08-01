@@ -36,7 +36,9 @@ pot_eners = np.zeros(nstates,dtype=np.float64)
 #print(pot_eners)
 step = 0
 nhops = 0
+os.system("rm hopping.dat")
 with open("PESs.dat",'r') as gf:  
+      
      gf.readline()  # header
      state = init_state
      for l in gf:
@@ -53,11 +55,21 @@ with open("PESs.dat",'r') as gf:
              pot_eners_array = np.vstack((pot_eners_array, pot_eners))
              #print(pot_eners_array)
          else:
-             hop, outstate, pot_eners_array = calc_lz_hopp("l",state ,pot_eners,pot_eners_array, Ekin, dt)
-             print(step, outstate)
+             hop, outstate, pot_eners_array = calc_lz_hopp("l",state ,pot_eners,pot_eners_array, Ekin, dt)     
+             
              if  hop:
                  state = outstate
                  nhops += 1
-     print("Number of hops: {}".format(nhops))
              
+             with open("hopping.dat",'a') as of: 
+                 #line = ("{} {}".format(step, state) )
+
+                 line = ("{} {:10.10f}".format(step, 0.1*state-901)
+                         + ' '.join('{:20.10f}'.format(pot_eners_array[1][st]) 
+                         for st in range(0, nstates))
+                         + "\n")
+                 of.write(line)
+             of.close()
+     print("Number of hops: {}".format(nhops))
+     
 gf.close()
