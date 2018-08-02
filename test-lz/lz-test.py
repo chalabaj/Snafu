@@ -28,16 +28,19 @@ else:
     print("All modules loaded succesfully. Starting...\n \n")
 
 step = 0
-nstates = 7
-init_state = 0
-Ekin = 0.05   #ua
-dt = 4
+nstates = 8
+init_state = 2
+Ekin = 0.1   #ua
+dt = 1
 pot_eners = np.zeros(nstates,dtype=np.float64) 
 #print(pot_eners)
 step = 0
 nhops = 0
-os.system("rm hopping.dat")
-with open("PESs.dat",'r') as gf:  
+inputfile = sys.argv[1]
+outfile = "{}_hopping-initstate_{}-{}auEkin_dt{}.dat".format(inputfile,init_state,Ekin,dt)
+os.system("rm {}".format(outfile))
+baseline = 196.9
+with open(inputfile,'r') as gf:  
       
      gf.readline()  # header
      state = init_state
@@ -55,17 +58,21 @@ with open("PESs.dat",'r') as gf:
              pot_eners_array = np.vstack((pot_eners_array, pot_eners))
              #print(pot_eners_array)
          else:
-             hop, outstate, pot_eners_array = calc_lz_hopp("l",state ,pot_eners,pot_eners_array, Ekin, dt)     
+             hop, outstate, pot_eners_array, prob = calc_lz_hopp("l",
+                                                                 state ,
+                                                                 pot_eners,
+                                                                 pot_eners_array,
+                                                                 Ekin, dt)     
              
              if  hop:
                  state = outstate
                  nhops += 1
              
-             with open("hopping.dat",'a') as of: 
+             with open(outfile,'a') as of: 
                  #line = ("{} {}".format(step, state) )
 
-                 line = ("{} {:10.10f}".format(step, 0.1*state-901)
-                         + ' '.join('{:20.10f}'.format(pot_eners_array[1][st]) 
+                 line = ("{}  {} {} ".format(step, 0.1*state-baseline, prob-baseline)
+                         + ' '.join('{:5.5f}'.format(pot_eners_array[1][st]) 
                          for st in range(0, nstates))
                          + "\n")
                  of.write(line)

@@ -8,7 +8,7 @@ import re
 import numpy as np
 from datetime import datetime
 startTime = datetime.now()
-np.set_printoptions(precision=8)  # for print and stability testing
+
 
 # ENVIRONMENT LAYER & LOCAL IMPORT
 # find local modules
@@ -28,8 +28,7 @@ modules_files = [
     'constants.py'
 ]
 
-# if some of the imports dont work in other modules
-# ImportError will be raised with None name
+# if some of the imports fail in modules ImportError rais None name
 try:
     SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
@@ -52,8 +51,10 @@ try:
     )
     from constants import *
 except ImportError as ime:
-    if ime.name is None:  # module could have been removed or module file renamed
-        print("Import in some of the modules ({}) in snafu dir failed. Exiting...".format(ime.name))
+    # module could have been removed or module file renamed
+    if ime.name is None:  
+        print("Import in some of the modules ({}),
+              "in snafu dir failed. Exiting...".format(ime.name))
         exit(1)
     else:
         print("Module {} not found.".format(ime.name),
@@ -69,7 +70,6 @@ except KeyError as ke:
 else:
     print("All modules loaded succesfully. Starting...\n \n")
     print_snafu()
-
 
 
 liner = ("_") * 70
