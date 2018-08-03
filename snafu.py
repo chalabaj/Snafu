@@ -53,8 +53,8 @@ try:
 except ImportError as ime:
     # module could have been removed or module file renamed
     if ime.name is None:  
-        print("Import in some of the modules ({}),
-              "in snafu dir failed. Exiting...".format(ime.name))
+        print("Import in some of the modules ({})".format(ime.name),
+              "in snafu dir failed. Exiting...")
         exit(1)
     else:
         print("Module {} not found.".format(ime.name),
@@ -188,12 +188,13 @@ if __name__ == "__main__":
                fx_new, fy_new, fz_new, pot_eners = calc_forces(
                    step, at_names, state, nstates, x_new, y_new, z_new,
                    fx_new, fy_new,fz_new, pot_eners, ab_initio_file_path)
-                               
-        
-        pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
-        pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+
+              pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
+              pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
                
-        #else:       
+        else: 
+            pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+            
         vx, vy, vz = update_velocities(dt, am, vx, vy, vz, fx, fy, fz,
                                        fx_new, fy_new, fz_new)
         fx = np.copy(fx_new)
