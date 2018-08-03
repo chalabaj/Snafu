@@ -44,7 +44,7 @@ try:
     )
     from propagates import (
         calc_forces, calc_energies,
-        update_velocities, update_positions
+        update_velocities, update_positions, rescale_velocities
     )
     from landauzener import (
         calc_hopp
@@ -189,6 +189,8 @@ if __name__ == "__main__":
                    step, at_names, state, nstates, x_new, y_new, z_new,
                    fx_new, fy_new,fz_new, pot_eners, ab_initio_file_path)
                                
+        
+        pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
         pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
                
         #else:       
