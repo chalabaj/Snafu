@@ -47,7 +47,7 @@ try:
         update_velocities, update_positions
     )
     from landauzener import (
-        calc_lz_hopp
+        calc_hopp
     )
     from constants import *
 except ImportError as ime:
@@ -151,34 +151,49 @@ if __name__ == "__main__":
     for step in range(1, maxsteps + 1):
         
             
-        x_new, y_new, z_new = update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz)
+        x_new, y_new, z_new = update_positions(dt, am, 
+                                               x, y, z, 
+                                               vx, vy, vz, 
+                                               fx, fy, fz)
 
-        fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, state,
-                                                        nstates, x_new, y_new,
-                                                        z_new, fx_new, fy_new,
-                                                        fz_new, pot_eners,
+        fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, 
+                                                        state, nstates, 
+                                                        x_new, y_new, z_new,
+                                                        fx_new, fy_new,fz_new,
+                                                        pot_eners,
                                                         ab_initio_file_path)
         
         if step >= 2:
-            hop, outstate, pot_eners_array = calc_lz_hopp(method, state, pot_eners,
-                                                          pot_eners_array, Ekin, dt)
+            hop, outstate, v_scal_fac, prob = calc_hopp(method, state, 
+                                                        pot_eners, 
+                                                        pot_eners_array, 
+                                                        Ekin, dt)
+        
             if hop:
                state = outstate
-               rescale vel
-               cacl f for old R in new state
-               get new R
-               calc F for new T
-               vstacka pot eners               
-                
-        else:
-            pot_eners_array = np.append(pot_eners_array, pot_eners, axis = 0)
+               
+               #cacl f for old R but in new state
+               fx_new, fy_new, fz_new, pot_eners = calc_forces(
+                   step, at_names, state, nstates, x, y, z,
+                   fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path)
 
-        # copied list instead of just referencing | or slice it
-        #if hop: 
-            #adjust veloc
+               vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac) 
+               # hop, scaled vel, forces on new PES
+               
+               # now finish the propagation step
+               x_new, y_new, z_new = update_positions(dt, am, 
+                                                      x, y, z, 
+                                                      vx, vy, vz, 
+                                                      fx, fy, fz)
+               fx_new, fy_new, fz_new, pot_eners = calc_forces(
+                   step, at_names, state, nstates, x_new, y_new, z_new,
+                   fx_new, fy_new,fz_new, pot_eners, ab_initio_file_path)
+                               
+        pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+               
         #else:       
         vx, vy, vz = update_velocities(dt, am, vx, vy, vz, fx, fy, fz,
-                                           fx_new, fy_new, fz_new)
+                                       fx_new, fy_new, fz_new)
         fx = np.copy(fx_new)
         fy = np.copy(fy_new)
         fz = np.copy(fz_new)

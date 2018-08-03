@@ -11,9 +11,14 @@ except ImportError as ime:
               " in snafu dir failed. Exiting...".format(ime.name))
         exit(1)
  
-def calc_lz_hopp(method, state, pot_eners,
-                 pot_eners_array, Ekin, dt):
-   
+def calc_hopp(method, state, pot_eners,
+              pot_eners_array, Ekin, dt):
+    """
+    Velocity adjustment/ hopping prob.:
+    Landau–Zener type surface hopping algorithms
+    Andrey K. Belyaev, Caroline Lasser, and Giulio Trigila
+    The Journal of Chemical Physics 140, 224108 (2014); doi:10.1063/1.4882073
+    """
     hop = False             
     instate = state
 
@@ -22,35 +27,37 @@ def calc_lz_hopp(method, state, pot_eners,
     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  
     print("Pot_eners_array: {}".format(pot_eners_array))
 
-    prob = [calc_prob(instate, outstate, pot_eners_array, dt) 
-            for outstate in range(0, len(pot_eners)) if outstate != instate ]
+    probs = [calc_prob(instate, outstate, pot_eners_array, dt) 
+             for outstate in range(0, len(pot_eners)) if outstate != instate]
 
-    max_prob_row = (np.argmax(prob, axis = 0)[3])  # row with max probaBILITY 
-    max_prob = prob[max_prob_row][3]
+    max_prob_row = (np.argmax(probs, axis = 0)[3])  # row with max probaBILITY 
+    max_prob = probs[max_prob_row][3]
     theta = random.random()
-    print("Max probability: {}".format(prob[max_prob_row][3]))
+    print("Max probability: {}".format(probs[max_prob_row][3]))
     
-    if prob[max_prob_row][3] > theta:
-        outstate = prob[max_prob_row][1]
-
+    if max_prob > theta:
+        outstate = probs[max_prob_row][1]
         dEpot = pot_eners_array[2][outstate] - pot_eners_array[2][instate]
-
+        # energy conservation criteria
         if dEpot < Ekin: 
             hop = True
             print("dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),
                   "Hop = {},".format(hop),
                   "Outstate: {}, Instate: {}".format(instate, outstate),       
-                  "Probability: {}".format(prob[max_prob_row][3]),
+                  "Probability: {}".format(probs[max_prob_row][3]),
                   "\nRandon number: {}".format(theta))
-            pot_eners_array = np.delete(pot_eners_array, obj = -1, axis = 0) 
-            # hop to another PES, remove appended energies from last propagation, comment for test
+            # comment for test: hop --> remove appended energies
             
+            if outstate > instate:
+                v_scaling_fac = math.sqrt(1-2*abs(dEpot)/Ekin)  # lower upper
+            else:
+                v_scaling_fac = math.sqrt(1+2*abs(dEpot)/Ekin)  # upper lower
+
     if not hop:
-        pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
         outstate = instate
-    # uncoment for test     pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)    
-    return(hop, outstate, pot_eners_array, max_prob)
-   
+    # uncoment for test pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)    
+    return(hop, outstate, v_scaling_fac, max_prob)
+
 def calc_prob(instate, outstate, pot_eners_array, dt):
     """
     PHYSICAL REVIEW A 84, 014701 (2011)
@@ -58,13 +65,14 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
     collisions based on branching classical trajectories
     Andrey K. Belyaev1,2 and Oleg V. Lebedev1
     """
-    
+
     #print("Instate {}, Outstate {}".format(instate, outstate))
-    
     # energy gap in time T-DT [0], T [1], T+DT [2]
-    Z = [ (abs(pot_eners_array[step][instate] - pot_eners_array[step][outstate])) for step in range(0,3)]  
-    print("Z[t-dt]: {:.4f}  Z[t]: {:.4f}  Z[t+dt]: {:.4f}".format(Z[0],Z[1],Z[2]))
-    
+
+    Z = [(abs(pot_eners_array[step][instate] 
+              - pot_eners_array[step][outstate])) for step in range(0,3)]
+    print("Z[-dt]: {:.4f}  Z[t]: {:.4f} Z[dt]: {:.4f}".format(Z[0],Z[1],Z[2]))
+
     # three point minima of adiaabatic splitting Zjk
     if Z[0] > Z[1] and Z[1] < Z[2]: 
         sec_der = ((Z[2] - 2 * Z[1] + Z[0]) / (dt ** 2))
@@ -72,7 +80,7 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
                         * (math.sqrt(Z[1] ** 3 / sec_der)))
         if prob > 1.00:
             error_exit(6)
-        print("Z({}->{}) minimum  with".format(instate, outstate), 
+        print("Z({}->{}) minimum  with".format(instate, outstate),
               "dE/a.u. = {}. ".format(Z[1]),
               "Second derivative at minima: {},".format(sec_der),
               "Z**3: {}".format( Z[1]**3),

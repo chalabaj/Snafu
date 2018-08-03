@@ -5,7 +5,7 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
     from landauzener import (
-        calc_lz_hopp
+        calc_hopp
     )
     import numpy as np
     from constants import *
@@ -58,16 +58,19 @@ with open(inputfile,'r') as gf:
              pot_eners_array = np.vstack((pot_eners_array, pot_eners))
              #print(pot_eners_array)
          else:
-             hop, outstate, pot_eners_array, prob = calc_lz_hopp("l",
-                                                                 state ,
-                                                                 pot_eners,
-                                                                 pot_eners_array,
-                                                                 Ekin, dt)     
+             hop, outstate,  prob, v_fac = calc_lz_hopp("l",
+                                                                        state ,
+                                                                        pot_eners,
+                                                                        pot_eners_array,
+                                                                        Ekin, dt)     
              
              if  hop:
                  state = outstate
+                 pot_eners_array = np.delete(pot_eners_array, obj = -1, axis = 0)
                  nhops += 1
-             
+             else:
+                 pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
+                 
              with open(outfile,'a') as of: 
                  #line = ("{} {}".format(step, state) )
 

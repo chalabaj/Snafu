@@ -101,6 +101,13 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
 
     return(Ekin,Epot,Etot,dE)
 
+def rescale_velocities(vx, vy, vz, v_scaling_fac):
+    print(vx, v_scal_fac)
+    vx = [xx * v_scaling_fac for xx in vx] 
+    vx = [yy * v_scaling_fac for yy in vy] 
+    vx = [zz * v_scaling_fac for zz in vz] 
+    print(vx)
+    return(vx, vy, vz)
     # Windows installed ubuntu has rather complicated path
     # if re.search(r'win',sys.platform):
     # testpath = "/mnt/c/Users/chalabaj/Documents/Coding/snafu-master/ABINITIO/test.sh" 
