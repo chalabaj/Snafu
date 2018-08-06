@@ -1,10 +1,9 @@
 
 import numpy as np
+from constants import *
 
-ang_bohr = 1.889726132873e0     # agstroms to bohrs
 
 def print_positions(step,time,natoms, at_names, x, y, z):
-    bohr_ang =1/ang_bohr     # bohr to ang units
     
     with open ("movie.xyz", "a") as mov:
      header = ("{} \n".format(natoms))
@@ -12,7 +11,7 @@ def print_positions(step,time,natoms, at_names, x, y, z):
      comment = ("Step: {}      Time_fs:{}\n".format(step,time))
      mov.write(comment)
      for iat in range(0,natoms):     
-      line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],x[iat]*bohr_ang,y[iat]*bohr_ang,z[iat]*bohr_ang)))
+      line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],x[iat]*BOHR_ANG,y[iat]*BOHR_ANG,z[iat]*BOHR_ANG)))
       mov.write(line)
     mov.closed
     return()
@@ -30,13 +29,15 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
     vel.closed
     return()
  
-def print_energies(step,time,Ekin,Epot,Etot,dE):
-    
+def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
+
     with open ("energies.dat", "a") as ef:
         if step == 0:
-            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV\n"
+            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV  dE_step\n"
             ef.write(str(headline))
-        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}\n".format(time,Ekin,Epot,Etot,dE)
+            dE = 0.0
+            dE_step  = 0.0
+        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(time,Ekin,Epot,Etot,dE * AU_EV, dE_step * AU_EV)
         ef.write(str(line))
     ef.closed
     return()  

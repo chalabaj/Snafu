@@ -13,19 +13,23 @@ except ImportError as ime:
  
 def calc_hopp(method, state, pot_eners,
               pot_eners_array, Ekin, dt):
+    
     """
-    Velocity adjustment/ hopping prob.:
-    Landau–Zener type surface hopping algorithms
+    Calculate hopping probability according to the following paper
+    Landau Zener type surface hopping algorithms
     Andrey K. Belyaev, Caroline Lasser, and Giulio Trigila
-    The Journal of Chemical Physics 140, 224108 (2014); doi:10.1063/1.4882073
+    The Journal of Chemical Physics 140, 224108 (2014) 
+    Also factor for velocity rescaling is determined by energy conservation
     """
+
     hop = False             
     instate = state
 
     # add last calculated pot energies to evaluate hop 
     # vstack along row , axis = 0
     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  
-    print("Pot_eners_array: {}".format(pot_eners_array))
+    print("Pot_eners_array HOP:\n",
+          "{}".format(pot_eners_array))
 
     probs = [calc_prob(instate, outstate, pot_eners_array, dt) 
              for outstate in range(0, len(pot_eners)) if outstate != instate]
@@ -37,28 +41,31 @@ def calc_hopp(method, state, pot_eners,
     
     if max_prob > theta:
         outstate = probs[max_prob_row][1]
-        dEpot = pot_eners_array[2][outstate] - pot_eners_array[2][instate]
+        dEpot = pot_eners_array[1][outstate] - pot_eners_array[1][instate]
+        print(pot_eners_array[1][outstate],pot_eners_array[1][instate])
         # energy conservation criteria
         if dEpot < Ekin: 
             hop = True
             print("dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),
                   "Hop = {},".format(hop),
-                  "Outstate: {}, Instate: {}".format(instate, outstate),       
+                  "Instate: {}, Outstate  {}".format(instate, outstate),       
                   "Probability: {}".format(probs[max_prob_row][3]),
                   "\nRandon number: {}".format(theta))
             # comment for test: hop --> remove appended energies
             
             if outstate > instate:
-                v_scaling_fac = math.sqrt(1-2*abs(dEpot)/Ekin)  # lower upper
+                v_scaling_fac = math.sqrt(1-abs(dEpot)/Ekin)  # lower upper
             else:
-                v_scaling_fac = math.sqrt(1+2*abs(dEpot)/Ekin)  # upper lower
+                v_scaling_fac = math.sqrt(1+abs(dEpot)/Ekin)  # upper lower
 
     if not hop:
         outstate = instate
+        v_scaling_fac = 1
     # uncoment for test pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)    
     return(hop, outstate, v_scaling_fac, max_prob)
 
 def calc_prob(instate, outstate, pot_eners_array, dt):
+    
     """
     PHYSICAL REVIEW A 84, 014701 (2011)
     Nonadiabatic nuclear dynamics of atomic 

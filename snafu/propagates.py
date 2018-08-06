@@ -39,6 +39,15 @@ def update_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
         vz[iat] = vz[iat] + ( dt * (fz[iat] + fz_new[iat]) / (2 * am[iat]) )
      #print(vz[iat])
     return(vx,vy,vz)   
+
+def adjust_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
+    # at the point where a hop occured, subtract the included forces from an old state and replace them with forces of a new state
+    for iat in range(0,len(am)):
+        vx[iat] = vx[iat] + ( dt * (-fx[iat] + fx_new[iat]) / (2 * am[iat]) )
+        vy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
+        vz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
+     #print(vz[iat])
+    return(vx,vy,vz)   
     
 def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
                 pot_eners, ab_initio_file_path):
@@ -62,7 +71,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
     abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
 
     try:
-        abinit_proc = subprocess.run(abinit_inputs, stdout= None, stderr= subprocess.PIPE, shell = True, check = True)	
+        abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
     except subprocess.CalledProcessError as cpe: 
         print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
         error_exit(4)
@@ -86,7 +95,9 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
     gef.closed
     return(fx , fy, fz, pot_eners)
 
-def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_init):
+def calc_energies(
+    step, time, natoms, am, state, pot_eners, 
+    vx, vy, vz, Etot_init, Etot_prev):
      
     Ekin = 0.000
     for iat in range(0,natoms):
@@ -95,17 +106,17 @@ def calc_energies(step, time, natoms, am, state, pot_eners, vx, vy, vz, Etot_ini
         Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),...
         Etot = Ekin + Epot
         dE = (Etot - Etot_init) 
-
-    print_energies(step, time, Ekin, Epot, Etot, dE * AU_EV)
+        dE_step = (Etot - Etot_prev)
+    print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
     print_pes(time, step, pot_eners)
 
     return(Ekin,Epot,Etot,dE)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
-    print(vx, v_scal_fac)
+    print(vx, v_scaling_fac)
     vx = [xx * v_scaling_fac for xx in vx] 
-    vx = [yy * v_scaling_fac for yy in vy] 
-    vx = [zz * v_scaling_fac for zz in vz] 
+    vy = [yy * v_scaling_fac for yy in vy] 
+    vz = [zz * v_scaling_fac for zz in vz] 
     print(vx)
     return(vx, vy, vz)
     # Windows installed ubuntu has rather complicated path

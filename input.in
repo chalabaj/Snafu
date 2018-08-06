@@ -1,9 +1,10 @@
 [Settings]
 natoms  = 3               # number of atoms in system
-nstates = 1               # number of electronic states
-init_state = 0            # initial electronic state
+nstates = 3               # number of electronic states
+init_state = 2            # initial electronic state
 timestep = 4              # in atomic unit au = 0.024 fs 
-maxsteps = 20             # total number of steps
+maxsteps = 100             # total number of steps
 method  = lz-adibatic     # bomd/lz-adibatic (Belyaev)/ lz-diabatic scheme
-abinitio  = g09-dft        # where to take gradients,file has to start  g09 or molpro to distinguish between forces and gradients
+abinitio  = molpro-casscf        # where to take gradients,file has to start  g09 or molpro to distinguish between forces and gradients
 restart = 0
+vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1 new velociting from hoppingp oint are included in verlet step

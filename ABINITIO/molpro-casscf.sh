@@ -17,7 +17,7 @@ basis="6-31g"  # for Pople basis sets and df-casscf, fitting DF basis must be sp
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.
 nocc=5         # occupied orbitals
-nclosed=3      # closed orbitals
+nclosed=2      # closed orbitals
 memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
 
@@ -80,12 +80,15 @@ $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 # If it is some other error, do nothing. It's up to ABIN to decide what to do.
 if [[ $? -ne 0 ]];then
    cp $input.com.out $input.com.out.error
-   if $( grep -q 'NO CONVER' $input.com.out ) ;then 
-      echo "ERROR: Could not converge forces!"
-      exit 3
+   if $( grep "NO CONVER" $input.com.out ) ;then 
+      echo "ERROR during execution of MOLPRO. See $input.com.out"
+      exit 1
+   elif $( grep "ERROR DETECTED" $input.com.out ); then
+      echo "ERROR during execution of MOLPRO. See $input.com.out"
+      exit 2  
    else
       echo "ERROR during execution of MOLPRO. See $input.com.out"
-      exit 2
+      exit 3
    fi
 fi
 cp $input.com.out $input.com.out.old
@@ -94,7 +97,7 @@ cp $input.com.out $input.com.out.old
 grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
 grep "GRADIENT," $input.pun | awk -F" " '{print $5" "$6" "$7" "}'>> ../gradients.dat #need space at the end for numpy float reading
 
-cat ../gradients.dat >> grads.dat
+#cat ../gradients.dat >> grads.dat
 
 if [[ $? -eq 0 ]];then
 exit 0
