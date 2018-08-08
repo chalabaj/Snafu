@@ -15,7 +15,8 @@ def error_exit(error_number):
            "3 - OS error: {0}".format("Could not create necessarry files.\n"),
            "4 - Ab initio calculations failed.\n",
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
-           "6 - Hopping probability larger than 1, something went wrong.\n")
+           "6 - Hopping probability larger than 1, something went wrong.\n",
+           "7 - Too large nergy drift.\n")
     print("---------------------------------")
     print("Program was terminated due to an error! Exiting...")
     print(err[error_number])

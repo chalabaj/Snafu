@@ -98,20 +98,24 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
 
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 
-    vx, vy, vz, Etot_init, Etot_prev):
+    vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
      
     Ekin = 0.000
     for iat in range(0,natoms):
         vv = vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2
         Ekin = Ekin + (0.5 * am[iat] * vv)
-        Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),...
+        Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
         Etot = Ekin + Epot
-        dE = (Etot - Etot_init) 
+        dE = (Etot - Etot_init)
+        if dE >= ener_thresh: 
+            print("Energy change since start {} ".format(dE),
+                  "large then threshold {}.".format(ener_thresh))
+            error_exit(7)
         dE_step = (Etot - Etot_prev)
     print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
     print_pes(time, step, pot_eners)
 
-    return(Ekin,Epot,Etot,dE,dE_step)
+    return(Ekin, Epot, Etot, dE, dE_step)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
     print(vx, v_scaling_fac)

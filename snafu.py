@@ -105,6 +105,7 @@ if __name__ == "__main__":
     state = int(init_state)   # initial or restart state
     dt = float(timestep)
     nstates = int(nstates)
+    ener_thresh = float(ener_thresh)
     print(liner)
 
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
@@ -149,11 +150,10 @@ if __name__ == "__main__":
     Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
                                                   state, pot_eners,
                                                   vx, vy, vz, Etot_init,
-                                                  Etot_prev)
+                                                  Etot_prev, ener_thresh)
     Etot_init = Etot
     
-    print("Step    Time/fs      dE_drift/eV      dE_step/eV      Hoppping",
-          "  State  Max. prob")
+    print("Step    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
     # MAIN LOOP
     for step in range(1, maxsteps + 1):
           
@@ -170,7 +170,6 @@ if __name__ == "__main__":
                                                         ab_initio_file_path)
         
         if not method == "bomd":
-            print("evaluate hop")
             if step >= 2:
                 hop, outstate, v_scal_fac, prob = calc_hopp(method, state, 
                                                         pot_eners, 
@@ -188,7 +187,6 @@ if __name__ == "__main__":
                         pot_eners, ab_initio_file_path)
                    #simple scaling or updatre velocities with new state forces
                     if not int(vel_adj):
-                        print("Rescale")
                         vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
                     else:
                         vx, vy, vz = adjust_velocities(dt, am,
@@ -236,12 +234,12 @@ if __name__ == "__main__":
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
-                                                      Etot_prev)
+                                                      Etot_prev, ener_thresh)
         if hop:
             print("new X Ekin {}".format(Ekin))
-        print(" {:<4d} {:<12.2f} {:>12.4e}".format(step, time, dE * AU_EV),
-              " {:>12.4f}".format(dE_step*AU_EV),
-              " {:>12s}     {}        {} \n".format(str(hop), state, prob))
+        print(" {:<6d}  {:<10.4f}  {:<10.4f}".format(step, time, dE * AU_EV),
+              " {:<11.4f}".format(dE_step*AU_EV),
+              "{}     {}\n".format(str(hop)[0], state))
 
         # save positions and velocities
         print_positions(step, time, natoms, at_names, x, y, z)

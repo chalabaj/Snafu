@@ -15,10 +15,12 @@ TODO:
 2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**
 
 ## Status
-Program works in beta version. Basic features works, but some needs more testing.
+Program works in beta version. 
+
+Basic features works, but some needs more testing.
 BOMD works with Velocity Verlet.
 Hopping algorithm works.
-Energy conservation from initial tests is about 10^-2 eV between hops and 10^4 eV between hops, but this need more testing for different ab-initio methods.
+Energy conservation from initial tests is about 10^-2 eV between hops and 10^5 eV between hops, but this need more testing for different ab-initio methods.
 
 
 

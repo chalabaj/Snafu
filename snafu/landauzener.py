@@ -53,7 +53,7 @@ def calc_hopp(method, state, pot_eners,
 
             v_scaling_fac = math.sqrt(1-(dEpot / Ekin))  # lower upper
 
-        print(v_scaling_fac)
+
     else:
         v_scaling_fac = -1
     if not hop:
