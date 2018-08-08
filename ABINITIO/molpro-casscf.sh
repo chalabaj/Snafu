@@ -8,7 +8,7 @@ natoms=$2
 state=$3   # for which state
 nstate=$4 # total number of state
 step=$5
-echo "$2 $3 $4 $5" > lal
+echo $step >> lal
 input=input
 nacaccu=9
 ####################################################################
@@ -63,6 +63,23 @@ NOEXTRA;
 cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2; 
 forces;samc,5101.2;
 
+if (status.lt.0) then
+   text, MCSCF failed to converge.
+   text, Attempting uncoupled iterations.
+   text, Enlarging PSPACE.
+   {$multi;
+   occ,$nocc;
+   closed,$nclosed;
+   WF,$nelectrons,0,$spin;
+   ! Info about pspace: https://www.molpro.net/info/2015.1/doc/manual/node244.html
+   ! uncomment in case of convergence difficulties...
+   pspace, 2;
+   state,$nstate;
+   maxiter,40;
+   {iterations
+   do,uncouple,1,to,5}
+   }
+endif
 EOF
 
 ############################----------MOLPRO JOB-------------------------
@@ -75,11 +92,15 @@ fi
 
 $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 
-
 # Check whether all is OK.
 # If it is some other error, do nothing. It's up to ABIN to decide what to do.
 if [[ $? -ne 0 ]];then
-   cp $input.com.out $input.com.out.error
+    cp $input.com.out $input.com.out.error.$step
+    rm $input.pun 
+    $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
+fi 
+if [[ $? -ne 0 ]];then
+   cp $input.com.out $input.com.out.error.$step.nowf
    if $( grep "NO CONVER" $input.com.out ) ;then 
       echo "ERROR during execution of MOLPRO. See $input.com.out"
       exit 1
@@ -91,7 +112,7 @@ if [[ $? -ne 0 ]];then
       exit 3
    fi
 fi
-cp $input.com.out $input.com.out.old
+
 #echo "$step" >> grads.dat
 ################### Extracting energy 
 grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat

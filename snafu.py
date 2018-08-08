@@ -44,7 +44,8 @@ try:
     )
     from propagates import (
         calc_forces, calc_energies,
-        update_velocities, update_positions, rescale_velocities
+        update_velocities, update_positions, rescale_velocities,
+        adjust_velocities
     )
     from landauzener import (
         calc_hopp
@@ -72,7 +73,7 @@ else:
     print_snafu()
 
 
-liner = ("_") * 70
+liner = ("_") * 100
 
 # ---------------INIT---------------------------------------------------------
 
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     # OBTAIN ATOMIC MASSES:
     masses = assign_masses(at_names)
     am = [mm * AMU for mm in masses]  # atomic mass units conversion
-    print("At    X      Y      Z    MASS:")
+    print("At    X       Y         Z         MASS:")
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], x[iat])),
               " %3.6f %2.6f %2.6f" % (y[iat], z[iat], masses[iat]))
@@ -144,16 +145,18 @@ if __name__ == "__main__":
     Etot_init = 0.0  # setting variable , total energy at the beginning
     Etot_prev = 0.0
     time = 0.0
-    Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am, state,
-                                         pot_eners, vx, vy, vz, Etot_init, 
-                                         Etot_prev)
+    prob = 0.0
+    Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
+                                                  state, pot_eners,
+                                                  vx, vy, vz, Etot_init,
+                                                  Etot_prev)
     Etot_init = Etot
     
-    print("Step      Time/fs      E-E_initial/eV      Hoppping    State ")
+    print("Step    Time/fs      dE_drift/eV      dE_step/eV      Hoppping",
+          "  State  Max. prob")
     # MAIN LOOP
     for step in range(1, maxsteps + 1):
-        
-            
+          
         x_new, y_new, z_new = update_positions(dt, am, 
                                                x, y, z, 
                                                vx, vy, vz, 
@@ -166,45 +169,56 @@ if __name__ == "__main__":
                                                         pot_eners,
                                                         ab_initio_file_path)
         
-        if step >= 2:
-            hop, outstate, v_scal_fac, prob = calc_hopp(method, state, 
+        if not method == "bomd":
+            print("evaluate hop")
+            if step >= 2:
+                hop, outstate, v_scal_fac, prob = calc_hopp(method, state, 
                                                         pot_eners, 
                                                         pot_eners_array, 
                                                         Ekin, dt)
-        
-            if hop:
-               state = outstate
-               
-               # use R  from prev. step, hop, cacl f new state
-               fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                   step, at_names, state, nstates, x, y, z,
-                   fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path)
-               #simple scaling or updatre velocities with new state forces
-               if vel_adj:
-                   vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
-               else:
-                   vx, vy, vz =adjust_velocities(dt, am,
-                                                 vx, vy, vz,
-                                                 fx, fy, fz,
-                                                 fx_new, fy_new, fz_new) 
-               # hop, scaled vel, forces on new PES
-               
-               # now finish the propagation step
-               x_new, y_new, z_new = update_positions(dt, am, 
-                                                      x, y, z, 
-                                                      vx, vy, vz, 
-                                                      fx_new, fy_new, fz_new)
 
-               fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                   step, at_names, state, nstates, x_new, y_new, z_new,
-                   fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path)
+                if hop:
+                    state = outstate
+               
+                    # use R  from prev. step, hop, cacl f new state
+                    fx_new, fy_new, fz_new, pot_eners = calc_forces(
+                        step, at_names, state, nstates, 
+                        x, y, z,
+                        fx_new, fy_new, fz_new, 
+                        pot_eners, ab_initio_file_path)
+                   #simple scaling or updatre velocities with new state forces
+                    if not int(vel_adj):
+                        print("Rescale")
+                        vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
+                    else:
+                        vx, vy, vz = adjust_velocities(dt, am,
+                                                      vx, vy, vz,
+                                                      fx, fy, fz,
+                                                      fx_new, fy_new, fz_new) 
+                    EE = 0
+                    for iat in range(0,natoms):
+                        vvv = vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2
+                        EE = EE + (0.5 * am[iat] * vvv)
+                    print("Scaled Ekin: {}, old Ekin {}".format(EE, Ekin))
 
-            pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
-            pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
-            print("Pot_eners_array END STEP:\n",
-                  "{}".format(pot_eners_array))   
-        else:
-            pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+                    # now finish the propagation step on new PES
+                    x_new, y_new, z_new = update_positions(dt, am, 
+                                                           x, y, z, 
+                                                           vx, vy, vz, 
+                                                           fx_new, fy_new,
+                                                           fz_new)
+
+                    fx_new, fy_new, fz_new, pot_eners = calc_forces(
+                        step, at_names, state, nstates, 
+                        x_new, y_new, z_new,
+                        fx_new, fy_new, fz_new,
+                        pot_eners, ab_initio_file_path)
+
+                pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
+                pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+
+            else:
+                pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
             
         vx, vy, vz = update_velocities(dt, am, 
                                        vx, vy, vz,
@@ -219,13 +233,15 @@ if __name__ == "__main__":
 
         time = step * dt * AU_FS
         Etot_prev = Etot
-        Ekin, Epot, Etot, dE = calc_energies(step, time, natoms, am,
-                                             state, pot_eners,
-                                             vx, vy, vz, Etot_init,
-                                             Etot_prev)
-
-        print(" {:<4d} {:>10.2f} {:>20.4e}".format(step, time, dE * AU_EV),
-              " {:>15s}      {}".format(str(hop), state))
+        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
+                                                      state, pot_eners,
+                                                      vx, vy, vz, Etot_init,
+                                                      Etot_prev)
+        if hop:
+            print("new X Ekin {}".format(Ekin))
+        print(" {:<4d} {:<12.2f} {:>12.4e}".format(step, time, dE * AU_EV),
+              " {:>12.4f}".format(dE_step*AU_EV),
+              " {:>12s}     {}        {} \n".format(str(hop), state, prob))
 
         # save positions and velocities
         print_positions(step, time, natoms, at_names, x, y, z)

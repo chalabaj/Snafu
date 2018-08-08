@@ -33,11 +33,11 @@ def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
 
     with open ("energies.dat", "a") as ef:
         if step == 0:
-            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/eV  dE_step\n"
+            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/  dE_step\n"
             ef.write(str(headline))
             dE = 0.0
             dE_step  = 0.0
-        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(time,Ekin,Epot,Etot,dE * AU_EV, dE_step * AU_EV)
+        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(time,Ekin,Epot,Etot,dE, dE_step )
         ef.write(str(line))
     ef.closed
     return()  

@@ -28,8 +28,8 @@ def calc_hopp(method, state, pot_eners,
     # add last calculated pot energies to evaluate hop 
     # vstack along row , axis = 0
     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  
-    print("Pot_eners_array HOP:\n",
-          "{}".format(pot_eners_array))
+    #print("Pot_eners_array HOP:\n",
+    #      "{}".format(pot_eners_array))
 
     probs = [calc_prob(instate, outstate, pot_eners_array, dt) 
              for outstate in range(0, len(pot_eners)) if outstate != instate]
@@ -37,27 +37,25 @@ def calc_hopp(method, state, pot_eners,
     max_prob_row = (np.argmax(probs, axis = 0)[3])  # row with max probaBILITY 
     max_prob = probs[max_prob_row][3]
     theta = random.random()
-    print("Max probability: {}".format(probs[max_prob_row][3]))
+    #print("Max probability: {}".format(probs[max_prob_row][3]))
     
     if max_prob > theta:
         outstate = probs[max_prob_row][1]
         dEpot = pot_eners_array[1][outstate] - pot_eners_array[1][instate]
-        print(pot_eners_array[1][outstate],pot_eners_array[1][instate])
         # energy conservation criteria
         if dEpot < Ekin: 
             hop = True
-            print("dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),
-                  "Hop = {},".format(hop),
-                  "Instate: {}, Outstate  {}".format(instate, outstate),       
-                  "Probability: {}".format(probs[max_prob_row][3]),
-                  "\nRandon number: {}".format(theta))
-            # comment for test: hop --> remove appended energies
+            print("Hop {} --> {}".format(instate, outstate),
+                  "dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),     
+                  "\nProbability: {} ".format(probs[max_prob_row][3]),
+                  "Randon number: {}".format(theta))
             
-            if outstate > instate:
-                v_scaling_fac = math.sqrt(1-abs(dEpot)/Ekin)  # lower upper
-            else:
-                v_scaling_fac = math.sqrt(1+abs(dEpot)/Ekin)  # upper lower
 
+            v_scaling_fac = math.sqrt(1-(dEpot / Ekin))  # lower upper
+
+        print(v_scaling_fac)
+    else:
+        v_scaling_fac = -1
     if not hop:
         outstate = instate
         v_scaling_fac = 1
@@ -78,7 +76,7 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
 
     Z = [(abs(pot_eners_array[step][instate] 
               - pot_eners_array[step][outstate])) for step in range(0,3)]
-    print("Z[-dt]: {:.4f}  Z[t]: {:.4f} Z[dt]: {:.4f}".format(Z[0],Z[1],Z[2]))
+    #print("Z[-dt]: {:.4f}  Z[t]: {:.4f} Z[dt]: {:.4f}".format(Z[0],Z[1],Z[2]))
 
     # three point minima of adiaabatic splitting Zjk
     if Z[0] > Z[1] and Z[1] < Z[2]: 
@@ -89,8 +87,8 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
             error_exit(6)
         print("Z({}->{}) minimum  with".format(instate, outstate),
               "dE/a.u. = {}. ".format(Z[1]),
-              "Second derivative at minima: {},".format(sec_der),
-              "Z**3: {}".format( Z[1]**3),
+              #"Second derivative at minima: {},".format(sec_der),
+              #"Z**3: {}".format( Z[1]**3),
               "Probability: {}".format(prob))
     else:
         prob = 0.0000

@@ -56,6 +56,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
     state = current state - PES for the forcess calc 
     """
     natoms = len(x)
+
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:
@@ -68,7 +69,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
     # electronic states starts from 1(ground state) 
     # while code starts from 0 index due to python 
     state = state + 1 
-    abinit_inputs = "{} {}  {}  {}  {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
+    abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
 
     try:
         abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
@@ -110,7 +111,7 @@ def calc_energies(
     print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
     print_pes(time, step, pot_eners)
 
-    return(Ekin,Epot,Etot,dE)
+    return(Ekin,Epot,Etot,dE,dE_step)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
     print(vx, v_scaling_fac)
