@@ -28,7 +28,7 @@ ang_bohr = 1.889726132873e0  # agstroms to bohrs
 def update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz):
     for iat in range(0,len(am)): 
         x[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
-        y[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2  *am[iat]) * dt ** 2 )
+        y[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
         z[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2 * am[iat]) * dt ** 2 )
     return(x,y,z)
 
@@ -107,9 +107,9 @@ def calc_energies(
         Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
         Etot = Ekin + Epot
         dE = (Etot - Etot_init)
-        if dE >= ener_thresh: 
-            print("Energy change since start {} ".format(dE),
-                  "large then threshold {}.".format(ener_thresh))
+        if (dE * AU_EV) >= ener_thresh: 
+            print("Total energy change since start {} ".format(dE * AU_EV),
+                  "larger then threshold {}.".format(ener_thresh))
             error_exit(7)
         dE_step = (Etot - Etot_prev)
     print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
@@ -118,11 +118,11 @@ def calc_energies(
     return(Ekin, Epot, Etot, dE, dE_step)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
-    print(vx, v_scaling_fac)
+
     vx = [xx * v_scaling_fac for xx in vx] 
     vy = [yy * v_scaling_fac for yy in vy] 
     vz = [zz * v_scaling_fac for zz in vz] 
-    print(vx)
+
     return(vx, vy, vz)
     # Windows installed ubuntu has rather complicated path
     # if re.search(r'win',sys.platform):

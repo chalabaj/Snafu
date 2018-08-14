@@ -10,9 +10,9 @@ nstate=$4 # total number of state
 step=$5
 echo $step >> lal
 input=input
-nacaccu=9
+nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g"  # for Pople basis sets and df-casscf, fitting DF basis must be specified manually
+basis="6-31g"  
                # don't use Dunning basis sets, you won't get NACME
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.
