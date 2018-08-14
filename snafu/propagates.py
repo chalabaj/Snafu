@@ -25,12 +25,13 @@ au_eV = 27.21139
 amu = 1822.888484264545e0    # atomic mass unit me = 1 AMU*atomic weight
 ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
-def update_positions(dt, am, x, y, z, vx, vy, vz, fx, fy, fz):
-    for iat in range(0,len(am)): 
-        x[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
-        y[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
-        z[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2 * am[iat]) * dt ** 2 )
-    return(x,y,z)
+def update_positions(
+        dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
+    for iat in range(0,len(am)):
+        x_new[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
+        y_new[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
+        z_new[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2 * am[iat]) * dt ** 2 )
+    return(x_new, y_new, z_new)
 
 def update_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
     for iat in range(0,len(am)):
@@ -49,8 +50,9 @@ def adjust_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
      #print(vz[iat])
     return(vx,vy,vz)   
     
-def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
-                pot_eners, ab_initio_file_path):
+def calc_forces(
+        step, at_names, state, nstates, x, y, z, fx_new , fy_new, fz_new,
+        pot_eners, ab_initio_file_path):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
@@ -90,11 +92,11 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz,
             line = gef.readline().split(" ")
             # FX FY FZ, gradient to forces 
             # TO DO Gaussian has forces, molpro gradients
-            fx[iat] = grad * np.float64(line[0])
-            fy[iat] = grad * np.float64(line[1])
-            fz[iat] = grad * np.float64(line[2])    
+            fx_new[iat] = grad * np.float64(line[0])
+            fy_new[iat] = grad * np.float64(line[1])
+            fz_new[iat] = grad * np.float64(line[2])    
     gef.closed
-    return(fx , fy, fz, pot_eners)
+    return(fx_new , fy_new, fz_new, pot_eners)
 
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 
