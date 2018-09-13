@@ -8,7 +8,7 @@ natoms=$2
 state=$3   # for which state
 nstate=$4 # total number of state
 step=$5
-echo $step >> lal
+
 input=input
 nacaccu=9   # forces accuracy
 ####################################################################

@@ -43,7 +43,7 @@ def calc_hopp(method, state, pot_eners,
         outstate = probs[max_prob_row][1]
         dEpot = pot_eners_array[1][outstate] - pot_eners_array[1][instate]
         # energy conservation criteria
-        if dEpot < Ekin: 
+        if dEpot < Ekin and dEpot < 0.02: 
             hop = True
             print("Hop {} --> {}".format(instate, outstate),
                   "dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),     

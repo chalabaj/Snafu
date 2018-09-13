@@ -73,7 +73,7 @@
     }
  endif
 
- Variables initialized (889), CPU time= 0.01 sec
+ Variables initialized (889), CPU time= 0.00 sec
  Commands  initialized (702), CPU time= 0.01 sec, 572 directives.
  Default parameters read. Elapsed time= 0.04 sec
 
@@ -89,7 +89,7 @@
 
  **********************************************************************************************************************************
  LABEL *                                                                                 
-  64 bit serial version                                                                  DATE: 14-Aug-18          TIME: 11:29:20  
+  64 bit serial version                                                                  DATE: 14-Aug-18          TIME: 12:56:58  
  **********************************************************************************************************************************
 
  SHA1:             41aa48e1468dac041f2eaabdf410f3ce2ee7f8bf
@@ -118,15 +118,15 @@
  _ZUNIT          =    ANG
  _NELEC          =      9.00000000
  _PROGRAM        =    FORCES
- _CPUSTEP        =      0.00000000
- _SYSSTEP        =      0.01000000
- _WALLSTEP       =      0.00000000
+ _CPUSTEP        =      0.01000000
+ _SYSSTEP        =      0.00000000
+ _WALLSTEP       =      0.01000000
  _BASINP         =    610.00000000
- _CPUTOT         =      0.43000000
+ _CPUTOT         =      0.50000000
  _DFTEXFAC       =      1.00000000
- _DMX(1:3)       =      1.52413599     1.83424358     1.70980089
+ _DMX(1:3)       =      1.49322763     1.67145180     2.04817086
  _DMY(1:3)       =     -0.09838606    -0.09838606    -0.09838606
- _DMZ(1:3)       =      1.16926741     1.41155136     1.31432349
+ _DMZ(1:3)       =      1.16157787     1.30707734     1.59594700
  _DMX_SCF        =      0.95066584
  _DMY_SCF        =     -0.09838606
  _DMZ_SCF        =      0.72122303
@@ -135,39 +135,39 @@
  _EIGS(1:13)     =    -21.12062114    -1.84839858    -1.20162501    -1.06228365    -1.12680293    -0.13986690
                        -0.04678565     0.64548114     0.65281685     0.72604476     0.78812453     0.92290387
                         1.22726361
- _ENERGY(1:3)    =    -75.44425666   -75.35169100   -75.34706012
+ _ENERGY(1:3)    =    -75.40272011   -75.36253460   -75.24309074
  _ENERGY_METHOD  =    MULTI
  _ENERGY_BASIS   =    6-31G
  _GEOMETRY_METHOD=     
  _GEOMETRY_BASIS =     
- _ENUC           =      6.38190302
- _EPS1(1:5)      =    -21.05729481    -1.63416999    -0.83315885    -0.83634567    -0.83937452
- _GRADENERG      =    -75.35169100
+ _ENUC           =      6.35495143
+ _EPS1(1:5)      =    -21.08614750    -1.64898269    -0.87559567    -0.84749717    -0.84641797
+ _GRADENERG      =    -75.36253460
  _GRADEXFAC      =   9999.00000000
  _GRADMETHOD     =      5.00000000
- _VIRIAL         =      0.28797848
+ _VIRIAL         =      0.25152927
  _ITERATIONS     =      3.00000000
  _LASTNELEC      =      5.00000000
  _LASTSPIN       =      1.00000000
  _LASTSYM        =      1.00000000
  _ORBITAL        =   2140.20000000
- _SEIG_MIN       =      0.13598963
+ _SEIG_MIN       =      0.15153796
  _SEWPROP        =      1.00000000
  _STATUS         =      1.00000000
- _SYSTOT         =      0.98000000
- _WALLTOT        =      1.44000000
+ _SYSTOT         =      1.22000000
+ _WALLTOT        =      1.74000000
  _LASTORB        =    MCSCF
  _PGROUP         =    C1  
- _TIME           =    11:28:11
- _DMX_CC(1:3)    =      0.22238618     0.22238618     0.22238618
+ _TIME           =    12:39:02
+ _DMX_CC(1:3)    =      0.25472675     0.25472675     0.25472675
  _DMY_CC(1:3)    =      0.39354422     0.39354422     0.39354422
- _DMZ_CC(1:3)    =      0.25982110     0.25982110     0.25982110
- _DMX_NUC(1:3)   =      1.40255433     1.40255433     1.40255433
- _DMY_NUC(1:3)   =     -0.98386055    -0.98386055    -0.98386055
- _DMZ_NUC(1:3)   =      0.88061129     0.88061129     0.88061129
- _TRDMX(1:3)     =     -0.00000000    -0.00000000     0.14759507
- _TRDMY(1:3)     =      0.00000022    -0.11950807     0.00000000
- _TRDMZ(1:3)     =     -0.00000000     0.00000000    -0.18891259
+ _DMZ_CC(1:3)    =      0.29538974     0.29538974     0.29538974
+ _DMX_NUC(1:3)   =      1.65424830     1.65424830     1.65424830
+ _DMY_NUC(1:3)   =     -0.98386056    -0.98386056    -0.98386056
+ _DMZ_NUC(1:3)   =      1.08965184     1.08965184     1.08965184
+ _TRDMX(1:3)     =      0.00000000    -0.00000001    -0.06164740
+ _TRDMY(1:3)     =      0.00039843    -0.13949806     0.00000001
+ _TRDMZ(1:3)     =      0.00000000     0.00000001     0.08809745
 
  Geometry written to block  1 of record 700
 
@@ -178,8 +178,8 @@
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL   RESTART
- CPU TIMES  *         0.13      0.01
- REAL TIME  *         0.13 SEC
+ CPU TIMES  *         0.11      0.00
+ REAL TIME  *         0.12 SEC
  DISK USED  *         0.03 MB      
  **********************************************************************************************************************************
 
@@ -206,8 +206,8 @@ Geometry recognized as XYZ
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   
 
  PROGRAMS   *        TOTAL      DATA   RESTART
- CPU TIMES  *         0.13      0.00      0.01
- REAL TIME  *         0.13 SEC
+ CPU TIMES  *         0.12      0.00      0.00
+ REAL TIME  *         0.12 SEC
  DISK USED  *         2.85 MB      
  **********************************************************************************************************************************
 
@@ -234,9 +234,9 @@ Geometry recognized as XYZ
 
  NR  ATOM    CHARGE       X              Y              Z
 
-   1  O       8.00   -0.180061841   -0.098386055   -0.162198205
-   2  H       1.00    0.395977269   -0.098386055    2.417267331
-   3  H       1.00    2.462138680   -0.098386055   -0.227298841
+   1  O       8.00   -0.210632273   -0.098386054   -0.187715846
+   2  H       1.00    0.938435770   -0.098385906    2.253566032
+   3  H       1.00    2.404923697   -0.098386215    0.341443176
 
  NUCLEAR CHARGE:                   10
  NUMBER OF PRIMITIVE AOS:          30
@@ -246,19 +246,18 @@ Geometry recognized as XYZ
  NUMBER OF VALENCE ORBITALS:        6   (   6A   )
 
 
- NUCLEAR REPULSION ENERGY    6.35169448
+ NUCLEAR REPULSION ENERGY    6.37782403
 
- EXTRA SYMMETRY OF AOS IN SYMMETRY 1:   1 1 1 1 2 1 1 2 1 1   1 1 1
 
  Eigenvalues of metric
 
-         1 0.137E+00 0.195E+00 0.346E+00 0.399E+00 0.417E+00 0.498E+00 0.863E+00 0.103E+01
+         1 0.151E+00 0.154E+00 0.335E+00 0.394E+00 0.451E+00 0.498E+00 0.877E+00 0.967E+00
 
 
  Contracted 2-electron integrals neglected if value below      1.0D-11
  AO integral compression algorithm  1   Integral accuracy      1.0D-11
 
-     0.262 MB (compressed) written to integral file ( 89.8%)
+     0.262 MB (compressed) written to integral file (100.0%)
 
 
  NUMBER OF SORTED TWO-ELECTRON INTEGRALS:       4186.     BUFFER LENGTH:  32768
@@ -266,8 +265,8 @@ Geometry recognized as XYZ
 
  Memory used in sort:       0.56 MW
 
- SORT1 READ        6781. AND WROTE        2315. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
- SORT2 READ        2315. AND WROTE        4186. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
+ SORT1 READ        6781. AND WROTE        3291. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
+ SORT2 READ        3291. AND WROTE        4186. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
 
  FILE SIZES:   FILE 1:    16.7 MBYTE,  FILE 4:     4.2 MBYTE,   TOTAL:     20.9 MBYTE
 
@@ -285,8 +284,8 @@ Geometry recognized as XYZ
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   
 
  PROGRAMS   *        TOTAL       INT      DATA   RESTART
- CPU TIMES  *         0.41      0.28      0.00      0.01
- REAL TIME  *         1.41 SEC
+ CPU TIMES  *         0.46      0.34      0.00      0.00
+ REAL TIME  *         1.62 SEC
  DISK USED  *        22.63 MB      
  **********************************************************************************************************************************
 
@@ -323,14 +322,14 @@ Geometry recognized as XYZ
 
  ITER. MIC  NCI  NEG     ENERGY(VAR)     ENERGY(PROJ)   ENERGY CHANGE     GRAD(0)  GRAD(ORB)   GRAD(CI)     STEP       TIME
 
-   1   21    7    0     -75.37799176     -75.37801557   -0.00002382    0.00602290 0.00000000 0.00000000  0.55D-02      0.01
-   2   20   13    0     -75.37801559     -75.37801559   -0.00000000    0.00001097 0.00000000 0.00000000  0.47D-05      0.01
-   3   19   10    0     -75.37801559     -75.37801559   -0.00000000    0.00000000 0.00000000 0.00000000  0.15D-10      0.02
+   1   21    7    0     -75.33510223     -75.33518074   -0.00007850    0.01092339 0.00000000 0.00000000  0.94D-02      0.01
+   2   22   13    0     -75.33518060     -75.33518060   -0.00000000    0.00003793 0.00000000 0.00000000  0.30D-04      0.01
+   3   24   10    0     -75.33518060     -75.33518060    0.00000000    0.00000000 0.00000000 0.00000000  0.58D-09      0.02
 
- ** WVFN ****  CONVERGENCE REACHED, FINAL GRADIENT:  0.14D-13
+ ** WVFN ****  CONVERGENCE REACHED, FINAL GRADIENT:  0.87D-14
 
  Solving MCSCF z-vector equations for state  2.1, requested accuracy=      0.10D-08
- Convergence reached in  17 iterations ( 17 expansion vectors), accuracy=  0.61D-09
+ Convergence reached in  16 iterations ( 16 expansion vectors), accuracy=  0.76D-09
 
  SA-Gradient information saved on record      5101.2
 
@@ -339,59 +338,62 @@ Geometry recognized as XYZ
  Results for state 1.1
  =====================
 
- !MCSCF STATE 1.1 Energy              -75.440803697782
- Nuclear energy                         6.35169448
- Kinetic energy                        74.44340981
- One electron energy                 -112.89920508
- Two electron energy                   31.10670690
- Virial ratio                           2.01339801
+ !MCSCF STATE 1.1 Energy              -75.402576275172
+ Nuclear energy                         6.37782403
+ Kinetic energy                        74.49363960
+ One electron energy                 -112.59692937
+ Two electron energy                   30.81652907
+ Virial ratio                           2.01220153
 
- !MCSCF STATE 1.1 Dipole moment         1.53503995    -0.09838606     1.17778653
- Dipole moment /Debye                   3.90142684    -0.25005603     2.99343868
+ !MCSCF STATE 1.1 Dipole moment         1.47689936    -0.09838606     1.14922055
+ Dipole moment /Debye                   3.75365787    -0.25005604     2.92083596
 
  Results for state 2.1
  =====================
 
- !MCSCF STATE 2.1 Energy              -75.350687564544
- Nuclear energy                         6.35169448
- Kinetic energy                        75.03373831
- One electron energy                 -113.60278544
- Two electron energy                   31.90040339
- Virial ratio                           2.00422409
+ !MCSCF STATE 2.1 Energy              -75.364134842066
+ Nuclear energy                         6.37782403
+ Kinetic energy                        74.79824077
+ One electron energy                 -112.94482083
+ Two electron energy                   31.20286195
+ Virial ratio                           2.00756561
 
- !MCSCF STATE 2.1 Dipole moment         1.84400439    -0.09838606     1.41917686
- Dipole moment /Debye                   4.68668469    -0.25005603     3.60695151
+ !MCSCF STATE 2.1 Dipole moment         1.64730302    -0.09838606     1.28849918
+ Dipole moment /Debye                   4.18675240    -0.25005604     3.27482375
 
  Results for state 3.1
  =====================
 
- !MCSCF STATE 3.1 Energy              -75.342555499797
- Nuclear energy                         6.35169448
- Kinetic energy                        74.98767331
- One electron energy                 -113.67385691
- Two electron energy                   31.97960692
- Virial ratio                           2.00473254
+ !MCSCF STATE 3.1 Energy              -75.238830691315
+ Nuclear energy                         6.37782403
+ Kinetic energy                        75.34221618
+ One electron energy                 -113.86761530
+ Two electron energy                   32.25096058
+ Virial ratio                           1.99862779
 
- !MCSCF STATE 3.1 Dipole moment         1.73322862    -0.09838606     1.33262776
- Dipole moment /Debye                   4.40513920    -0.25005603     3.38698006
+ !MCSCF STATE 3.1 Dipole moment         2.04785380    -0.09838606     1.59649814
+ Dipole moment /Debye                   5.20478425    -0.25005605     4.05762773
 
  State-averaged charge density matrix saved on record  2140.2 (density set 1)
 
- !MCSCF expec         <1.1|DMX|1.1>     1.535039950628 au =     3.901426837717 Debye
- !MCSCF expec         <2.1|DMX|2.1>     1.844004394757 au =     4.686684689628 Debye
- !MCSCF trans         <3.1|DMX|2.1>     0.148032302668 au =     0.376235939816 Debye
- !MCSCF expec         <3.1|DMX|3.1>     1.733228623193 au =     4.405139204134 Debye
+ !MCSCF expec         <1.1|DMX|1.1>     1.476899358693 au =     3.753657872067 Debye
+ !MCSCF expec         <2.1|DMX|2.1>     1.647303016062 au =     4.186752399563 Debye
+ !MCSCF trans         <3.1|DMX|1.1>    -0.000000011917 au =    -0.000000030288 Debye
+ !MCSCF trans         <3.1|DMX|2.1>    -0.054990373095 au =    -0.139762432451 Debye
+ !MCSCF expec         <3.1|DMX|3.1>     2.047853795848 au =     5.204784250451 Debye
 
- !MCSCF expec         <1.1|DMY|1.1>    -0.098386055161 au =    -0.250056030077 Debye
- !MCSCF trans         <2.1|DMY|1.1>     0.000000124020 au =     0.000000315207 Debye
- !MCSCF expec         <2.1|DMY|2.1>    -0.098386055137 au =    -0.250056030014 Debye
- !MCSCF trans         <3.1|DMY|1.1>    -0.118646240377 au =    -0.301548911618 Debye
- !MCSCF expec         <3.1|DMY|3.1>    -0.098386055083 au =    -0.250056029877 Debye
+ !MCSCF expec         <1.1|DMY|1.1>    -0.098386059486 au =    -0.250056041069 Debye
+ !MCSCF trans         <2.1|DMY|1.1>     0.000427932526 au =     0.001087624751 Debye
+ !MCSCF expec         <2.1|DMY|2.1>    -0.098386059553 au =    -0.250056041239 Debye
+ !MCSCF trans         <3.1|DMY|1.1>    -0.141946743592 au =    -0.360769004577 Debye
+ !MCSCF trans         <3.1|DMY|2.1>     0.000000012210 au =     0.000000031033 Debye
+ !MCSCF expec         <3.1|DMY|3.1>    -0.098386061686 au =    -0.250056046661 Debye
 
- !MCSCF expec         <1.1|DMZ|1.1>     1.177786526535 au =     2.993438680111 Debye
- !MCSCF expec         <2.1|DMZ|2.1>     1.419176856294 au =     3.606951514419 Debye
- !MCSCF trans         <3.1|DMZ|2.1>    -0.189472465255 au =    -0.481559428242 Debye
- !MCSCF expec         <3.1|DMZ|3.1>     1.332627760688 au =     3.386980064008 Debye
+ !MCSCF expec         <1.1|DMZ|1.1>     1.149220547754 au =     2.920835959761 Debye
+ !MCSCF expec         <2.1|DMZ|2.1>     1.288499181818 au =     3.274823750524 Debye
+ !MCSCF trans         <3.1|DMZ|1.1>     0.000000014312 au =     0.000000036375 Debye
+ !MCSCF trans         <3.1|DMZ|2.1>     0.079982461997 au =     0.203281825762 Debye
+ !MCSCF expec         <3.1|DMZ|3.1>     1.596498135955 au =     4.057627732380 Debye
 
 
  NATURAL ORBITALS (state averaged)
@@ -402,20 +404,20 @@ Geometry recognized as XYZ
                                    1 1s      1 1s      1 1s      1 2px     1 2py     1 2pz     1 2px     1 2py     1 2pz     2 1s   
                                    2 1s      3 1s      3 1s   
 
-   1.1  2.00000   -21.056888     0.995947  0.020515 -0.005627  0.000983 -0.000000  0.000768 -0.001103  0.000000 -0.000862  0.000347
-                                 0.000805  0.000347  0.000805
+   1.1  2.00000   -21.088818     0.995949  0.020348 -0.005286  0.000895 -0.000000  0.000694 -0.001030  0.000000 -0.000793  0.000277
+                                 0.000567  0.000279  0.000601
 
-   2.1  2.00000    -1.632269    -0.222427  0.513452  0.523907  0.067572 -0.000000  0.052793  0.075849 -0.000000  0.059260  0.065200
-                                 0.008385  0.065200  0.008385
+   2.1  2.00000    -1.651599    -0.219776  0.513608  0.505268  0.069871 -0.000000  0.053952  0.077927 -0.000000  0.060684  0.078857
+                                 0.016989  0.081122  0.016234
 
-   3.1  1.66667    -0.834325    -0.029429  0.088555  0.070023 -0.429413  0.391879  0.191411 -0.293804  0.253793  0.123316  0.048357
-                                 0.039372 -0.178733 -0.144455
+   3.1  1.66667    -0.853217    -0.046954  0.137021  0.117496 -0.089147  0.557349 -0.274035 -0.069801  0.350636 -0.184398 -0.147687
+                                -0.116766 -0.095446 -0.059659
 
-   4.1  1.66667    -0.837412     0.036037 -0.108438 -0.085745 -0.036783 -0.351003  0.485721 -0.017001 -0.227321  0.331242  0.190687
-                                 0.154080 -0.031038 -0.025404
+   4.1  1.66667    -0.879883     0.069091 -0.201474 -0.173134  0.269707  0.405472  0.225778  0.190040  0.255088  0.158909  0.179707
+                                 0.131381  0.177673  0.127092
 
-   5.1  1.66667    -0.832062    -0.053208  0.160108  0.126602 -0.341862 -0.454474 -0.210089 -0.240208 -0.294332 -0.149497 -0.105576
-                                -0.085052 -0.130144 -0.104939
+   5.1  1.66667    -0.845827    -0.013620  0.039312  0.034813 -0.440625  0.135427  0.451806 -0.281718  0.085199  0.283110  0.069757
+                                 0.087190 -0.139150 -0.134990
 
  Total charge:   1.000000000000
  
@@ -426,11 +428,11 @@ Geometry recognized as XYZ
  CI vector
  =========
 
- 22a      0.6537203   0.0771751   0.7527906
- a22     -0.5636831   0.7133728   0.4163661
- 2a2      0.5048873   0.6965223  -0.5098486
+ 22a      0.1928022   0.9678152  -0.1617439
+ 2a2      0.5772550   0.0214222   0.8162829
+ a22      0.7934759  -0.2507486  -0.5545459
 
- TOTAL ENERGIES                       -75.44080370   -75.35068756   -75.34255550
+ TOTAL ENERGIES                       -75.40257628   -75.36413484   -75.23883069
 
 
 
@@ -445,8 +447,8 @@ Geometry recognized as XYZ
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL     MULTI       INT      DATA   RESTART
- CPU TIMES  *         0.43      0.02      0.28      0.00      0.01
- REAL TIME  *         1.43 SEC
+ CPU TIMES  *         0.48      0.02      0.34      0.00      0.00
+ REAL TIME  *         1.64 SEC
  DISK USED  *        22.63 MB      
  **********************************************************************************************************************************
 
@@ -469,11 +471,11 @@ Geometry recognized as XYZ
 
  Atom          dE/dx               dE/dy               dE/dz
 
-   1        -0.053650418        -0.000000000        -0.041916189
-   2        -0.001175037        -0.000000000         0.056796683
-   3         0.054825455         0.000000000        -0.014880494
+   1        -0.050725962         0.000000000        -0.039529945
+   2         0.001888265         0.000000005         0.049737940
+   3         0.048837697        -0.000000005        -0.010207995
 
- Nuclear force contribution to virial =         0.291656794
+ Nuclear force contribution to virial =         0.245930155
 
 
  **********************************************************************************************************************************
@@ -487,14 +489,14 @@ Geometry recognized as XYZ
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL    FORCES     MULTI       INT      DATA   RESTART
- CPU TIMES  *         0.43      0.00      0.02      0.28      0.00      0.01
- REAL TIME  *         1.44 SEC
+ CPU TIMES  *         0.49      0.01      0.02      0.34      0.00      0.00
+ REAL TIME  *         1.65 SEC
  DISK USED  *        22.63 MB      
  **********************************************************************************************************************************
 
- MULTI/6-31G energy=    -75.342555499797
+ MULTI/6-31G energy=    -75.238830691315
 
         MULTI   
-    -75.35068756
+    -75.36413484
  **********************************************************************************************************************************
  Variable memory released

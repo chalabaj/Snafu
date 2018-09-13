@@ -33,20 +33,25 @@ def update_positions(
         z_new[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2 * am[iat]) * dt ** 2 )
     return(x_new, y_new, z_new)
 
-def update_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
+def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
+    vxx = np.copy(vx)
+    vyy = np.copy(vy)
+    vzz = np.copy(vz)
     for iat in range(0,len(am)):
-        vx[iat] = vx[iat] + ( dt * (fx[iat] + fx_new[iat]) / (2 * am[iat]) )
-        vy[iat] = vy[iat] + ( dt * (fy[iat] + fy_new[iat]) / (2 * am[iat]) )
-        vz[iat] = vz[iat] + ( dt * (fz[iat] + fz_new[iat]) / (2 * am[iat]) )
-     #print(vz[iat])
-    return(vx,vy,vz)   
+        vxx[iat] = vx[iat] + ( dt * (fx[iat] + fx_new[iat]) / (2 * am[iat]) )
+        vyy[iat] = vy[iat] + ( dt * (fy[iat] + fy_new[iat]) / (2 * am[iat]) )
+        vzz[iat] = vz[iat] + ( dt * (fz[iat] + fz_new[iat]) / (2 * am[iat]) )
+    return(vxx, vyy, vzz)   
 
 def adjust_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
+    vxx = np.copy(vx)
+    vyy = np.copy(vy)
+    vzz = np.copy(vz)
     # at the point where a hop occured, subtract the included forces from an old state and replace them with forces of a new state
     for iat in range(0,len(am)):
-        vx[iat] = vx[iat] + ( dt * (-fx[iat] + fx_new[iat]) / (2 * am[iat]) )
-        vy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
-        vz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
+        vxx[iat] = vx[iat] + ( dt * (-fx[iat] + fx_new[iat]) / (2 * am[iat]) )
+        vyy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
+        vzz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
      #print(vz[iat])
     return(vx,vy,vz)   
     
@@ -80,9 +85,9 @@ def calc_forces(
         error_exit(4)
 
     # COLLECT DATA (TODO: diabatization - needs more forces)
-    if  re.search(r'g09',ab_initio_file_path):
+    if  re.search(r'g09', ab_initio_file_path):
             grad = 1   # gaus exports forces -1
-    elif re.search(r'molpro',ab_initio_file_path):
+    elif re.search(r'molpro', ab_initio_file_path):
             grad = -1  #molpro export gradient
     with open ("gradients.dat", "r") as gef:
            
@@ -101,19 +106,23 @@ def calc_forces(
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 
     vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
-     
+
     Ekin = 0.000
+
     for iat in range(0,natoms):
         vv = vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2
         Ekin = Ekin + (0.5 * am[iat] * vv)
-        Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
-        Etot = Ekin + Epot
-        dE = (Etot - Etot_init)
-        if (dE * AU_EV) >= ener_thresh: 
-            print("Total energy change since start {} ".format(dE * AU_EV),
-                  "larger then threshold {}.".format(ener_thresh))
-            error_exit(7)
-        dE_step = (Etot - Etot_prev)
+
+    Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
+    Etot = Ekin + Epot
+    dE = (Etot - Etot_init)
+    dE_step = (Etot - Etot_prev)
+
+    if (dE * AU_EV) >= ener_thresh: 
+        print("Total energy change since start {} ".format(dE * AU_EV),
+              "larger then threshold {}.".format(ener_thresh))
+        error_exit(7)
+        
     print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
     print_pes(time, step, pot_eners)
 
