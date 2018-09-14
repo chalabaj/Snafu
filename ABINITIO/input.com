@@ -32,7 +32,7 @@ maxiter,40;
 ORBITAL,2140.2;
 NOEXTRA;
 
-cpmcscf,grad,2.1,ACCU=1d-9,save=5101.2; 
+cpmcscf,grad,3.1,ACCU=1d-9,save=5101.2; 
 forces;samc,5101.2;
 
 if (status.lt.0) then

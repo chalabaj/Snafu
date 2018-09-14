@@ -49,11 +49,7 @@ def calc_hopp(method, state, pot_eners,
                   "dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),     
                   "\nProbability: {} ".format(probs[max_prob_row][3]),
                   "Randon number: {}".format(theta))
-            
-
             v_scaling_fac = math.sqrt(1-(dEpot / Ekin))  # lower upper
-
-
     else:
         v_scaling_fac = -1
     if not hop:
@@ -73,7 +69,7 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
 
     #print("Instate {}, Outstate {}".format(instate, outstate))
     # energy gap in time T-DT [0], T [1], T+DT [2]
-
+    prob = 0.0000
     Z = [(abs(pot_eners_array[step][instate] 
               - pot_eners_array[step][outstate])) for step in range(0,3)]
     #print("Z[-dt]: {:.4f}  Z[t]: {:.4f} Z[dt]: {:.4f}".format(Z[0],Z[1],Z[2]))
@@ -90,6 +86,5 @@ def calc_prob(instate, outstate, pot_eners_array, dt):
               #"Second derivative at minima: {},".format(sec_der),
               #"Z**3: {}".format( Z[1]**3),
               "Probability: {}".format(prob))
-    else:
-        prob = 0.0000
+
     return([instate, outstate, Z[1], prob])

@@ -216,7 +216,7 @@ if __name__ == "__main__":
                                                            fx_new, fy_new,
                                                            fz_new)
 
-                    
+
                     fx_new, fy_new, fz_new, pot_eners = calc_forces(
                         step, at_names, state, nstates, 
                         x_new, y_new, z_new, fx_new, fy_new, fz_new,
@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
             else:
                 pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
-            
+
         vx, vy, vz = update_velocities(dt, am, 
                                        vx, vy, vz,
                                        fx, fy, fz,
@@ -246,14 +246,12 @@ if __name__ == "__main__":
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
                                                       Etot_prev, ener_thresh)
-        #if hop:
-        #    print("New X Ekin {}".format(Ekin))
-            
-        print("Ekin {}, Epot {}, Etot{}".format(Ekin, Epot, Etot))
-        print(" {:<6d}  {:<10.4f}  {:<10.4f}".format(step, time, dE * AU_EV),
-              " {:<11.4f}".format(dE_step*AU_EV),
-              "{}     {}\n".format(str(hop)[0], state))
-        print("-----------------------------------------------------")
+
+        # print("Ekin {}, Epot {}, Etot{}".format(Ekin, Epot, Etot))
+        print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, time, dE * AU_EV),
+              " {:<13.4f}".format(dE_step * AU_EV),
+              "{}     {}".format(str(hop)[0], state))
+        #print("-----------------------------------------------------")
 
         # save positions and velocities
         print_positions(step, time, natoms, at_names, x, y, z)

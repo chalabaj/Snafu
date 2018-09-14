@@ -27,6 +27,7 @@ ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
 def update_positions(
         dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
+
     for iat in range(0,len(am)):
         x_new[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
         y_new[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
@@ -53,7 +54,7 @@ def adjust_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
         vyy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
         vzz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
      #print(vz[iat])
-    return(vx,vy,vz)   
+    return(vxx, vyy, vzz)   
     
 def calc_forces(
         step, at_names, state, nstates, x, y, z, fx_new , fy_new, fz_new,
@@ -63,7 +64,7 @@ def calc_forces(
     state = current state - PES for the forcess calc 
     """
     natoms = len(x)
-
+    grad = 1
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:
@@ -72,9 +73,9 @@ def calc_forces(
              agf.write(line)
     agf.closed
 
-    # CALL EXTERNAL HANDLING AB-INITIO CALCULATIONS       
-    # electronic states starts from 1(ground state) 
-    # while code starts from 0 index due to python 
+    # CALL EXTERNAL AB-INITIO CALCULATIONS       
+    # ab initio index from 1
+    # snafu index from 0 
     state = state + 1 
     abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
 
@@ -89,8 +90,8 @@ def calc_forces(
             grad = 1   # gaus exports forces -1
     elif re.search(r'molpro', ab_initio_file_path):
             grad = -1  #molpro export gradient
+
     with open ("gradients.dat", "r") as gef:
-           
         for st in range(0, nstates):
             pot_eners[st] = float(gef.readline()) 
         for iat in range(0, natoms):
@@ -118,7 +119,7 @@ def calc_energies(
     dE = (Etot - Etot_init)
     dE_step = (Etot - Etot_prev)
 
-    if (dE * AU_EV) >= ener_thresh: 
+    if abs(dE * AU_EV) >= ener_thresh and step > 1: 
         print("Total energy change since start {} ".format(dE * AU_EV),
               "larger then threshold {}.".format(ener_thresh))
         error_exit(7)

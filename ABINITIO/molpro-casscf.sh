@@ -102,13 +102,13 @@ fi
 if [[ $? -ne 0 ]];then
    cp $input.com.out $input.com.out.error.$step.nowf
    if $( grep "NO CONVER" $input.com.out ) ;then 
-      echo "ERROR during execution of MOLPRO. See $input.com.out"
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
       exit 1
    elif $( grep "ERROR DETECTED" $input.com.out ); then
-      echo "ERROR during execution of MOLPRO. See $input.com.out"
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
       exit 2  
    else
-      echo "ERROR during execution of MOLPRO. See $input.com.out"
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
       exit 3
    fi
 fi
