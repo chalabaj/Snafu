@@ -21,8 +21,8 @@ BOMD works with Velocity Verlet.
 Hopping algorithm works.
 Energy conservation from initial tests is about 10^-2 eV between hops and 10^5 eV for bomd without hops.
 Velocity adjustment after hops seems to be more stable when the velocities are scales factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies for which the hop occured and Ekin is current kinetic energy at the moment of the hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation is  only about 10^-1 eV.
-Timestep of 4 au appers to be most stable, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops.
-Hops are only allowed for pot. eneergy differences with less than 0.5 eV. Higher energy transitions lead to poore energy conservation.
+Timestep of 4 au appears to be most stable, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops.
+Hops are only allowed for pot. energy differences with less than 0.5 eV. Higher energy transitions lead to poore energy conservation.
 
 
 ## How to run/Requirements
@@ -46,12 +46,21 @@ File names input.in needs to be present in the folder with following parameters:
 
 [Settings]
 natoms  = 3                # number of atoms in system
+
 nstates = 3                # number of electronic states
+
 init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state
+
 timestep = 6               # in atomic unit au = 0.024 fs 
+
 maxsteps = 600             # total number of steps
+
 method  = lz-adiabatic     # bomd/lz-adibatic (Belyaev)
+
 abinitio  = molpro-casscf   # where to take gradients, file has to start  g09 or molpro to distinguish between forces and gradients
+
 restart = 0                # not yet working
-vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces fro new surface are included into velocity at hop point
+
+vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point
+
 ener_thresh = 1.0          # threshold for max energy drift in eV 
