@@ -3,7 +3,6 @@
 ### * *ab initio* * nonadiabatic MD without calculating non-adiabatic couplings
 
 ### Theory
-Two scheme with/without diabatization
 
 1) adiabatic-potential-based formula derived within Landau-Zener:
 
