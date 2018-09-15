@@ -106,6 +106,7 @@ if __name__ == "__main__":
     dt = float(timestep)
     nstates = int(nstates)
     ener_thresh = float(ener_thresh)
+    hop_thresh = float(hop_thresh)
     print(liner)
 
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
@@ -175,7 +176,8 @@ if __name__ == "__main__":
                 hop, outstate, v_scal_fac, prob = calc_hopp(method, state,
                                                             pot_eners, 
                                                             pot_eners_array,
-                                                            Ekin, dt)
+                                                            Ekin, dt,
+                                                            hop_thresh)
 
                 if hop:
                     state = outstate

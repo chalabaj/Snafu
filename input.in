@@ -9,3 +9,4 @@ abinitio  = molpro-casscf    # where to take gradients,file has to start  g09 or
 restart = 0                # not yet working
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces fro new surface are included into velocity at hop point
 ener_thresh = 1.0          # threshold for max energy drift in eV 
+hop_thresh = 0.5          # threshold for hopping between the states with energy difference less than this threshhold
