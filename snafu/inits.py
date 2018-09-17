@@ -71,7 +71,6 @@ def read_input(cwd,input_file_path):
 
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
-    # could be xyz matrix [natoms,3] as well, but this should be more clear reading
     x = np.zeros(natoms, dtype=np.float64)  
     y = np.zeros(natoms, dtype=np.float64)  
     z = np.zeros(natoms, dtype=np.float64)  

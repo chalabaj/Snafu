@@ -58,7 +58,7 @@ def print_pes(time, step, pot_eners):
     return()
     
 def print_snafu():
-   print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFF FFFFFFFFFFFUUUUUUUU     UUUUUUUU")
+   print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN                AAA               FFFFFFFFF FFFFFFFFFFFUUUUUUUU     UUUUUUUU")
    print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F:::::::::::::::::::FU::::::U     U::::::U")
    print( "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F:::::::::::::::::::FU::::::U     U::::::U")
    print( "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF:::::FFFFFFFFF::::FUU:::::U     U:::::UU")

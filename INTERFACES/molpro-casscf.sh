@@ -8,16 +8,16 @@ natoms=$2
 state=$3   # for which state
 nstate=$4 # total number of state
 step=$5
-echo "$2 $3 $4 $5" > lal
+
 input=input
-nacaccu=9
+nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g"  # for Pople basis sets and df-casscf, fitting DF basis must be specified manually
+basis="6-31g"  
                # don't use Dunning basis sets, you won't get NACME
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.
 nocc=5         # occupied orbitals
-nclosed=3      # closed orbitals
+nclosed=2      # closed orbitals
 memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
 
@@ -63,6 +63,23 @@ NOEXTRA;
 cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2; 
 forces;samc,5101.2;
 
+if (status.lt.0) then
+   text, MCSCF failed to converge.
+   text, Attempting uncoupled iterations.
+   text, Enlarging PSPACE.
+   {$multi;
+   occ,$nocc;
+   closed,$nclosed;
+   WF,$nelectrons,0,$spin;
+   ! Info about pspace: https://www.molpro.net/info/2015.1/doc/manual/node244.html
+   ! uncomment in case of convergence difficulties...
+   pspace, 2;
+   state,$nstate;
+   maxiter,40;
+   {iterations
+   do,uncouple,1,to,5}
+   }
+endif
 EOF
 
 ############################----------MOLPRO JOB-------------------------
@@ -75,26 +92,33 @@ fi
 
 $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 
-
 # Check whether all is OK.
 # If it is some other error, do nothing. It's up to ABIN to decide what to do.
 if [[ $? -ne 0 ]];then
-   cp $input.com.out $input.com.out.error
-   if $( grep -q 'NO CONVER' $input.com.out ) ;then 
-      echo "ERROR: Could not converge forces!"
-      exit 3
+    cp $input.com.out $input.com.out.error.$step
+    rm $input.pun 
+    $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
+fi 
+if [[ $? -ne 0 ]];then
+   cp $input.com.out $input.com.out.error.$step.nowf
+   if $( grep "NO CONVER" $input.com.out ) ;then 
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
+      exit 1
+   elif $( grep "ERROR DETECTED" $input.com.out ); then
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
+      exit 2  
    else
-      echo "ERROR during execution of MOLPRO. See $input.com.out"
-      exit 2
+      echo "ERROR during execution of MOLPRO. See $input.com.out" > MOLPRO_ERROR
+      exit 3
    fi
 fi
-cp $input.com.out $input.com.out.old
+
 #echo "$step" >> grads.dat
 ################### Extracting energy 
 grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
 grep "GRADIENT," $input.pun | awk -F" " '{print $5" "$6" "$7" "}'>> ../gradients.dat #need space at the end for numpy float reading
 
-cat ../gradients.dat >> grads.dat
+#cat ../gradients.dat >> grads.dat
 
 if [[ $? -eq 0 ]];then
 exit 0
