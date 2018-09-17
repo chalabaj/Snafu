@@ -9,7 +9,6 @@ import numpy as np
 from datetime import datetime
 startTime = datetime.now()
 
-
 # ENVIRONMENT LAYER & LOCAL IMPORT
 # find local modules
 # SNAFU_DIR=/path/to/SNAFU/snafu variable must be set before launch
@@ -75,7 +74,7 @@ else:
 
 liner = ("_") * 100
 
-# ---------------INIT---------------------------------------------------------
+# ---------------INIT--------------------------------------------------------
 
 if __name__ == "__main__":
 
@@ -130,15 +129,14 @@ if __name__ == "__main__":
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], x[iat])),
               " %3.6f %2.6f %2.6f" % (y[iat], z[iat], masses[iat]))
-    print(liner)
-
+    print("{}".format(liner),
+          "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
     # TO DO CHECK RESTART files OR if files exist and not restart then error!!
 
     # CENTER OF MASS REMOVAL
     x, y, z = com_removal(x, y, z, am)
 
     # CALC INITIAL ENERGIES AND GRADIENTS
-
     fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
                                         x, y, z, fx, fy, fz, pot_eners,
                                         ab_initio_file_path)
@@ -154,8 +152,9 @@ if __name__ == "__main__":
                                                   Etot_prev, ener_thresh)
     Etot_init = Etot
     
-    print("Step    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
-    # MAIN LOOP
+    
+
+    #-------------------MAIN LOOP-----------------------------------------
     for step in range(1, maxsteps + 1):
 
         x_new, y_new, z_new = update_positions(dt, am, 
@@ -255,12 +254,13 @@ if __name__ == "__main__":
               "{}     {}".format(str(hop)[0], state))
         #print("-----------------------------------------------------")
 
-        # save positions and velocities
+        # SAVE POSITION AND VELOCITIES
         print_positions(step, time, natoms, at_names, x, y, z)
         print_velocities(step, time, natoms, at_names, vx, vy, vz)
 
-    print("JOB completed.")
+    # FINAL PRINTS
     print(liner)
+    print("JOB completed.")
     stopTime = datetime.now()
     simtime = (datetime.now() - startTime)
     print("Simulation ended at: {}".format(stopTime))

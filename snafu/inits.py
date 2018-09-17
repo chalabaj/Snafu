@@ -72,13 +72,13 @@ def read_input(cwd,input_file_path):
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
     # could be xyz matrix [natoms,3] as well, but this should be more clear reading
-    x = np.zeros(natoms,dtype=np.float64)  
-    y = np.zeros(natoms,dtype=np.float64)  
-    z = np.zeros(natoms,dtype=np.float64)  
+    x = np.zeros(natoms, dtype=np.float64)  
+    y = np.zeros(natoms, dtype=np.float64)  
+    z = np.zeros(natoms, dtype=np.float64)  
     
-    x_new = np.zeros(natoms,dtype=np.float64)  
-    y_new = np.zeros(natoms,dtype=np.float64)  
-    z_new = np.zeros(natoms,dtype=np.float64)  
+    x_new = np.zeros(natoms, dtype=np.float64)  
+    y_new = np.zeros(natoms, dtype=np.float64)  
+    z_new = np.zeros(natoms, dtype=np.float64)  
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path,'r') as igf:  # igf input geom file 
@@ -96,9 +96,9 @@ def read_geoms(natoms,geom_file_path):
      return(at_names, x, y, z, x_new, y_new, z_new)
  # READ INITIAL VELOCITIES:
 def read_velocs(init_vel, natoms, vel_file_path):  
-    vx = np.zeros(natoms,dtype=np.float64)  
-    vy = np.zeros(natoms,dtype=np.float64)  
-    vz = np.zeros(natoms,dtype=np.float64)  
+    vx = np.zeros(natoms, dtype=np.float64)  
+    vy = np.zeros(natoms, dtype=np.float64)  
+    vz = np.zeros(natoms, dtype=np.float64)  
     if init_vel:
         with open(vel_file_path,'r') as ivf:  
             atoms = ivf.readline()  # first line is number of atoms
@@ -111,7 +111,7 @@ def read_velocs(init_vel, natoms, vel_file_path):
                 vy[iat] = float(line[2])
                 vz[iat] = float(line[3])
         ivf.close()
-    return(vx,vy,vz)
+    return(vx, vy, vz)
 
     
 def capitalize_2th(s):
@@ -136,7 +136,7 @@ def init_forces(natoms,nstates):
     
 def init_energies(nstates):
     # Initialize empty potential energies array
-    pot_eners = np.zeros(nstates,dtype=np.float64)     
+    pot_eners = np.zeros(nstates, dtype=np.float64)     
     return(pot_eners)
     
 def com_removal(x,y,z,am):
@@ -148,8 +148,8 @@ def com_removal(x,y,z,am):
         totmass += am[iat] 
         
     xcom = xsum / totmass
-    ycom = xsum / totmass
-    zcom = xsum / totmass
+    ycom = ysum / totmass
+    zcom = zsum / totmass
      
     for iat in range(0,len(x)):
         x[iat] = x[iat] - xcom
