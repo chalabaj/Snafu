@@ -97,6 +97,10 @@ if __name__ == "__main__":
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
 
     # READ INPUT VARIABLES SET THEM AS GLOBAL VARIABLES
+    # DEFAULTS:
+    ener_thresh = 1.000
+    hop_thresh = 0.5
+    dt = 4.00
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     globals().update(input_vars)
     natoms = int(natoms)
