@@ -1,0 +1,67 @@
+#!/bin/bash
+
+function PrintHelp {
+   echo " "
+   echo "USAGE: 'launchSNAFU nproc que' "
+   exit 1
+}
+                              
+name="snafu"
+        
+nproc=$1
+echo $nproc
+
+if ! [[ $nproc =~ ^[1-9]+$ ]] ; then
+   echo "error: Nproc is not an integer number" 
+   PrintHelp
+fi
+
+#which queue
+cluster=$(uname -a | awk {'print $2'})
+if [[ ! -n "$2" ]]; then
+if [ "$cluster" = "as67-1" ]; then
+   queue='sq-8-16'
+elif [ "$cluster" == "403-a324-01" ]; then
+   queue='aq'
+elif [ "$cluster" = "403-as67-01" ]; then
+   queue='nq'
+fi
+else 
+queue=$2
+echo $queue
+fi
+
+cat > r.$name << EOF
+#!/bin/bash
+
+#$ -V
+#$ -cwd
+#$ -pe shm $nproc 
+#$ -notify
+
+export OMP_NUM_THREADS=1
+SNAFUS $input
+EOF
+
+echo "   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU";
+echo " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U";
+echo "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F::::::::::::::::::::FU::::::U     U::::::U";
+echo "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF::::::FFFFFFFFF::::FUU:::::U     U:::::UU";
+echo "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F:::::F       FFFFFF U:::::U     U:::::U ";
+echo "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F:::::F              U:::::D     D:::::U ";
+echo " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F::::::FFFFFFFFFF    U:::::D     D:::::U ";
+echo "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F:::::::::::::::F    U:::::D     D:::::U ";
+echo "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F:::::::::::::::F    U:::::D     D:::::U ";
+echo "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F::::::FFFFFFFFFF    U:::::D     D:::::U ";
+echo "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F:::::F              U:::::D     D:::::U ";
+echo "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F:::::F              U::::::U   U::::::U ";
+echo "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF:::::::FF            U:::::::UUU:::::::U ";
+echo "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F::::::::FF             UU:::::::::::::UU  ";
+echo "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F::::::::FF               UU:::::::::UU    ";
+echo " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFFF                 UUUUUUUUU      "
+
+echo "Launching SNAFU job for $input using $nproc processors."
+echo "Results will be saved to $name.out, JOB information in $name.log"
+echo "qsub -cwd -V -q $queue -pe shm $nproc r.$name"
+echo "-----------------------------------------"
+qsub -cwd -V -q $queue -pe shm $nproc  r.$name

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+#$ -cwd -V
+
+OUTFILE=snafu.out
+if [[ -e $OUTFILE ]];then  # TO DO
+rm $OUTFILE
+fi
+
+jobfile=job.log
+delscratch="true"
+
+export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
+export PATH="/home/$USER/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"
+export SNAFU_DIR="/home/$USER/chalabaj/SNAFU"  #folder with python files, needs to be set
+export basedir=$PWD
+export OMP_NUM_THREADS=1
+
+uname -n     >  $jobfile  #if the scratch is on other node
+echo "${SCRDIR}"    >>  $jobfile
+
+if [[ -d $SCRDIR ]];then
+   echo "Job direcory $SCRDIR already exist!"
+   echo "Exiting..."
+   exit 1
+else
+   mkdir ${SCRDIR}
+fi
+
+# input file
+cp -r $basedir/* $SCRDIR/.
+
+cd $SCRDIR
+ 
+function clean_scratch {
+   cp -pr * $basedir/.
+   if [[ $? -ne "0" ]];then
+      echo "Error when copying the data from scratch back to the server."
+      echo "I will keep the directory $SCRATCH on node ${HOSTNAME}"
+      exit 1
+   fi
+   if [[ $delscratch -eq "true" ]];then
+      cd ../
+      rm -r $SCRDIR
+   fi
+   exit 1
+}
+trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to basedir
+
+python $SNAFU_DIR/snafu.py > $OUTFILE 2>&1   # errors also to output
+
+cp -r $SCRDIR/* $basedir
+
+echo 'Normal termination of:' ${JOB_ID} >> $jobfile
+clean_scratch
+exit 0

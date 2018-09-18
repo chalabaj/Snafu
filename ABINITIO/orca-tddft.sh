@@ -14,15 +14,21 @@ charge=-3
 multiplicity=6
 basis=LANL2DZ
 DFTfunc="B3LYP"
+
 mem=8000   # memory in MB per core
 
+if [[ ! -z  {$NSLOTS}]]; then
+nprocs=$NSLOTS
+else
+nprocs=1
+fi
 ###########END OF INPUTS
 
 cat > $input << EOF
 
 %maxcore $mem          # memory per core
 %pal 
-   nprocs 16           # number of cores
+   nprocs $nprocs           # number of cores
 end
 
 %basis
@@ -40,7 +46,7 @@ if [[ $state -eq 0 ]];then
 
 cat >> $input << EOF
 $new_job
-! B3LYP RIJCOSX TightSCF
+! $DFTfunc RIJCOSX TightSCF
 ! moread
 %basis
  Basis "LANL2DZ"        # The orbital expansion basis set
@@ -60,6 +66,12 @@ else
   iroot $state
   maxcore 32000
 end
+fi
+
+export TMPDIR=$PWD/scratch
+
+if [[ ! -d $TMPDIR ]]; then
+mkdir $TMPDIR
 fi
 
 $ORCAEXE $input &> $input.out
