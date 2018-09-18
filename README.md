@@ -49,7 +49,8 @@ Fx(n_at) Fy(n_at) Fz(n_at)
 
 Environment variables for particular ab initio code have to be adjusted to your machine environment (e.g. if Molpro is used then $MOLPROEXE variable should be set up).
 
-3) In order to run the code, **geom.in** and **input.in** files have to present in a folder.
+3) In order to run the code, **geom.in** with iunitial geometry and **input.in** files have to present in a folder.
+The veloc.in files with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
 The geom.in file has to be in XYZ format:  
 3  
 water xyz  
