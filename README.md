@@ -14,14 +14,12 @@ TODO:
 2) diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**
 
 ## Status
-Program works in beta version. 
-Basic features works, but some needs more testing.
-BOMD works with Velocity Verlet.
-Hopping algorithm works.
-Energy conservation from initial tests is about 10^-2 eV between hops and 10^5 eV for bomd without hops.
-Velocity adjustment after hops seems to be more stable when the velocities are scales factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies for which the hop occured and Ekin is current kinetic energy at the moment of the hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation is  only about 10^-1 eV.
-Timestep of 4 au appears to be most stable, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops.
-Hops are only allowed for pot. energy differences with less than 0.5 eV. Higher energy transitions lead to poore energy conservation.
+This is developing version. 
+
+-Energy conservation from initial tests is about 10^-4 eV - 10^-1 eV between hops and 10^5 eV for regions without hops.
+-Velocity adjustment after hops seems to be more stable when the velocities are scaled by the factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies for which the hop occured and Ekin is current kinetic energy at the moment of the hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appers to be less stable.
+-Timestep of 4 au appears to be most suitable, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops.
+-Hops are only allowed for pot. energy differences with less than 0.5 eV by default. Higher energy transitions lead to poor energy conservation.
 
 
 ## How to run/Requirements
