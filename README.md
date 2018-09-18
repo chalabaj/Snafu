@@ -32,11 +32,11 @@ Python ver 3.5 and newer should work.
 export SNAFU_DIR="path/to/snafu/dir"
 ``` 
 
-2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:
-Currently fully working is CASSCF in MOLPRO
-BOMD with MP2 in Gaussian
-ORCA (tddft - not fully working yet)
-TODO: EOM-IP, EOM-EA in QCHEM/ORCA, TDDDFT Gaussian
+2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
+Currently fully working is CASSCF in MOLPRO  
+BOMD with MP2 in Gaussian  
+ORCA (tddft - not fully working yet)  
+TODO: EOM-IP, EOM-EA in QCHEM/ORCA, TDDDFT Gaussian  
 It is straight forward to implement a new ab initio as at each step, the code reads engrad.dat file in running directory with structure:  
 energy-gs  
 energy-1ex state  
