@@ -12,8 +12,13 @@ input=input.com
 #SYSTEM:
 charge=-3 
 multiplicity=6
-basis=LANL2DZ
+basis=LANL2DZ  # def2-SVP
 DFTfunc="B3LYP"
+#RI-JK approximations for hybrid-DFT methods-: 
+#RIJCOSX approximation for Coulomb and HF Exchange is recommended, but RIJK can be better for small molecules
+#E(DFT-TDDFT) with RIJCOSX for wat dimer is 0.0001
+#E(DFT-TDDFT) with NORI for wat dimer is 0.0000
+
 
 mem=8000   # memory in MB per core
 
