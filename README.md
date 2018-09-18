@@ -37,7 +37,7 @@ Currently fully working is CASSCF in MOLPRO
 BOMD with MP2 in Gaussian  
 ORCA (tddft - not fully working yet)  
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA, TDDDFT Gaussian  
-It is straight forward to implement a new ab initio as at each step, the code reads engrad.dat file in running directory with structure:  
+It is straight forward to implement a new ab initio as at each step, the code reads gradients.dat file in running directory with structure:  
 energy-gs  
 energy-1ex state  
 ....  
