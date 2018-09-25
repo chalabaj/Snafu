@@ -14,9 +14,9 @@ rm $input
 fi
 ########## ORCA PARAMETERS ###########################################
 mem=8000   # memory in MB per core
-charge=1 
-multiplicity=2
-basis=6-31g**         # def2-SVP and 6-31+g** are about the same expensive
+charge=0 
+multiplicity=1
+basis=LANL2DZ         # def2-SVP and 6-31+g** are about the same expensive
 DFT="B3LYP RIJCOSX"   # TightSCF 
 #RI-JK approximations for hybrid-DFT methods-: 
 #RIJCOSX approximation for Coulomb and HF Exchange is recommended, but RIJK can be better for small molecules
