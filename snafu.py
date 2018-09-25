@@ -39,7 +39,8 @@ try:
     from masses import assign_masses
     from errors import error_exit
     from prints import (
-        print_positions, print_velocities, print_snafu
+        print_positions, print_velocities, print_snafu,
+        print_state
     )
     from propagates import (
         calc_forces, calc_energies,
@@ -261,7 +262,7 @@ if __name__ == "__main__":
         # SAVE POSITION AND VELOCITIES
         print_positions(step, time, natoms, at_names, x, y, z)
         print_velocities(step, time, natoms, at_names, vx, vy, vz)
-
+        print_state(step, time, state)
     # FINAL PRINTS
     print(liner)
     print("JOB completed.")

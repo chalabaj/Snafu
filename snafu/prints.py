@@ -1,10 +1,29 @@
-
+import os
 import numpy as np
-from constants import *
-
+try:
+    from constants import *
+    from errors import error_exit
+except ImportError as ime:
+    # module could have been removed or module file renamed
+    if ime.name is None:  
+        print("Import in some of the modules ({})".format(ime.name),
+              "in snafu dir failed. Exiting...")
+        exit(1)
+    else:
+        print("Module {} not found.".format(ime.name),
+              "Make sure that {} contains snafu folder".format(SNAFU_EXE),
+              "with: {}".format('\n'.join(modules_files)))
+        exit(1)
+except KeyError as ke:
+    print("SNAFU_DIR is not set.",
+          "See '.bashrc' file in your home directory",
+          "or use 'env' command and make sure $SNAFU_DIR is exported.",
+          "\nHint: export SNAFU_DIR=/path/to/SNAFU")
+    exit(1)
 
 def print_positions(step,time,natoms, at_names, x, y, z):
-    
+    if step == 1 and (os.path.isfile("movie.xyz")):
+         error_exit(8)
     with open ("movie.xyz", "a") as mov:
      header = ("{} \n".format(natoms))
      mov.write(header)
@@ -17,7 +36,8 @@ def print_positions(step,time,natoms, at_names, x, y, z):
     return()
 
 def print_velocities(step,time,natoms, at_names, vx, vy, vz):
-     
+    if step == 1 and (os.path.isfile("velocities.xyz")):
+         error_exit(8)     
     with open ("velocities.xyz", "a") as vel:
      header = ("{} \n".format(natoms))
      vel.write(header)
@@ -28,9 +48,10 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
        vel.write(line)
     vel.closed
     return()
- 
-def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
 
+def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
+    if step == 1 and (os.path.isfile("energies.xyz")):
+         error_exit(8)   
     with open ("energies.dat", "a") as ef:
         if step == 0:
             headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/  dE_step\n"
@@ -41,9 +62,10 @@ def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
         ef.write(str(line))
     ef.closed
     return()  
-    
+
 def print_pes(time, step, pot_eners):
-    
+    if step == 1 and (os.path.isfile("PES.xyz")):
+         error_exit(8)    
     with open ("PES.dat", "a") as pesf:
         if step == 0:
             headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
@@ -56,7 +78,19 @@ def print_pes(time, step, pot_eners):
         pesf.write(str(line))
     pesf.closed
     return()
-    
+
+def print_state(step, time, state):
+    if step == 1 and (os.path.isfile("state.dat")):
+         error_exit(8)
+    with open ("state.dat", "a") as stf:
+        if step == 0:
+            headline = "# Time,  El. state ( 0 = gs )"
+            stf.write(str(headline)) 
+        line = ("{:10.10f} {:4d} \n ".format(time, state)) 
+        stf.write(str(line))   
+    stf.closed
+    return()
+
 def print_snafu():
    print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN                AAA               FFFFFFFFF FFFFFFFFFFFUUUUUUUU     UUUUUUUU")
    print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F:::::::::::::::::::FU::::::U     U::::::U")

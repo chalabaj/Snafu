@@ -16,7 +16,8 @@ def error_exit(error_number):
            "4 - Ab initio calculations failed.\n",
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
            "6 - Hopping probability larger than 1, something went wrong.\n",
-           "7 - Too large energy drift.\n")
+           "7 - Too large energy drift.\n",
+           "8 - Some of the output files already exists and restart = 0)\n")
     print("---------------------------------")
     print("Program was terminated due to an error! Exiting...")
     print(err[error_number])

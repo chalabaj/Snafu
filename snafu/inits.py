@@ -62,12 +62,12 @@ def read_input(cwd,input_file_path):
         
     # Now that we know everything - check for ab initio interface
     abinit_file = "ABINITIO/{}.sh".format(par['abinitio'])
-    ab_initio_file_path  = os.path.join(cwd,abinit_file)
+    ab_initio_file_path  = os.path.join(cwd, abinit_file)
     
     if (not os.path.isfile(ab_initio_file_path)):
          error_exit(5)
          
-    return(par,ab_initio_file_path)
+    return(par, ab_initio_file_path)
 
 def read_geoms(natoms,geom_file_path):
     #if restart == 1 : read  last two geoms
