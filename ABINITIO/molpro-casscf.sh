@@ -5,8 +5,8 @@ cd ABINITIO
 ##########SNAFU INPUTS###########################################
 abinit_geom_file=$1
 natoms=$2
-state=$3   # for which state
-nstate=$4 # total number of state
+state=$3     # which electronic state
+nstate=$4    # total number of state
 step=$5
 
 input=input

@@ -27,7 +27,6 @@ ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
 def update_positions(
         dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
-
     for iat in range(0,len(am)):
         x_new[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
         y_new[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
@@ -44,20 +43,22 @@ def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
         vzz[iat] = vz[iat] + ( dt * (fz[iat] + fz_new[iat]) / (2 * am[iat]) )
     return(vxx, vyy, vzz)   
 
-def adjust_velocities(dt,am,vx,vy,vz,fx,fy,fz,fx_new,fy_new,fz_new):
+def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
     vxx = np.copy(vx)
     vyy = np.copy(vy)
     vzz = np.copy(vz)
-    # at the point where a hop occured, subtract the included forces from an old state and replace them with forces of a new state
+    # at the point where a hop occured, 
+    # subtract the included forces from an old state 
+    # and replace them with forces of a new state
     for iat in range(0,len(am)):
         vxx[iat] = vx[iat] + ( dt * (-fx[iat] + fx_new[iat]) / (2 * am[iat]) )
         vyy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
         vzz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
-     #print(vz[iat])
     return(vxx, vyy, vzz)   
     
 def calc_forces(
-        step, at_names, state, nstates, x, y, z, fx_new , fy_new, fz_new,
+        step, at_names, state, nstates, x, y, z,
+        fx_new , fy_new, fz_new,
         pot_eners, ab_initio_file_path):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
@@ -65,6 +66,15 @@ def calc_forces(
     """
     natoms = len(x)
     grad = 1
+
+    if re.search(r'g09', ab_initio_file_path):
+            grad = 1   # gaus exports forces -1
+    elif re.search(r'molpro', ab_initio_file_path):
+            grad = -1  # molpro exports gradients
+            state = state + 1 #molpro index starts from 1
+    elif re.search(r'orca', ab_initio_file_path):
+            grad = -1  #orca exports gradients
+                        
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:
@@ -74,9 +84,7 @@ def calc_forces(
     agf.closed
 
     # CALL EXTERNAL AB-INITIO CALCULATIONS       
-    # ab initio index from 1
-    # snafu index from 0 
-    state = state + 1 
+
     abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
 
     try:
@@ -84,12 +92,6 @@ def calc_forces(
     except subprocess.CalledProcessError as cpe: 
         print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
         error_exit(4)
-
-    # COLLECT DATA (TODO: diabatization - needs more forces)
-    if  re.search(r'g09', ab_initio_file_path):
-            grad = 1   # gaus exports forces -1
-    elif re.search(r'molpro', ab_initio_file_path):
-            grad = -1  #molpro export gradient
 
     with open ("gradients.dat", "r") as gef:
         for st in range(0, nstates):

@@ -265,7 +265,10 @@ if __name__ == "__main__":
         print_state(step, time, state)
     # FINAL PRINTS
     print(liner)
-    print("JOB completed.")
+    print("#####JOB DONE.############")
+    print("See output files:",
+          "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
+    print(liner)
     stopTime = datetime.now()
     simtime = (datetime.now() - startTime)
     print("Simulation ended at: {}".format(stopTime))

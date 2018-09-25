@@ -54,7 +54,7 @@ def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
          error_exit(8)   
     with open ("energies.dat", "a") as ef:
         if step == 0:
-            headline = "# Time,  Ekinetic/au,  Epotential/au,  Etotal/au,  dE/  dE_step\n"
+            headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
             ef.write(str(headline))
             dE = 0.0
             dE_step  = 0.0
@@ -80,13 +80,13 @@ def print_pes(time, step, pot_eners):
     return()
 
 def print_state(step, time, state):
-    if step == 1 and (os.path.isfile("state.dat")):
+    if step == 0 and (os.path.isfile("state.dat")):
          error_exit(8)
     with open ("state.dat", "a") as stf:
-        if step == 0:
-            headline = "# Time,  El. state ( 0 = gs )"
+        if step == 1:
+            headline = "# Time,  Electronic state(0 = gs)\n"
             stf.write(str(headline)) 
-        line = ("{:10.10f} {:4d} \n ".format(time, state)) 
+        line = ("{:7.4f} {:4d}\n".format(time, state)) 
         stf.write(str(line))   
     stf.closed
     return()
