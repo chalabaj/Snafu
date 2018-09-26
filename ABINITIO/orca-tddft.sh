@@ -89,6 +89,7 @@ else
    echo "WARNING from ORCA calculation probably failed."
    echo "See $input.out.error" 
    cp $input.out $input.out.error
+   exit 1
 fi
 
 ### EXTRACTING ENERGY AND FORCES
