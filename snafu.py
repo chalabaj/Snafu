@@ -130,10 +130,17 @@ if __name__ == "__main__":
     # OBTAIN ATOMIC MASSES:
     masses = assign_masses(at_names)
     am = [mm * AMU for mm in masses]  # atomic mass units conversion
-    print("At    X       Y         Z         MASS:")
+    print("Initial geometry:\n",
+          "At    X       Y         Z         MASS:")
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], x[iat])),
               " %3.6f %2.6f %2.6f" % (y[iat], z[iat], masses[iat]))
+
+    print("Initial velocities:\n",
+          "At    VX       VY       VZ         ")
+    for iat in range(0, natoms):
+        print("".join("%2s" " " "%3.3f" % (at_names[iat], vx[iat])),
+              " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
     # TO DO CHECK RESTART files OR if files exist and not restart then error!!

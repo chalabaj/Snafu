@@ -1,54 +1,27 @@
-memory, 1000,m;
-file, 2, input.wfu,unknown
-PUNCH, input.pun,new
-gprint, orbital,civector
-symmetry,nosym
-Angstrom
+! ENERGY BHANDHLYP def2-svp def2/jk RIJCOSX           # for small systems increase accuracy by: Grid5 FinalGrid6 
+! NOPOP
+! MiniPrint
+! AUTOSTART         # try to read from previous step
+* xyz 1 2 
+ O -5.2127658215874867e-02 0.0000000000000000e+00 -4.0726586338626733e-02
+ H -5.3042658215874866e-02 0.0000000000000000e+00 9.2064241366137334e-01
+ H 8.8046334178412511e-01 0.0000000000000000e+00 -2.7419058633862675e-01
+*
+$new_job
+! ENGRAD BHANDHLYP def2-svp def2/jk RIJCOSX
+! NOPOP
+! moread
+! MiniPrint
 
-geometry=../abinit_geom.xyz
-
-basis=6-31g
-
-!-for simple CASSCF, you don't need to modify anything below this
-
-!-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
-!-otherwise, the forces and NACME are wrong for the following reason
-!-cpmscf will not rewrite itself it but ather write into following records
-!-but the subsequent call to forces would read from old records -> wrong numbers
-!-we use file 2 for forces and NACME due to df-casscf
-
-data,truncate,2,5101
-
-if (lastorb.ne.MCSCF)then
-   {hf;wf,9,0,1}
-endif
-
-multi;
-occ,5;
-closed,2;
-WF,9,0,1;
-state,3;
-maxiter,40;
-ORBITAL,2140.2;
-NOEXTRA;
-
-cpmcscf,grad,3.1,ACCU=1d-9,save=5101.2; 
-forces;samc,5101.2;
-
-if (status.lt.0) then
-   text, MCSCF failed to converge.
-   text, Attempting uncoupled iterations.
-   text, Enlarging PSPACE.
-   {multi;
-   occ,5;
-   closed,2;
-   WF,9,0,1;
-   ! Info about pspace: https://www.molpro.net/info/2015.1/doc/manual/node244.html
-   ! uncomment in case of convergence difficulties...
-   pspace, 2;
-   state,3;
-   maxiter,40;
-   {iterations
-   do,uncouple,1,to,5}
-   }
-endif
+%tddft
+  maxdim 5
+  nroots 2
+  maxcore 8000
+  iroot 2  
+  PrintLevel 3
+end
+* xyz 1 2 
+ O -5.2127658215874867e-02 0.0000000000000000e+00 -4.0726586338626733e-02
+ H -5.3042658215874866e-02 0.0000000000000000e+00 9.2064241366137334e-01
+ H 8.8046334178412511e-01 0.0000000000000000e+00 -2.7419058633862675e-01
+*

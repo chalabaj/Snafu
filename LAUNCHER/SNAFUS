@@ -11,9 +11,9 @@ jobfile=job.log
 delscratch="true"
 
 export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
-export PATH="/home/$USER/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"
-export SNAFU_DIR="/home/$USER/chalabaj/SNAFU"  #folder with python files, needs to be set
-export basedir=$PWD
+export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python
+export SNAFU_DIR="/home/chalabaj/SNAFU"  #folder with python files, needs to be set
+export basedir=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
 
 uname -n     >  $jobfile  #if the scratch is on other node
@@ -46,6 +46,8 @@ function clean_scratch {
    exit 1
 }
 trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to basedir
+
+
 
 python $SNAFU_DIR/snafu.py > $OUTFILE 2>&1   # errors also to output
 

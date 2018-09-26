@@ -3,22 +3,16 @@
         Comment:             The SCF Energy                                                                                                              
         Geometry:            3
         Type:                DOUBLE
-        Value:               -76.3756843122699962
+        Value:               -75.8727033207993600
                     PROPERTY:
         Name:                SCF_Energy                      
         Comment:             The SCF Energy                                                                                                              
         Geometry:            3
         Type:                DOUBLE
-        Value:               -76.3756843210480412
-                    PROPERTY:
-        Name:                SCF_Energy                      
-        Comment:             The SCF Energy                                                                                                              
-        Geometry:            3
-        Type:                DOUBLE
-        Value:               -76.3756844580946961
+        Value:               -75.8727033207993600
                     GEOMETRY:    3
         Number of atoms:    3
         Coordinates:
-            O     -0.000064000000    0.000000000000   -0.000050000000
-            H     -0.000979000000    0.000000000000    0.961319000000
-            H      0.932527000000    0.000000000000   -0.233514000000
+            O     -0.052127658216    0.000000000000   -0.040726586339
+            H     -0.053042658216    0.000000000000    0.920642413661
+            H      0.880463341784    0.000000000000   -0.274190586339

@@ -69,7 +69,7 @@ def read_input(cwd,input_file_path):
          
     return(par, ab_initio_file_path)
 
-def read_geoms(natoms,geom_file_path):
+def read_geoms(natoms, geom_file_path):
     #if restart == 1 : read  last two geoms
     x = np.zeros(natoms, dtype=np.float64)  
     y = np.zeros(natoms, dtype=np.float64)  
@@ -80,11 +80,11 @@ def read_geoms(natoms,geom_file_path):
     z_new = np.zeros(natoms, dtype=np.float64)  
     at_names = []
  # READ INITIAL POSITIONS:   
-    with open(geom_file_path,'r') as igf:  # igf input geom file 
+    with open(geom_file_path, 'r') as igf:  # igf input geom file 
      atoms = igf.readline()  # first line in geom file is number of atoms
      if not (int(atoms) == natoms):  error_exit(2)                         
      garbage = igf.readline()  # comment 
-     for iat in range(0,natoms):
+     for iat in range(0, natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))
         x[iat] = np.float64(line[1]) * ang_bohr  # atomic units : Bohr
@@ -99,12 +99,12 @@ def read_velocs(init_vel, natoms, vel_file_path):
     vy = np.zeros(natoms, dtype=np.float64)  
     vz = np.zeros(natoms, dtype=np.float64)  
     if init_vel:
-        with open(vel_file_path,'r') as ivf:  
+        with open(vel_file_path, 'r') as ivf:  
             atoms = ivf.readline()  # first line is number of atoms
             if not (int(atoms) == natoms):  
                 error_exit(2)                         
             garbage = ivf.readline()  # second comment line
-            for iat in range(0,natoms):
+            for iat in range(0, natoms):
                 line = ivf.readline().split()
                 vx[iat] = float(line[1])
                 vy[iat] = float(line[2])

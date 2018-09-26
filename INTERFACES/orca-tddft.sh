@@ -2,6 +2,7 @@
 cd ABINITIO
 
 source SetEnvironment.sh ORCA 4.0.0
+export MKL_NUM_THREADS=1
 ########## SNAFU INPUTS ###########################################
 abinit_geom_file=$1
 natoms=$2
@@ -14,10 +15,10 @@ rm $input
 fi
 ########## ORCA PARAMETERS ###########################################
 mem=8000   # memory in MB per core
-charge=0 
-multiplicity=1
-basis=LANL2DZ         # def2-SVP and 6-31+g** are about the same expensive
-DFT="B3LYP RIJCOSX"   # TightSCF 
+charge=1 
+multiplicity=2
+basis="def2-svp def2/jk"         # def2-SVP and 6-31+g** are about the same expensive
+DFT="BHANDHLYP $basis RIJCOSX"   # TightSCF
 #RI-JK approximations for hybrid-DFT methods-: 
 #RIJCOSX approximation for Coulomb and HF Exchange is recommended, but RIJK can be better for small molecules
 #E(DFT-TDDFT) with RIJCOSX for wat dimer is 0.0001
@@ -47,11 +48,8 @@ fi
 ########### END OF INPUTS ###########################################
 
 cat >> $input << EOF
-%basis
-Basis "$basis"        # The orbital expansion basis set
-end
-
 $gstask           # for small systems increase accuracy by: Grid5 FinalGrid6 
+! NOPOP
 ! MiniPrint
 ! AUTOSTART         # try to read from previous step
 * xyz $charge $multiplicity 
@@ -62,11 +60,10 @@ echo '*' >>$input
 cat >> $input << EOF
 \$new_job
 $extask
+! NOPOP
 ! moread
 ! MiniPrint
-%basis
- Basis "$basis"        # The orbital expansion basis set
-end
+
 %tddft
   maxdim 5
   nroots $nstate
@@ -85,11 +82,26 @@ $ORCAEXE $input > $input.out
 
 if [[ $? -eq 0 ]];then
    cp $input.out $input.out.old
+   rm *.tmp
 else
    echo "WARNING from ORCA calculation probably failed."
-   echo "See $input.out.error" 
-   cp $input.out $input.out.error
+   echo "See $input.out.error_old"
+   echo "TRYING TO RESTART JOB WITHOUT PREVIOUS WF" 
+   cp $input.out $input.out.error_old
+   mv input.com restart.inp
+   rm input.*
+   mv restart.inp input.com 
+   $ORCAEXE $input > $input.out
+   if [[ $? -eq 0 ]];then
+      cp $input.out $input.out.old
+      rm *.tmp
+   else
+      echo "WARNING from ORCA calculation probably failed."
+      echo "See $input.out.error"
+      exit 1
+      fi
 fi
+
 
 ### EXTRACTING ENERGY AND FORCES
 # need space at the end for numpy float reading

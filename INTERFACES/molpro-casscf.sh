@@ -5,18 +5,18 @@ cd ABINITIO
 ##########SNAFU INPUTS###########################################
 abinit_geom_file=$1
 natoms=$2
-state=$3   # for which state
-nstate=$4 # total number of state
+state=$3     # which electronic state
+nstate=$4    # total number of state
 step=$5
 
 input=input
 nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g"  
+basis="6-31g**"  
                # don't use Dunning basis sets, you won't get NACME
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.
-nocc=5         # occupied orbitals
+nocc=6         # occupied orbitals
 nclosed=2      # closed orbitals
 memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
