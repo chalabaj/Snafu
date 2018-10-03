@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ABINITIO
-
+printenv >ll
 source SetEnvironment.sh ORCA 4.0.0
 export MKL_NUM_THREADS=1
 ########## SNAFU INPUTS ###########################################
@@ -36,7 +36,7 @@ else                         # excited state
  gradfile="input_job2.engrad"
 fi
 
-if [[ -z {$NSLOTS} ]];then
+if [[ ! -z "${NSLOTS}" ]];then
 nprocs=$NSLOTS
 cat > $input << EOF
 %maxcore $mem          # memory per core
@@ -44,11 +44,15 @@ cat > $input << EOF
    nprocs $nprocs           # number of cores
 end
 EOF
+touch nslostsset
 fi
 ########### END OF INPUTS ###########################################
 
 cat >> $input << EOF
 $gstask           # for small systems increase accuracy by: Grid5 FinalGrid6 
+%scf
+maxiter 200
+end
 ! NOPOP
 ! MiniPrint
 ! AUTOSTART         # try to read from previous step
@@ -60,6 +64,9 @@ echo '*' >>$input
 cat >> $input << EOF
 \$new_job
 $extask
+%scf
+maxiter 200
+end
 ! NOPOP
 ! moread
 ! MiniPrint
