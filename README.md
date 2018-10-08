@@ -27,10 +27,10 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 The code was tested on Linux/Debian 4.7.2-5 platform with Anaconda 3.6 package.
 Python ver 3.5 and newer should work.
 
-1) Set up environment, i.e. set an env. variable SNAFU_DIR  in .bashrc or before launching the code by:
-
+1) Set up environment, i.e. set an envir. variable **SNAFU_DIR**  in .bashrc or before launching the code by: 
+<code>
 export SNAFU_DIR="path/to/snafu/dir"
-``` 
+</code>
 
 2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
 Currently fully working is CASSCF in MOLPRO  
