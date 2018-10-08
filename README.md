@@ -27,17 +27,18 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 The code was tested on Linux/Debian 4.7.2-5 platform with Anaconda 3.6 package.
 Python ver 3.5 and newer should work.
 
-1) Set up environment in .bashrc or before launching the code by:
-```
+1) Set up environment, i.e. set an env. variable SNAFU_DIR  in .bashrc or before launching the code by:
+
 export SNAFU_DIR="path/to/snafu/dir"
 ``` 
 
 2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
 Currently fully working is CASSCF in MOLPRO  
 BOMD with MP2 in Gaussian  
-ORCA (tddft - not fully working yet)  
-TODO: EOM-IP, EOM-EA in QCHEM/ORCA, TDDDFT Gaussian  
-It is straight forward to implement a new ab initio as at each step, the code reads gradients.dat file in running directory with structure:  
+ORCA: tddft -  working 
+Gaussian09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge 
+TODO: EOM-IP, EOM-EA in QCHEM/ORCA, 
+It is straight forward to implement a new ab initio as at each step, the code reads gradients.dat file in the running directory with a structure:  
 energy-gs  
 energy-1ex state  
 ....  
@@ -49,9 +50,9 @@ Fx(n_at) Fy(n_at) Fz(n_at)
 
 Environment variables for particular ab initio code have to be adjusted to your machine environment (e.g. if Molpro is used then $MOLPROEXE variable should be set up).
 
-3) In order to run the code, **geom.in** with iunitial geometry and **input.in** files have to present in a folder.
+3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a folder.
 The veloc.in files with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
-The geom.in file has to be in XYZ format:  
+The geom.in and veloc.in files have to be in the XYZ format:  
 3  
 water xyz  
 O 0.0 0.0 0.0   
