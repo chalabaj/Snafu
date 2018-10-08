@@ -1,0 +1,910 @@
+ Entering Gaussian System, Link 0=/home/slavicek/G03/g09-altix/g09//g09
+ Input=input.com
+ Output=input.log
+ Initial command:
+ /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/SNAFU/ABINITIO/scratch/Gau-32300.inp" -scrdir="/home/chalabaj/SNAFU/ABINITIO/scratch/"
+ Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=     32302.
+  
+ Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2013,
+            Gaussian, Inc.  All Rights Reserved.
+  
+ This is part of the Gaussian(R) 09 program.  It is based on
+ the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
+ the Gaussian(R) 98 system (copyright 1998, Gaussian, Inc.),
+ the Gaussian(R) 94 system (copyright 1995, Gaussian, Inc.),
+ the Gaussian 92(TM) system (copyright 1992, Gaussian, Inc.),
+ the Gaussian 90(TM) system (copyright 1990, Gaussian, Inc.),
+ the Gaussian 88(TM) system (copyright 1988, Gaussian, Inc.),
+ the Gaussian 86(TM) system (copyright 1986, Carnegie Mellon
+ University), and the Gaussian 82(TM) system (copyright 1983,
+ Carnegie Mellon University). Gaussian is a federally registered
+ trademark of Gaussian, Inc.
+  
+ This software contains proprietary and confidential information,
+ including trade secrets, belonging to Gaussian, Inc.
+  
+ This software is provided under written license and may be
+ used, copied, transmitted, or stored only in accord with that
+ written license.
+  
+ The following legend is applicable only to US Government
+ contracts under FAR:
+  
+                    RESTRICTED RIGHTS LEGEND
+  
+ Use, reproduction and disclosure by the US Government is
+ subject to restrictions as set forth in subparagraphs (a)
+ and (c) of the Commercial Computer Software - Restricted
+ Rights clause in FAR 52.227-19.
+  
+ Gaussian, Inc.
+ 340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
+  
+  
+ ---------------------------------------------------------------
+ Warning -- This program may not be used in any manner that
+ competes with the business of Gaussian, Inc. or will provide
+ assistance to any competitor of Gaussian, Inc.  The licensee
+ of this program is prohibited from giving any competitor of
+ Gaussian, Inc. access to this program.  By using this program,
+ the user acknowledges that Gaussian, Inc. is engaged in the
+ business of creating and licensing software in the field of
+ computational chemistry and represents and warrants to the
+ licensee that it is not a competitor of Gaussian, Inc. and that
+ it will not use this program in any manner prohibited above.
+ ---------------------------------------------------------------
+  
+
+ Cite this work as:
+ Gaussian 09, Revision D.01,
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria, 
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone, B. Mennucci, 
+ G. A. Petersson, H. Nakatsuji, M. Caricato, X. Li, H. P. Hratchian, 
+ A. F. Izmaylov, J. Bloino, G. Zheng, J. L. Sonnenberg, M. Hada, 
+ M. Ehara, K. Toyota, R. Fukuda, J. Hasegawa, M. Ishida, T. Nakajima, 
+ Y. Honda, O. Kitao, H. Nakai, T. Vreven, J. A. Montgomery, Jr., 
+ J. E. Peralta, F. Ogliaro, M. Bearpark, J. J. Heyd, E. Brothers, 
+ K. N. Kudin, V. N. Staroverov, T. Keith, R. Kobayashi, J. Normand, 
+ K. Raghavachari, A. Rendell, J. C. Burant, S. S. Iyengar, J. Tomasi, 
+ M. Cossi, N. Rega, J. M. Millam, M. Klene, J. E. Knox, J. B. Cross, 
+ V. Bakken, C. Adamo, J. Jaramillo, R. Gomperts, R. E. Stratmann, 
+ O. Yazyev, A. J. Austin, R. Cammi, C. Pomelli, J. W. Ochterski, 
+ R. L. Martin, K. Morokuma, V. G. Zakrzewski, G. A. Voth, 
+ P. Salvador, J. J. Dannenberg, S. Dapprich, A. D. Daniels, 
+ O. Farkas, J. B. Foresman, J. V. Ortiz, J. Cioslowski, 
+ and D. J. Fox, Gaussian, Inc., Wallingford CT, 2013.
+ 
+ ******************************************
+ Gaussian 09:  ES64L-G09RevD.01 24-Apr-2013
+                 4-Oct-2018 
+ ******************************************
+ %chk=checkpoint.chk
+ %Mem=4Gb
+ %Nproc=1
+ Will use up to    1 processors via shared memory.
+ ------------------------------------------------
+ #P BHandHLYP/6-31g** SCF=XQC guess=(Read,TCheck)
+ ------------------------------------------------
+ 1/38=1/1;
+ 2/12=2,17=6,18=5,40=1/2;
+ 3/5=1,6=6,7=101,11=2,16=1,25=1,30=1,74=-3/1,2,3;
+ 4/5=102/1;
+ 5/5=2,8=3,13=1/2,8;
+ 6/7=2,8=2,9=2,10=2,28=1/1;
+ 99/5=1,9=1/99;
+ Leave Link    1 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l101.exe)
+ -------
+ comment
+ -------
+ Symbolic Z-matrix:
+ Charge =  0 Multiplicity = 1
+ O                    -0.05273   0.       -0.0412 
+ H                    -0.05305   0.        0.93047 
+ H                     0.88999   0.       -0.27657 
+ 
+ NAtoms=      3 NQM=        3 NQMF=       0 NMMI=      0 NMMIF=      0
+                NMic=       0 NMicF=      0.
+                    Isotopes and Nuclear Properties:
+ (Nuclear quadrupole moments (NQMom) in fm**2, nuclear magnetic moments (NMagM)
+  in nuclear magnetons)
+
+  Atom         1           2           3
+ IAtWgt=          16           1           1
+ AtmWgt=  15.9949146   1.0078250   1.0078250
+ NucSpn=           0           1           1
+ AtZEff=   0.0000000   0.0000000   0.0000000
+ NQMom=    0.0000000   0.0000000   0.0000000
+ NMagM=    0.0000000   2.7928460   2.7928460
+ AtZNuc=   8.0000000   1.0000000   1.0000000
+ Leave Link  101 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l202.exe)
+                          Input orientation:                          
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0       -0.052728    0.000000   -0.041195
+      2          1           0       -0.053050    0.000000    0.930466
+      3          1           0        0.889994    0.000000   -0.276574
+ ---------------------------------------------------------------------
+                    Distance matrix (angstroms):
+                    1          2          3
+     1  O    0.000000
+     2  H    0.971662   0.000000
+     3  H    0.971662   1.531757   0.000000
+ Stoichiometry    H2O
+ Framework group  C2V[C2(O),SGV(H2)]
+ Deg. of freedom     2
+ Full point group                 C2V     NOp   4
+ Largest Abelian subgroup         C2V     NOp   4
+ Largest concise Abelian subgroup C2      NOp   2
+                         Standard orientation:                         
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0        0.000000    0.000000    0.119592
+      2          1           0        0.000000   -0.765878   -0.478369
+      3          1           0        0.000000    0.765878   -0.478369
+ ---------------------------------------------------------------------
+ Rotational constants (GHZ):    789.5905477    427.4472696    277.3195039
+ Leave Link  202 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l301.exe)
+ Standard basis: 6-31G(d,p) (6D, 7F)
+ Ernie: Thresh=  0.10000D-02 Tol=  0.10000D-05 Strict=F.
+ There are    12 symmetry adapted cartesian basis functions of A1  symmetry.
+ There are     2 symmetry adapted cartesian basis functions of A2  symmetry.
+ There are     4 symmetry adapted cartesian basis functions of B1  symmetry.
+ There are     7 symmetry adapted cartesian basis functions of B2  symmetry.
+ There are    12 symmetry adapted basis functions of A1  symmetry.
+ There are     2 symmetry adapted basis functions of A2  symmetry.
+ There are     4 symmetry adapted basis functions of B1  symmetry.
+ There are     7 symmetry adapted basis functions of B2  symmetry.
+    25 basis functions,    42 primitive gaussians,    25 cartesian basis functions
+     5 alpha electrons        5 beta electrons
+       nuclear repulsion energy         9.0592382713 Hartrees.
+ IExCor=  402 DFT=T Ex+Corr=BHandHLYP ExCW=0 ScaHFX=  0.500000
+ ScaDFX=  0.500000  0.500000  1.000000  1.000000 ScalE2=  1.000000  1.000000
+ IRadAn=      0 IRanWt=     -1 IRanGd=            0 ICorTp=0 IEmpDi=  4
+ NAtoms=    3 NActive=    3 NUniq=    2 SFac= 2.25D+00 NAtFMM=   60 NAOKFM=F Big=F
+ Integral buffers will be    131072 words long.
+ Raffenetti 2 integral format.
+ Two-electron integral symmetry is turned on.
+ Leave Link  301 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l302.exe)
+ NPDir=0 NMtPBC=     1 NCelOv=     1 NCel=       1 NClECP=     1 NCelD=      1
+         NCelK=      1 NCelE2=     1 NClLst=     1 CellRange=     0.0.
+ One-electron integrals computed using PRISM.
+ One-electron integral symmetry used in STVInt
+ NBasis=    25 RedAO= T EigKep=  4.15D-02  NBF=    12     2     4     7
+ NBsUse=    25 1.00D-06 EigRej= -1.00D+00 NBFU=    12     2     4     7
+ Precomputing XC quadrature grid using
+ IXCGrd= 4 IRadAn=           0 IRanWt=          -1 IRanGd=           0 AccXCQ= 0.00D+00.
+ Generated NRdTot=       0 NPtTot=           0 NUsed=           0 NTot=          32
+ NSgBfM=    25    25    25    25    25 MxSgAt=     3 MxSgA2=     3.
+ Leave Link  302 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l303.exe)
+ DipDrv:  MaxL=1.
+ Leave Link  303 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l401.exe)
+ Initial guess from the checkpoint file:  "checkpoint.chk"
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Guess basis will be translated and rotated to current coordinates.
+ JPrj=2 DoOrth=T DoCkMO=T.
+ Initial guess orbital symmetries:
+       Occupied  (A1) (A1) (B2) (A1) (B1)
+       Virtual   (A1) (B2) (B2) (A1) (A1) (B1) (B2) (A1) (A2) (A1)
+                 (B1) (A1) (B2) (B2) (A2) (B1) (A1) (A1) (B2) (A1)
+ The electronic state of the initial guess is 1-A1.
+ Leave Link  401 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l502.exe)
+ Closed shell SCF:
+ Using DIIS extrapolation, IDIIS=  1040.
+ Integral symmetry usage will be decided dynamically.
+ Keep R1 ints in memory in symmetry-blocked form, NReq=922159.
+ IVT=        8225 IEndB=        8225 NGot=   536870912 MDV=   536846574
+ LenX=   536846574 LenY=   536845508
+ Requested convergence on RMS density matrix=1.00D-08 within  64 cycles.
+ Requested convergence on MAX density matrix=1.00D-06.
+ Requested convergence on             energy=1.00D-06.
+ No special actions if energy rises.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=     600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    325 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+
+ Cycle   1  Pass 1  IDiag  1:
+ E= -76.3789131677152    
+ DIIS: error= 1.95D-09 at cycle   1 NSaved=   1.
+ NSaved= 1 IEnMin= 1 EnMin= -76.3789131677152     IErMin= 1 ErrMin= 1.95D-09
+ ErrMax= 1.95D-09  0.00D+00 EMaxC= 1.00D-01 BMatC= 6.92D-17 BMatP= 6.92D-17
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.100D+01
+ Coeff:      0.100D+01
+ Gap=     0.487 Goal=   None    Shift=    0.000
+ RMSDP=3.79D-10 MaxDP=4.03D-09              OVMax= 3.79D-09
+
+ SCF Done:  E(RBHandHLYP) =  -76.3789131677     A.U. after    1 cycles
+            NFock=  1  Conv=0.38D-09     -V/T= 2.0074
+ KE= 7.581948873661D+01 PE=-1.987468429064D+02 EE= 3.748920273087D+01
+ Leave Link  502 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l508.exe)
+ QCSCF skips out because SCF is already converged.
+ Leave Link  508 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l601.exe)
+ Copying SCF densities to generalized density rwf, IOpCl= 0 IROHF=0.
+
+ **********************************************************************
+
+            Population analysis using the SCF density.
+
+ **********************************************************************
+
+ Orbital symmetries:
+       Occupied  (A1) (A1) (B2) (A1) (B1)
+       Virtual   (A1) (B2) (B2) (A1) (A1) (B1) (B2) (A1) (A2) (A1)
+                 (B1) (A1) (B2) (B2) (A2) (B1) (A1) (A1) (B2) (A1)
+ The electronic state is 1-A1.
+ Alpha  occ. eigenvalues --  -19.68872  -1.12967  -0.58934  -0.45206  -0.37672
+ Alpha virt. eigenvalues --    0.11072   0.19945   0.83754   0.89628   0.97442
+ Alpha virt. eigenvalues --    0.98710   1.11080   1.25468   1.62394   1.63514
+ Alpha virt. eigenvalues --    1.74151   2.34324   2.36675   2.55693   2.75050
+ Alpha virt. eigenvalues --    2.77014   3.13442   3.43069   3.65880   3.83396
+          Condensed to atoms (all electrons):
+               1          2          3
+     1  O    8.059207   0.290807   0.290807
+     2  H    0.290807   0.415258  -0.026475
+     3  H    0.290807  -0.026475   0.415258
+ Mulliken charges:
+               1
+     1  O   -0.640821
+     2  H    0.320410
+     3  H    0.320410
+ Sum of Mulliken charges =   0.00000
+ Mulliken charges with hydrogens summed into heavy atoms:
+               1
+     1  O    0.000000
+ Electronic spatial extent (au):  <R**2>=             19.0925
+ Charge=              0.0000 electrons
+ Dipole moment (field-independent basis, Debye):
+    X=              0.0000    Y=              0.0000    Z=             -2.1154  Tot=              2.1154
+ Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -7.1574   YY=             -4.1881   ZZ=             -5.9518
+   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
+ Traceless Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -1.3916   YY=              1.5777   ZZ=             -0.1860
+   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
+ Octapole moment (field-independent basis, Debye-Ang**2):
+  XXX=              0.0000  YYY=              0.0000  ZZZ=             -1.2469  XYY=              0.0000
+  XXY=              0.0000  XXZ=             -0.3133  XZZ=              0.0000  YZZ=              0.0000
+  YYZ=             -1.3040  XYZ=              0.0000
+ Hexadecapole moment (field-independent basis, Debye-Ang**3):
+ XXXX=             -5.1357 YYYY=             -5.9327 ZZZZ=             -6.2430 XXXY=              0.0000
+ XXXZ=              0.0000 YYYX=              0.0000 YYYZ=              0.0000 ZZZX=              0.0000
+ ZZZY=              0.0000 XXYY=             -2.1208 XXZZ=             -1.9526 YYZZ=             -1.6705
+ XXYZ=              0.0000 YYXZ=              0.0000 ZZXY=              0.0000
+ N-N= 9.059238271256D+00 E-N=-1.987468429052D+02  KE= 7.581948873661D+01
+ Symmetry A1   KE= 6.771025066480D+01
+ Symmetry A2   KE= 1.378738888796D-35
+ Symmetry B1   KE= 4.584801600557D+00
+ Symmetry B2   KE= 3.524436471257D+00
+ No NMR shielding tensors so no spin-rotation constants.
+ Leave Link  601 at Thu Oct  4 13:19:36 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l9999.exe)
+ 1\1\GINC-403-AS67-01\SP\RBHandHLYP\6-31G(d,p)\H2O1\CHALABAJ\04-Oct-201
+ 8\0\\#P BHandHLYP/6-31g** SCF=XQC guess=(Read,TCheck)\\comment\\0,1\O,
+ 0,-0.0527276185,0.,-0.0411953269\H,0,-0.0530499545,0.,0.9304664407\H,0
+ ,0.889993789,0.,-0.2765743094\\Version=ES64L-G09RevD.01\State=1-A1\HF=
+ -76.3789132\RMSD=3.790e-10\Dipole=0.6558263,0.,0.5123879\Quadrupole=0.
+ 3587144,-1.0346523,0.6759379,0.,-0.6361581,0.\PG=C02V [C2(O1),SGV(H2)]
+ \\@
+
+
+ I think that all right-thinking people in this
+ country are sick and tired of being told that
+ ordinary, decent people are fed up in this country
+ with being sick and tired.  I'm certainly not!
+ But I'm sick and tired of being told that I am!
+                               -- Monty Python
+ Job cpu time:       0 days  0 hours  0 minutes  0.6 seconds.
+ File lengths (MBytes):  RWF=      5 Int=      0 D2E=      0 Chk=      1 Scr=      1
+ Normal termination of Gaussian 09 at Thu Oct  4 13:19:37 2018.
+ Initial command:
+ /home/slavicek/G03/g09-altix/g09/l1.exe "/home/chalabaj/SNAFU/ABINITIO/scratch/Gau-32300.inp" -scrdir="/home/chalabaj/SNAFU/ABINITIO/scratch/"
+ Entering Link 1 = /home/slavicek/G03/g09-altix/g09/l1.exe PID=     32305.
+  
+ Copyright (c) 1988,1990,1992,1993,1995,1998,2003,2009,2013,
+            Gaussian, Inc.  All Rights Reserved.
+  
+ This is part of the Gaussian(R) 09 program.  It is based on
+ the Gaussian(R) 03 system (copyright 2003, Gaussian, Inc.),
+ the Gaussian(R) 98 system (copyright 1998, Gaussian, Inc.),
+ the Gaussian(R) 94 system (copyright 1995, Gaussian, Inc.),
+ the Gaussian 92(TM) system (copyright 1992, Gaussian, Inc.),
+ the Gaussian 90(TM) system (copyright 1990, Gaussian, Inc.),
+ the Gaussian 88(TM) system (copyright 1988, Gaussian, Inc.),
+ the Gaussian 86(TM) system (copyright 1986, Carnegie Mellon
+ University), and the Gaussian 82(TM) system (copyright 1983,
+ Carnegie Mellon University). Gaussian is a federally registered
+ trademark of Gaussian, Inc.
+  
+ This software contains proprietary and confidential information,
+ including trade secrets, belonging to Gaussian, Inc.
+  
+ This software is provided under written license and may be
+ used, copied, transmitted, or stored only in accord with that
+ written license.
+  
+ The following legend is applicable only to US Government
+ contracts under FAR:
+  
+                    RESTRICTED RIGHTS LEGEND
+  
+ Use, reproduction and disclosure by the US Government is
+ subject to restrictions as set forth in subparagraphs (a)
+ and (c) of the Commercial Computer Software - Restricted
+ Rights clause in FAR 52.227-19.
+  
+ Gaussian, Inc.
+ 340 Quinnipiac St., Bldg. 40, Wallingford CT 06492
+  
+  
+ ---------------------------------------------------------------
+ Warning -- This program may not be used in any manner that
+ competes with the business of Gaussian, Inc. or will provide
+ assistance to any competitor of Gaussian, Inc.  The licensee
+ of this program is prohibited from giving any competitor of
+ Gaussian, Inc. access to this program.  By using this program,
+ the user acknowledges that Gaussian, Inc. is engaged in the
+ business of creating and licensing software in the field of
+ computational chemistry and represents and warrants to the
+ licensee that it is not a competitor of Gaussian, Inc. and that
+ it will not use this program in any manner prohibited above.
+ ---------------------------------------------------------------
+  
+
+ Cite this work as:
+ Gaussian 09, Revision D.01,
+ M. J. Frisch, G. W. Trucks, H. B. Schlegel, G. E. Scuseria, 
+ M. A. Robb, J. R. Cheeseman, G. Scalmani, V. Barone, B. Mennucci, 
+ G. A. Petersson, H. Nakatsuji, M. Caricato, X. Li, H. P. Hratchian, 
+ A. F. Izmaylov, J. Bloino, G. Zheng, J. L. Sonnenberg, M. Hada, 
+ M. Ehara, K. Toyota, R. Fukuda, J. Hasegawa, M. Ishida, T. Nakajima, 
+ Y. Honda, O. Kitao, H. Nakai, T. Vreven, J. A. Montgomery, Jr., 
+ J. E. Peralta, F. Ogliaro, M. Bearpark, J. J. Heyd, E. Brothers, 
+ K. N. Kudin, V. N. Staroverov, T. Keith, R. Kobayashi, J. Normand, 
+ K. Raghavachari, A. Rendell, J. C. Burant, S. S. Iyengar, J. Tomasi, 
+ M. Cossi, N. Rega, J. M. Millam, M. Klene, J. E. Knox, J. B. Cross, 
+ V. Bakken, C. Adamo, J. Jaramillo, R. Gomperts, R. E. Stratmann, 
+ O. Yazyev, A. J. Austin, R. Cammi, C. Pomelli, J. W. Ochterski, 
+ R. L. Martin, K. Morokuma, V. G. Zakrzewski, G. A. Voth, 
+ P. Salvador, J. J. Dannenberg, S. Dapprich, A. D. Daniels, 
+ O. Farkas, J. B. Foresman, J. V. Ortiz, J. Cioslowski, 
+ and D. J. Fox, Gaussian, Inc., Wallingford CT, 2013.
+ 
+ ******************************************
+ Gaussian 09:  ES64L-G09RevD.01 24-Apr-2013
+                 4-Oct-2018 
+ ******************************************
+ %chk=checkpoint.chk
+ %Mem=4Gb
+ %Nproc=1
+ Will use up to    1 processors via shared memory.
+ ----------------------------------------------------------------------
+ #P BHandHLYP/6-31g** SCF=XQC FORCE TD=(nstates=2,root=2,conver=5) Geom
+ =Check Guess=Read
+ ----------------------------------------------------------------------
+ 1/10=7,29=2,30=1,38=1/1,3;
+ 2/12=2,40=1/2;
+ 3/5=1,6=6,7=101,11=9,14=-4,16=1,25=1,30=1,71=1,74=-3,116=-2/1,2,8,3;
+ 4/5=1/1;
+ 5/5=2,8=3,13=1,38=6/2,8;
+ 8/6=1,10=2,107=2,108=2/1;
+ 9/8=2,9=5,15=2,41=2,42=1,70=2/14;
+ 10/5=4/2;
+ 6/7=2,8=2,9=2,10=2,18=1/1;
+ 7/12=6,13=5,14=2,29=1/1,2,3,16;
+ 1/10=7,30=1/3;
+ 99//99;
+ Leave Link    1 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l101.exe)
+ -------
+ comment
+ -------
+ Structure from the checkpoint file:  "checkpoint.chk"
+ Charge =  0 Multiplicity = 1
+ Z-Matrix found in file.
+ O,0,-0.0527276185,0.,-0.0411953269
+ H,0,-0.0530499545,0.,0.9304664407
+ H,0,0.889993789,0.,-0.2765743094
+ Recover connectivity data from disk.
+ NAtoms=      3 NQM=        3 NQMF=       0 NMMI=      0 NMMIF=      0
+                NMic=       0 NMicF=      0.
+                    Isotopes and Nuclear Properties:
+ (Nuclear quadrupole moments (NQMom) in fm**2, nuclear magnetic moments (NMagM)
+  in nuclear magnetons)
+
+  Atom         1           2           3
+ IAtWgt=          16           1           1
+ AtmWgt=  15.9949146   1.0078250   1.0078250
+ NucSpn=           0           1           1
+ AtZEff=  -5.6000000  -1.0000000  -1.0000000
+ NQMom=    0.0000000   0.0000000   0.0000000
+ NMagM=    0.0000000   2.7928460   2.7928460
+ AtZNuc=   8.0000000   1.0000000   1.0000000
+ Leave Link  101 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l103.exe)
+
+ GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
+ Berny optimization.
+ Initialization pass.
+ Trust Radius=3.00D-01 FncErr=1.00D-07 GrdErr=1.00D-07
+ Number of steps in this run=      2 maximum allowed number of steps=      2.
+ GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
+
+ Leave Link  103 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l202.exe)
+                          Input orientation:                          
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0       -0.052728    0.000000   -0.041195
+      2          1           0       -0.053050    0.000000    0.930466
+      3          1           0        0.889994    0.000000   -0.276574
+ ---------------------------------------------------------------------
+                    Distance matrix (angstroms):
+                    1          2          3
+     1  O    0.000000
+     2  H    0.971662   0.000000
+     3  H    0.971662   1.531757   0.000000
+ Stoichiometry    H2O
+ Framework group  C2V[C2(O),SGV(H2)]
+ Deg. of freedom     2
+ Full point group                 C2V     NOp   4
+ RotChk:  IX=3 Diff= 1.20D-15
+ Largest Abelian subgroup         C2V     NOp   4
+ Largest concise Abelian subgroup C2      NOp   2
+                         Standard orientation:                         
+ ---------------------------------------------------------------------
+ Center     Atomic      Atomic             Coordinates (Angstroms)
+ Number     Number       Type             X           Y           Z
+ ---------------------------------------------------------------------
+      1          8           0        0.000000    0.000000    0.119592
+      2          1           0        0.000000   -0.765878   -0.478369
+      3          1           0        0.000000    0.765878   -0.478369
+ ---------------------------------------------------------------------
+ Rotational constants (GHZ):    789.5905477    427.4472696    277.3195039
+ Leave Link  202 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l301.exe)
+ Standard basis: 6-31G(d,p) (6D, 7F)
+ Ernie: Thresh=  0.10000D-02 Tol=  0.10000D-05 Strict=F.
+ There are    12 symmetry adapted cartesian basis functions of A1  symmetry.
+ There are     2 symmetry adapted cartesian basis functions of A2  symmetry.
+ There are     4 symmetry adapted cartesian basis functions of B1  symmetry.
+ There are     7 symmetry adapted cartesian basis functions of B2  symmetry.
+ There are    12 symmetry adapted basis functions of A1  symmetry.
+ There are     2 symmetry adapted basis functions of A2  symmetry.
+ There are     4 symmetry adapted basis functions of B1  symmetry.
+ There are     7 symmetry adapted basis functions of B2  symmetry.
+    25 basis functions,    42 primitive gaussians,    25 cartesian basis functions
+     5 alpha electrons        5 beta electrons
+       nuclear repulsion energy         9.0592382713 Hartrees.
+ IExCor=  402 DFT=T Ex+Corr=BHandHLYP ExCW=0 ScaHFX=  0.500000
+ ScaDFX=  0.500000  0.500000  1.000000  1.000000 ScalE2=  1.000000  1.000000
+ IRadAn=      0 IRanWt=     -1 IRanGd=            0 ICorTp=0 IEmpDi=  4
+ NAtoms=    3 NActive=    3 NUniq=    2 SFac= 2.25D+00 NAtFMM=   60 NAOKFM=F Big=F
+ Integral buffers will be    131072 words long.
+ Regular integral format.
+ Two-electron integral symmetry is turned on.
+ Leave Link  301 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l302.exe)
+ NPDir=0 NMtPBC=     1 NCelOv=     1 NCel=       1 NClECP=     1 NCelD=      1
+         NCelK=      1 NCelE2=     1 NClLst=     1 CellRange=     0.0.
+ One-electron integrals computed using PRISM.
+ One-electron integral symmetry used in STVInt
+ NBasis=    25 RedAO= T EigKep=  4.15D-02  NBF=    12     2     4     7
+ NBsUse=    25 1.00D-06 EigRej= -1.00D+00 NBFU=    12     2     4     7
+ Precomputing XC quadrature grid using
+ IXCGrd= 4 IRadAn=           0 IRanWt=          -1 IRanGd=           0 AccXCQ= 0.00D+00.
+ Generated NRdTot=       0 NPtTot=           0 NUsed=           0 NTot=          32
+ NSgBfM=    25    25    25    25    25 MxSgAt=     3 MxSgA2=     3.
+ Leave Link  302 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l308.exe)
+ Leave Link  308 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l303.exe)
+ DipDrv:  MaxL=1.
+ Leave Link  303 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l401.exe)
+ Initial guess from the checkpoint file:  "checkpoint.chk"
+ B after Tr=     0.000000    0.000000    0.000000
+         Rot=    1.000000    0.000000    0.000000    0.000000 Ang=   0.00 deg.
+ Guess basis will be translated and rotated to current coordinates.
+ JPrj=2 DoOrth=T DoCkMO=T.
+ Initial guess orbital symmetries:
+       Occupied  (A1) (A1) (B2) (A1) (B1)
+       Virtual   (A1) (B2) (B2) (A1) (A1) (B1) (B2) (A1) (A2) (A1)
+                 (B1) (A1) (B2) (B2) (A2) (B1) (A1) (A1) (B2) (A1)
+ The electronic state of the initial guess is 1-A1.
+ Leave Link  401 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l502.exe)
+ Closed shell SCF:
+ Using DIIS extrapolation, IDIIS=  1040.
+ Integral symmetry usage will be decided dynamically.
+ Keep R1 ints in memory in symmetry-blocked form, NReq=922159.
+ IVT=        8225 IEndB=        8225 NGot=   536870912 MDV=   536846574
+ LenX=   536846574 LenY=   536845508
+ Requested convergence on RMS density matrix=1.00D-08 within  64 cycles.
+ Requested convergence on MAX density matrix=1.00D-06.
+ Requested convergence on             energy=1.00D-06.
+ No special actions if energy rises.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=     600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    325 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+
+ Cycle   1  Pass 1  IDiag  1:
+ E= -76.3789131677152    
+ DIIS: error= 5.08D-10 at cycle   1 NSaved=   1.
+ NSaved= 1 IEnMin= 1 EnMin= -76.3789131677152     IErMin= 1 ErrMin= 5.08D-10
+ ErrMax= 5.08D-10  0.00D+00 EMaxC= 1.00D-01 BMatC= 3.16D-18 BMatP= 3.16D-18
+ IDIUse=1 WtCom= 1.00D+00 WtEn= 0.00D+00
+ Coeff-Com:  0.100D+01
+ Coeff:      0.100D+01
+ Gap=     0.487 Goal=   None    Shift=    0.000
+ Skip diagonalization as Alpha Fock matrix is already diagonal.
+ RMSDP=0.00D+00 MaxDP=0.00D+00              OVMax= 0.00D+00
+
+ SCF Done:  E(RBHandHLYP) =  -76.3789131677     A.U. after    1 cycles
+            NFock=  1  Conv=0.00D+00     -V/T= 2.0074
+ KE= 7.581948873661D+01 PE=-1.987468429052D+02 EE= 3.748920272962D+01
+ Leave Link  502 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l508.exe)
+ QCSCF skips out because SCF is already converged.
+ Leave Link  508 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l801.exe)
+ DoSCS=F DFT=T ScalE2(SS,OS)=  1.000000  1.000000
+ ExpMin= 1.61D-01 ExpMax= 5.48D+03 ExpMxC= 8.25D+02 IAcc=3 IRadAn=         5 AccDes= 0.00D+00
+ HarFok:  IExCor=  205 AccDes= 0.00D+00 IRadAn=         5 IDoV=-2 UseB2=F ITyADJ=14
+ ICtDFT= 12500011 ScaDFX=  1.000000  1.000000  1.000000  1.000000
+ Largest valence mixing into a core orbital is  4.66D-05
+ Largest core mixing into a valence orbital is  1.02D-05
+ Range of M.O.s used for correlation:     2    25
+ NBasis=    25 NAE=     5 NBE=     5 NFC=     1 NFV=     0
+ NROrb=     24 NOA=     4 NOB=     4 NVA=    20 NVB=    20
+ Leave Link  801 at Thu Oct  4 13:19:37 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l914.exe)
+ RHF ground state
+ MDV=   536870912 DFT=T DoStab=F Mixed=T DoRPA=T DoScal=F NonHer=T
+ Keep R1, R2, and R3 ints in memory in symmetry-blocked form, NReq=960139.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=     600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    325 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+ Making orbital integer symmetry assigments:
+ Orbital symmetries:
+       Occupied  (A1) (A1) (B2) (A1) (B1)
+       Virtual   (A1) (B2) (B2) (A1) (A1) (B1) (B2) (A1) (A2) (A1)
+                 (B1) (A1) (B2) (B2) (A2) (B1) (A1) (A1) (B2) (A1)
+     8 initial guesses have been made.
+ Convergence on wavefunction:    0.000010000000000
+ Davidson Disk Diagonalization:  ConvIn= 1.00D-05 SkipCon=T Conv= 1.00D-05.
+ Max sub-space:   200 roots to seek:     8 dimension of matrix:          160
+ Iteration     1 Dimension     8 NMult     0 NNew      8
+ CISAX will form     8 AO SS matrices at one time.
+ NMat=     8 NSing=     8 JSym2X=-1.
+ New state      2 was old state      3
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     8.648993627956251
+ Root      2 :    10.584036224121530
+ Root      3 :    11.322091525767210
+ Root      4 :    13.413257199403970
+ Root      5 :    14.892842226881840
+ Root      6 :    19.334603272292410
+ Root      7 :    27.121263149610530
+ Root      8 :    30.578067791071890
+ Iteration     2 Dimension    12 NMult     8 NNew      4
+ CISAX will form     4 AO SS matrices at one time.
+ NMat=     4 NSing=     4 JSym2X=-1.
+ Root      1 not converged, maximum delta is    0.030188288997167
+ Root      2 not converged, maximum delta is    0.045518253793920
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     8.502026036795874   Change is   -0.146967591160379
+ Root      2 :    10.454471767845880   Change is   -0.129564456275651
+ Iteration     3 Dimension    16 NMult    12 NNew      4
+ CISAX will form     4 AO SS matrices at one time.
+ NMat=     4 NSing=     4 JSym2X=-1.
+ Root      1 not converged, maximum delta is    0.004745178841700
+ Root      2 not converged, maximum delta is    0.000662103113716
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     8.499861705873091   Change is   -0.002164330922782
+ Root      2 :    10.454320422414020   Change is   -0.000151345431858
+ Iteration     4 Dimension    20 NMult    16 NNew      4
+ CISAX will form     4 AO SS matrices at one time.
+ NMat=     4 NSing=     4 JSym2X=-1.
+ Root      1 not converged, maximum delta is    0.000078817998334
+ Root      2 not converged, maximum delta is    0.000020814853782
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     8.499858773842368   Change is   -0.000002932030724
+ Root      2 :    10.454320357547990   Change is   -0.000000064866027
+ Iteration     5 Dimension    24 NMult    20 NNew      4
+ CISAX will form     4 AO SS matrices at one time.
+ NMat=     4 NSing=     4 JSym2X=-1.
+ Root      1 has converged.
+ Root      2 has converged.
+ Excitation Energies [eV] at current iteration:
+ Root      1 :     8.499858769090793   Change is   -0.000000004751576
+ Root      2 :    10.454320357503410   Change is   -0.000000000044579
+ Convergence achieved on expansion vectors.
+ ***********************************************************************
+ Excited states from <AA,BB:AA,BB> singles matrix:
+ ***********************************************************************
+ 
+ 1PDM for each excited state written to RWF  633
+ Ground to excited state transition densities written to RWF  633
+ Ground to excited state transition electric dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1         0.2682      0.0000      0.0000      0.0719      0.0150
+         2         0.0000      0.0000      0.0000      0.0000      0.0000
+ Ground to excited state transition velocity dipole moments (Au):
+       state          X           Y           Z        Dip. S.      Osc.
+         1        -0.1665      0.0000      0.0000      0.0277      0.0592
+         2         0.0000      0.0000      0.0000      0.0000      0.0000
+ Ground to excited state transition magnetic dipole moments (Au):
+       state          X           Y           Z
+         1         0.0000      0.2116      0.0000
+         2         0.0000      0.0000      0.3188
+ Ground to excited state transition velocity quadrupole moments (Au):
+       state          XX          YY          ZZ          XY          XZ          YZ
+         1         0.0000      0.0000      0.0000      0.0000      0.1212      0.0000
+         2         0.0000      0.0000      0.0000     -0.2313      0.0000      0.0000
+ <0|del|b> * <b|rxdel|0> + <0|del|b> * <b|delr+rdel|0>
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ    R(velocity)    E-M Angle
+         1         0.0000      0.0000      0.0000      0.0000       90.00
+         2         0.0000      0.0000      0.0000      0.0000       90.00
+ 1/2[<0|r|b>*<b|rxdel|0> + (<0|rxdel|b>*<b|r|0>)*]
+ Rotatory Strengths (R) in cgs (10**-40 erg-esu-cm/Gauss)
+       state          XX          YY          ZZ     R(length)
+         1         0.0000      0.0000      0.0000      0.0000
+         2         0.0000      0.0000      0.0000      0.0000
+  1/2[<0|del|b>*<b|r|0> + (<0|r|b>*<b|del|0>)*] (Au)
+       state          X           Y           Z        Dip. S.   Osc.(frdel)
+         1        -0.0447      0.0000      0.0000      0.0447      0.0298
+         2         0.0000      0.0000      0.0000      0.0000      0.0000
+
+ Excitation energies and oscillator strengths:
+ 
+ Excited State   1:      Singlet-B1     8.4999 eV  145.87 nm  f=0.0150  <S**2>=0.000
+       5 ->  6         0.70575
+ 
+ Excited State   2:      Singlet-A2    10.4543 eV  118.60 nm  f=0.0000  <S**2>=0.000
+       5 ->  7         0.70385
+ This state for optimization and/or second-order correction.
+ Total Energy, E(TD-HF/TD-KS) =  -75.9947239471    
+ Copying the excited state density for this state as the 1-particle RhoCI density.
+ SavETr:  write IOETrn=   770 NScale= 10 NData=  16 NLR=1 NState=    2 LETran=      46.
+ The selected state is a singlet
+ CISAX will form     1 AO SS matrices at one time.
+ NMat=     1 NSing=     1 JSym2X=-1.
+ CISAX will form     1 AO SS matrices at one time.
+ NMat=     1 NSing=     1 JSym2X=-1.
+ Leave Link  914 at Thu Oct  4 13:19:38 2018, MaxMem=   536870912 cpu:         0.6
+ (Enter /home/slavicek/G03/g09-altix/g09/l1002.exe)
+ Minotr:  Closed shell wavefunction.
+          Computing CIS/TD-HF/TD-KS derivatives.
+          Using Z-Vector for PSCF gradient.
+          Skipping F1 and S1 gradient terms here.
+          IDoAtm=111
+          Frozen-core window.
+          Direct CPHF calculation.
+          Differentiating once with respect to electric field.
+                with respect to dipole field.
+          Differentiating once with respect to nuclear coordinates.
+          Requested convergence is 1.0D-10 RMS, and 1.0D-09 maximum.
+          NewPWx=F KeepS1=T KeepF1=T KeepIn=T MapXYZ=F SortEE=F KeepMc=T.
+          MDV=     536870854 using IRadAn=       0.
+ Using stored XC quadrature information.
+ Keep R1 ints in memory in symmetry-blocked form, NReq=914622.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=           0 FMFlg1=           0
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=     600 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=    325 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+          Solving linear equations separately, MaxMat=       0.
+          There are     1 degrees of freedom in the 1st order CPHF.  IDoFFX=0 NUNeed=     1.
+ LinEq1:  Iter=  0 NonCon=     1 RMS=7.31D-02 Max=3.72D-01 NDo=     1
+ AX will form     1 AO Fock derivatives at one time.
+ LinEq1:  Iter=  1 NonCon=     1 RMS=1.64D-02 Max=1.10D-01 NDo=     1
+ LinEq1:  Iter=  2 NonCon=     1 RMS=1.45D-03 Max=5.93D-03 NDo=     1
+ LinEq1:  Iter=  3 NonCon=     1 RMS=1.21D-04 Max=4.28D-04 NDo=     1
+ LinEq1:  Iter=  4 NonCon=     1 RMS=9.43D-06 Max=4.95D-05 NDo=     1
+ LinEq1:  Iter=  5 NonCon=     1 RMS=1.28D-06 Max=5.76D-06 NDo=     1
+ LinEq1:  Iter=  6 NonCon=     1 RMS=1.31D-07 Max=6.77D-07 NDo=     1
+ LinEq1:  Iter=  7 NonCon=     1 RMS=5.62D-09 Max=2.83D-08 NDo=     1
+ LinEq1:  Iter=  8 NonCon=     1 RMS=2.50D-10 Max=8.87D-10 NDo=     1
+ LinEq1:  Iter=  9 NonCon=     0 RMS=1.25D-11 Max=4.26D-11 NDo=     1
+ Linear equations converged to 1.000D-10 1.000D-09 after     9 iterations.
+ End of Minotr F.D. properties file   721 does not exist.
+ End of Minotr F.D. properties file   722 does not exist.
+ End of Minotr F.D. properties file   788 does not exist.
+ Leave Link 1002 at Thu Oct  4 13:19:38 2018, MaxMem=   536870912 cpu:         0.4
+ (Enter /home/slavicek/G03/g09-altix/g09/l601.exe)
+ Copying SCF densities to generalized density rwf, IOpCl= 0 IROHF=0.
+
+ **********************************************************************
+
+            Population analysis using the SCF density.
+
+ **********************************************************************
+
+ Orbital symmetries:
+       Occupied  (A1) (A1) (B2) (A1) (B1)
+       Virtual   (A1) (B2) (B2) (A1) (A1) (B1) (B2) (A1) (A2) (A1)
+                 (B1) (A1) (B2) (B2) (A2) (B1) (A1) (A1) (B2) (A1)
+ The electronic state is 1-A1.
+ Alpha  occ. eigenvalues --  -19.68872  -1.12967  -0.58934  -0.45206  -0.37672
+ Alpha virt. eigenvalues --    0.11072   0.19945   0.83754   0.89628   0.97442
+ Alpha virt. eigenvalues --    0.98710   1.11080   1.25468   1.62394   1.63514
+ Alpha virt. eigenvalues --    1.74151   2.34324   2.36675   2.55693   2.75050
+ Alpha virt. eigenvalues --    2.77014   3.13442   3.43069   3.65880   3.83396
+          Condensed to atoms (all electrons):
+               1          2          3
+     1  O    8.059207   0.290807   0.290807
+     2  H    0.290807   0.415258  -0.026475
+     3  H    0.290807  -0.026475   0.415258
+ Mulliken charges:
+               1
+     1  O   -0.640821
+     2  H    0.320410
+     3  H    0.320410
+ Sum of Mulliken charges =   0.00000
+ Mulliken charges with hydrogens summed into heavy atoms:
+               1
+     1  O    0.000000
+ Electronic spatial extent (au):  <R**2>=             19.0925
+ Charge=              0.0000 electrons
+ Dipole moment (field-independent basis, Debye):
+    X=              0.0000    Y=              0.0000    Z=             -2.1154  Tot=              2.1154
+ Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -7.1574   YY=             -4.1881   ZZ=             -5.9518
+   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
+ Traceless Quadrupole moment (field-independent basis, Debye-Ang):
+   XX=             -1.3916   YY=              1.5777   ZZ=             -0.1860
+   XY=              0.0000   XZ=              0.0000   YZ=              0.0000
+ Octapole moment (field-independent basis, Debye-Ang**2):
+  XXX=              0.0000  YYY=              0.0000  ZZZ=             -1.2469  XYY=              0.0000
+  XXY=              0.0000  XXZ=             -0.3133  XZZ=              0.0000  YZZ=              0.0000
+  YYZ=             -1.3040  XYZ=              0.0000
+ Hexadecapole moment (field-independent basis, Debye-Ang**3):
+ XXXX=             -5.1357 YYYY=             -5.9327 ZZZZ=             -6.2430 XXXY=              0.0000
+ XXXZ=              0.0000 YYYX=              0.0000 YYYZ=              0.0000 ZZZX=              0.0000
+ ZZZY=              0.0000 XXYY=             -2.1208 XXZZ=             -1.9526 YYZZ=             -1.6705
+ XXYZ=              0.0000 YYXZ=              0.0000 ZZXY=              0.0000
+ N-N= 9.059238271256D+00 E-N=-1.987468429052D+02  KE= 7.581948873661D+01
+ Symmetry A1   KE= 6.771025066480D+01
+ Symmetry A2   KE= 4.868661492566D-35
+ Symmetry B1   KE= 4.584801600557D+00
+ Symmetry B2   KE= 3.524436471257D+00
+ No NMR shielding tensors so no spin-rotation constants.
+ Leave Link  601 at Thu Oct  4 13:19:38 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l701.exe)
+ Compute integral first derivatives.
+ ... and contract with generalized density number  6.
+ Leave Link  701 at Thu Oct  4 13:19:38 2018, MaxMem=   536870912 cpu:         0.1
+ (Enter /home/slavicek/G03/g09-altix/g09/l702.exe)
+ L702 exits ... SP integral derivatives will be done elsewhere.
+ Leave Link  702 at Thu Oct  4 13:19:38 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l703.exe)
+ Compute integral first derivatives, UseDBF=F ICtDFT=           0.
+ Integral derivatives from FoFJK, PRISM(SPDF).
+ Calling FoFJK, ICntrl=  10005127 FMM=F ISym2X=1 I1Cent= 0 IOpClX= 0 NMat=1 NMatS=1 NMatT=0.
+ FoFJK:  IHMeth= 1 ICntrl=10005127 DoSepK=F KAlg= 0 I1Cent=   0 FoldK=F
+ IRaf=         0 NMat=   1 IRICut=       1 DoRegI=T DoRafI=F ISym2E= 1.
+ FoFCou: FMM=F IPFlag=           0 FMFlag=      100000 FMFlg1=         800
+         NFxFlg=           0 DoJE=F BraDBF=F KetDBF=F FulRan=T
+         wScrn=  0.000000 ICntrl=10005127 IOpCl=  0 I1Cent=           0 NGrid=           0
+         NMat0=    1 NMatS0=      1 NMatT0=    0 NMatD0=    1 NMtDS0=    0 NMtDT0=    0
+ Petite list used in FoFCou.
+ Leave Link  703 at Thu Oct  4 13:19:39 2018, MaxMem=   536870912 cpu:         0.2
+ (Enter /home/slavicek/G03/g09-altix/g09/l716.exe)
+ Dipole        =-2.01314649D-17-8.88178420D-16 8.12532539D-02
+ ***** Axes restored to original set *****
+ -------------------------------------------------------------------
+ Center     Atomic                   Forces (Hartrees/Bohr)
+ Number     Number              X              Y              Z
+ -------------------------------------------------------------------
+      1        8          -0.108420828    0.000000000   -0.084707669
+      2        1           0.000980160    0.000000000    0.110485425
+      3        1           0.107440668    0.000000000   -0.025777756
+ -------------------------------------------------------------------
+ Cartesian Forces:  Max     0.110485425 RMS     0.069399364
+ Z-matrix is all fixed cartesians, so copy forces.
+ Force constants in Cartesian coordinates: 
+                1             2             3             4             5 
+      1  0.572497D+00
+      2  0.000000D+00  0.100000D+01
+      3 -0.676165D-01  0.000000D+00  0.606214D+00
+      4 -0.589521D-01  0.000000D+00 -0.458824D-01  0.474561D-01
+      5  0.000000D+00  0.000000D+00  0.000000D+00  0.000000D+00  0.100000D+01
+      6  0.156401D-03  0.000000D+00 -0.530404D+00 -0.160215D-03  0.000000D+00
+      7 -0.513545D+00  0.000000D+00  0.113499D+00  0.114959D-01  0.000000D+00
+      8  0.000000D+00  0.000000D+00  0.000000D+00  0.000000D+00  0.000000D+00
+      9  0.674601D-01  0.000000D+00 -0.758107D-01  0.460426D-01  0.000000D+00
+                6             7             8             9 
+      6  0.530388D+00
+      7  0.381383D-05  0.502049D+00
+      8  0.000000D+00  0.000000D+00  0.100000D+01
+      9  0.152749D-04 -0.113503D+00  0.000000D+00  0.757955D-01
+ Leave Link  716 at Thu Oct  4 13:19:39 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l103.exe)
+
+ GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
+ Berny optimization.
+ Search for a local minimum.
+ Step number   1 out of a maximum of    2
+ All quantities printed in internal units (Hartrees-Bohrs-Radians)
+ Second derivative matrix not updated -- first step.
+ The second derivative matrix:
+                          X1        Y1        Z1        X2        Y2
+           X1           0.57250
+           Y1           0.00000   1.00000
+           Z1          -0.06762   0.00000   0.60621
+           X2          -0.05895   0.00000  -0.04588   0.04746
+           Y2           0.00000   0.00000   0.00000   0.00000   1.00000
+           Z2           0.00016   0.00000  -0.53040  -0.00016   0.00000
+           X3          -0.51354   0.00000   0.11350   0.01150   0.00000
+           Y3           0.00000   0.00000   0.00000   0.00000   0.00000
+           Z3           0.06746   0.00000  -0.07581   0.04604   0.00000
+                          Z2        X3        Y3        Z3
+           Z2           0.53039
+           X3           0.00000   0.50205
+           Y3           0.00000   0.00000   1.00000
+           Z3           0.00002  -0.11350   0.00000   0.07580
+ ITU=  0
+     Eigenvalues ---    0.14143   0.82980   0.95105
+ Angle between quadratic step and forces=  30.34 degrees.
+ ClnCor:  largest displacement from symmetrization is 3.04D-14 for atom     3.
+ Linear search not attempted -- first point.
+ ClnCor:  largest displacement from symmetrization is 2.22D-16 for atom     3.
+ TrRot= -0.027182  0.000000 -0.021237  0.000000  0.000000  0.000000
+ Variable       Old X    -DE/DX   Delta X   Delta X   Delta X     New X
+                                 (Linear)    (Quad)   (Total)
+    X1       -0.09964  -0.10842   0.00000  -0.04460  -0.07178  -0.17142
+    Y1        0.00000   0.00000   0.00000   0.00000   0.00000   0.00000
+    Z1       -0.07785  -0.08471   0.00000  -0.03484  -0.05608  -0.13393
+    X2       -0.10025   0.00098   0.00000  -0.03396  -0.06114  -0.16139
+    Y2        0.00000   0.00000   0.00000   0.00000   0.00000   0.00000
+    Z2        1.75833   0.11049   0.00000   0.17347   0.15223   1.91056
+    X3        1.68184   0.10744   0.00000   0.16010   0.13292   1.81476
+    Y3        0.00000   0.00000   0.00000   0.00000   0.00000   0.00000
+    Z3       -0.52265  -0.02578   0.00000  -0.07491  -0.09615  -0.61880
+         Item               Value     Threshold  Converged?
+ Maximum Force            0.110485     0.000450     NO 
+ RMS     Force            0.069399     0.000300     NO 
+ Maximum Displacement     0.152231     0.001800     NO 
+ RMS     Displacement     0.083081     0.001200     NO 
+ Predicted change in Energy=-2.302602D-02
+ GradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGradGrad
+
+ Leave Link  103 at Thu Oct  4 13:19:39 2018, MaxMem=   536870912 cpu:         0.0
+ (Enter /home/slavicek/G03/g09-altix/g09/l9999.exe)
+ 1\1\GINC-403-AS67-01\Force\RBHandHLYP TD-FC\6-31G(d,p)\H2O1\CHALABAJ\0
+ 4-Oct-2018\0\\#P BHandHLYP/6-31g** SCF=XQC FORCE TD=(nstates=2,root=2,
+ conver=5) Geom=Check Guess=Read\\comment\\0,1\O,-0.052727601,0.,-0.041
+ 1953493\H,-0.0530499545,0.,0.9304664407\H,0.8899937889,0.,-0.276574020
+ 7\\Version=ES64L-G09RevD.01\State=1-A1\HF=-76.3789132\RMSD=0.000e+00\R
+ MSF=6.940e-02\Dipole=-0.0640284,0.,-0.0500245\PG=C02V [C2(O1),SGV(H2)]
+ \\@
+
+
+ LOGIC IS A SYSTEMATIC METHOD OF COMING TO THE
+ WRONG CONCLUSION WITH CONFIDENCE.
+ Job cpu time:       0 days  0 hours  0 minutes  2.1 seconds.
+ File lengths (MBytes):  RWF=      5 Int=      0 D2E=      0 Chk=      1 Scr=      1
+ Normal termination of Gaussian 09 at Thu Oct  4 13:19:39 2018.
