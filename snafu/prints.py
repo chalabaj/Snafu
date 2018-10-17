@@ -105,11 +105,12 @@ def print_restart(
              "Etot: {}\n".format(Etot),
              "Etot_init: {}\n".format(Etot_init)
             )
-    print(line1)
+    #print(line1)
     for irow in range(0, np.size(pot_eners_array, 0)):
-        line2 = ("Epot_array: \n",
-                 "".join("{5.8f}\n".format(pot_eners_array[irow, :])))
-        print(line2)
+        #line2 = ("Epot_array: \n",
+                 #"{5.8f}".format(' '.join(str(pot_eners_array[irow,:]))))
+    
+       #print(np.array2string(pot_eners_array[irow], formatter={'float_kind':lambda x: "%.6f" % x}))
     #  line2 = ("".join("{2s} {5.8f} {5.8f} {5.8f}\n".format(at_names[iat],vx[iat],vy[iat],vz[iat])))        
     return()
 def print_snafu():
