@@ -49,7 +49,7 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
     vel.closed
     return()
 
-def print_energies(step,time,Ekin,Epot,Etot, dE, dE_step):
+def print_energies(step, time, Ekin, Epot, Etot, dE, dE_step):
     if step == 1 and (os.path.isfile("energies.xyz")):
          error_exit(8)   
     with open ("energies.dat", "a") as ef:
@@ -91,6 +91,27 @@ def print_state(step, time, state):
     stf.closed
     return()
 
+def print_restart(
+        step, time, natoms, at_names, state, timestep,
+        x, y, z, vx, vy, vz, fx, fy, fz,
+        Ekin, Epot, Etot, Etot_init, pot_eners_array):
+    
+    line1 = ("Step: {:7.4f}\n".format(step),
+             "TimeStep: {:7.4f}\n".format(step),
+             "State: {}\n".format(state),
+             "Natoms: {}\n".format(natoms),
+             "Ekin: {}\n".format(Ekin),
+             "Epot: {}\n".format(Epot),
+             "Etot: {}\n".format(Etot),
+             "Etot_init: {}\n".format(Etot_init)
+            )
+    print(line1)
+    for irow in range(0, np.size(pot_eners_array, 0)):
+        line2 = ("Epot_array: \n",
+                 "".join("{5.8f}\n".format(pot_eners_array[irow, :])))
+        print(line2)
+    #  line2 = ("".join("{2s} {5.8f} {5.8f} {5.8f}\n".format(at_names[iat],vx[iat],vy[iat],vz[iat])))        
+    return()
 def print_snafu():
    print("   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN                AAA               FFFFFFFFF FFFFFFFFFFFUUUUUUUU     UUUUUUUU")
    print( " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F:::::::::::::::::::FU::::::U     U::::::U")

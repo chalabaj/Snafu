@@ -30,9 +30,9 @@ def file_check(cwd):
     input_file = "input.in"
     
     # absolute path to the files  
-    input_file_path = os.path.join(cwd,input_file)
-    geom_file_path  = os.path.join(cwd,geom_file)
-    vel_file_path = os.path.join(cwd,veloc_file)
+    input_file_path = os.path.join(cwd, input_file)
+    geom_file_path  = os.path.join(cwd, geom_file)
+    vel_file_path = os.path.join(cwd, veloc_file)
     if (not os.path.isfile(input_file_path)):
          error_exit(0)
     if (not os.path.isfile(geom_file_path)):
@@ -46,7 +46,7 @@ def file_check(cwd):
     
     return(input_file_path, geom_file_path, vel_file_path, init_vel)
     
-def read_input(cwd,input_file_path):
+def read_input(cwd, input_file_path):
     
     # Read parameter from input.in file
     cfg = configparser.ConfigParser(delimiters=('=', ':'),
@@ -112,33 +112,32 @@ def read_velocs(init_vel, natoms, vel_file_path):
         ivf.close()
     return(vx, vy, vz)
 
-    
 def capitalize_2th(s):
     # Capitalizace first letter, lower second -
     # avoid problems with different name for atoms in ab initio codes
     return s[:1].capitalize() + s[1:].lower()
 
-def init_forces(natoms,nstates):
+def init_forces(natoms, nstates):
     # Initialize empty forces array
     
     #f(t)
-    fx = np.zeros(natoms, dtype=np.float64)  
-    fy = np.zeros(natoms, dtype=np.float64)   
-    fz = np.zeros(natoms, dtype=np.float64)  
+    fx = np.zeros(natoms, dtype = np.float64)  
+    fy = np.zeros(natoms, dtype = np.float64)   
+    fz = np.zeros(natoms, dtype = np.float64)  
     
     #f_new(t+dt)
-    fx_new = np.zeros(natoms, dtype=np.float64)    
-    fy_new = np.zeros(natoms, dtype=np.float64)  
-    fz_new = np.zeros(natoms, dtype=np.float64)  
+    fx_new = np.zeros(natoms, dtype = np.float64)    
+    fy_new = np.zeros(natoms, dtype = np.float64)  
+    fz_new = np.zeros(natoms, dtype = np.float64)  
         
     return(fx, fy, fz, fx_new, fy_new, fz_new)
     
 def init_energies(nstates):
     # Initialize empty potential energies array
-    pot_eners = np.zeros(nstates, dtype=np.float64)     
+    pot_eners = np.zeros(nstates, dtype = np.float64)     
     return(pot_eners)
     
-def com_removal(x,y,z,am):
+def com_removal(x, y, z, am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0
     for iat in range(0,len(x)):
         xsum += x[iat] * am[iat] 

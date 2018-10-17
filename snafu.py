@@ -40,7 +40,7 @@ try:
     from errors import error_exit
     from prints import (
         print_positions, print_velocities, print_snafu,
-        print_state
+        print_state, print_restart
     )
     from propagates import (
         calc_forces, calc_energies,
@@ -113,6 +113,7 @@ if __name__ == "__main__":
         ener_thresh = float(ener_thresh)
         hop_thresh = float(hop_thresh)
         vel_adj = int(vel_adj)
+        restart = int(restart)
     except ValueError as VE:
         print(VE)
         error_exit(9)
@@ -124,6 +125,7 @@ if __name__ == "__main__":
     hop = False
     step = 0
     
+    # if restart: read all these from restart file
     at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
                                                         geom_file_path)
 
@@ -242,7 +244,7 @@ if __name__ == "__main__":
                         pot_eners, ab_initio_file_path)
 
                 pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
-                pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+                pot_eners_array = np.vstack((pot_eners_array, pot_eners))  #  keep last two steps
 
             else:
                 pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
@@ -276,6 +278,10 @@ if __name__ == "__main__":
         print_positions(step, time, natoms, at_names, x, y, z)
         print_velocities(step, time, natoms, at_names, vx, vy, vz)
         print_state(step, time, state)
+        if restart:
+            print_restart(step, time, natoms, at_names, state, timestep,
+                          x, y, z, vx, vy, vz, fx, fy, fz,
+                          Ekin, Epot, Etot, Etot_init, pot_eners_array)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")
