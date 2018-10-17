@@ -17,9 +17,10 @@ def error_exit(error_number):
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
            "6 - Hopping probability larger than 1, something went wrong.\n",
            "7 - Too large energy drift.\n",
-           "8 - Some of the output files already exists and restart = 0)\n")
+           "8 - Some of the output files already exists and restart = 0)\n",
+           "9 - Input varible(s) is not properly set. See input.in." )
     print("---------------------------------")
-    print("Program was terminated due to an error! Exiting...")
     print(err[error_number])
+    print("Program was terminated due to an error! Exiting...")
     sys.exit(1)
     return()

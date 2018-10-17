@@ -104,13 +104,19 @@ if __name__ == "__main__":
     dt = 4.00
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     globals().update(input_vars)
-    natoms = int(natoms)
-    maxsteps = int(maxsteps)
-    state = int(init_state)   # initial or restart state
-    dt = float(timestep)
-    nstates = int(nstates)
-    ener_thresh = float(ener_thresh)
-    hop_thresh = float(hop_thresh)
+    try:
+        natoms = int(natoms)
+        maxsteps = int(maxsteps)
+        state = int(init_state)   # initial or restart state
+        dt = float(timestep)
+        nstates = int(nstates)
+        ener_thresh = float(ener_thresh)
+        hop_thresh = float(hop_thresh)
+        vel_adj = int(vel_adj)
+    except ValueError as VE:
+        print(VE)
+        error_exit(9)
+
     print(liner)
 
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
@@ -202,7 +208,7 @@ if __name__ == "__main__":
 
                     #simple scaling or updatre velocities with new state forces
 
-                    if not int(vel_adj):
+                    if not vel_adj:
                         vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
                     else:
                         vx, vy, vz = adjust_velocities(dt, am,
