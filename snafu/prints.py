@@ -106,7 +106,7 @@ def print_restart(
              "Etot_init: {}\n".format(Etot_init)
             )
     #print(line1)
-    for irow in range(0, np.size(pot_eners_array, 0)):
+    #for irow in range(0, np.size(pot_eners_array, 0)):
         #line2 = ("Epot_array: \n",
                  #"{5.8f}".format(' '.join(str(pot_eners_array[irow,:]))))
     
