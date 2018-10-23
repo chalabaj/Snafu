@@ -24,7 +24,8 @@ modules_files = [
     'prints.py',
     'propagates.py',
     'landauzener.py',
-    'constants.py'
+    'constants.py',
+    'restart.py'
 ]
 
 # if some of the imports fail in modules ImportError rais None name
@@ -40,7 +41,7 @@ try:
     from errors import error_exit
     from prints import (
         print_positions, print_velocities, print_snafu,
-        print_state, print_restart
+        print_state
     )
     from propagates import (
         calc_forces, calc_energies,
@@ -49,6 +50,9 @@ try:
     )
     from landauzener import (
         calc_hopp
+    )
+    from restarts import (
+        print_restart, check_restart, read_restart
     )
     from constants import *
 except ImportError as ime:
@@ -119,28 +123,12 @@ if __name__ == "__main__":
         vel_adj = int(vel_adj)
         restart = int(restart)
         restart_write = int(restart_write)
-        if restart < 0:
-            error_exit(11, "(restart < 0)")
     except ValueError as VE:
         print(VE)
         error_exit(9)
 
-    if restart == 1:
-        print("Restart from the last completed step")
-    elif restart > 1:
-        rst_file = "restart_{}.in".format(restart)
-        rst_file_path = os.path.join(cwd, rst_file)
-        if not os.path.isfile(rst_file_path):
-            print("Restart from step {} failed\n".format(restart),
-                  "{} file was not found!".format(rst_file))
-            error_exit(10)
-    rst_file_path = os.path.join(cwd, "restart.in")
-    if (not restart) and (os.path.isfile(rst_file_path)):
-        print("File restart.in exists, but restart option is turned off.",
-              "Renaming restart.in to restart.in_old")
-        os.rename("restart.in","restart.in_old")
-        
-      
+    rst_file_path = check_restart(restart, cwd)
+    print(liner)
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
     # (1D array)
 

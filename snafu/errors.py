@@ -19,7 +19,7 @@ def error_exit(error_number, *error_desc):
            "7 - Too large energy drift.\n",
            "8 - Some of the output files already exists and restart = 0)\n",
            "9 - Input varible(s) is not properly set. See input.in.",
-           "10 - Required restart file was not found.",
+           "10 - Restart file {} was not found.".format(error_desc[0]),
            "11 - Wrong input parameter {}.".format(error_desc[0]))
     print("---------------------------------")
     print(err[error_number])
