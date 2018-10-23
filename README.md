@@ -81,9 +81,10 @@ abinitio  = molpro-casscf   # where to take gradients and energies, file name ha
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift in eV     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
-restart = 0                # 1 - restart from restart.in, 0 - unset but writes restart information
-restart_write = 100        # writes restart_$i.in file each i-th step, here i = 100
-restart_step = 500         # restart a simulation from selected step, (here 500-th step, restart_500.in must be in executing folder)
+restart = 0                # N - restart from N-th step, file restart_N.in must exist depending on restart_write period
+                           # 1 - restart from the last completed step (i.e. restart.in)
+                           # 0 - unset but writes restart information
+restart_write = 100        # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.)
 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  

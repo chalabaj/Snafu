@@ -102,6 +102,9 @@ if __name__ == "__main__":
     ener_thresh = 1.000
     hop_thresh = 0.5
     dt = 4.00
+    hop = False
+    step = 0
+
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     print(liner)
     globals().update(input_vars)
@@ -116,21 +119,31 @@ if __name__ == "__main__":
         vel_adj = int(vel_adj)
         restart = int(restart)
         restart_write = int(restart_write)
+        if restart < 0:
+            error_exit(11, "(restart < 0)")
     except ValueError as VE:
         print(VE)
         error_exit(9)
 
+    if restart == 1:
+        print("Restart from the last completed step")
+    elif restart > 1:
+        rst_file = "restart_{}.in".format(restart)
+        rst_file_path = os.path.join(cwd, rst_file)
+        if not os.path.isfile(rst_file_path):
+            print("Restart from step {} failed\n".format(restart),
+                  "{} file was not found!".format(rst_file))
+            error_exit(10)
     rst_file_path = os.path.join(cwd, "restart.in")
     if (not restart) and (os.path.isfile(rst_file_path)):
-        print("File restart.in exists, but restart option is unset.",
+        print("File restart.in exists, but restart option is turned off.",
               "Renaming restart.in to restart.in_old")
         os.rename("restart.in","restart.in_old")
         
       
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
     # (1D array)
-    hop = False
-    step = 0
+
     
     # if restart: read all these from restart file
     at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
@@ -283,11 +296,11 @@ if __name__ == "__main__":
               "{}     {}".format(str(hop)[0], state))
         #print("-----------------------------------------------------")
 
-        # SAVE POSITION AND VELOCITIES
+        # SAVE POSITION AND VELOCITIES AND RESTART
         print_positions(step, time, natoms, at_names, x, y, z)
         print_velocities(step, time, natoms, at_names, vx, vy, vz)
         print_state(step, time, state)
-        
+
         print_restart(step, time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,
                       Ekin, Epot, Etot, Etot_init, pot_eners_array,

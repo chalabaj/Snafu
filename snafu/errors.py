@@ -2,7 +2,7 @@
 import sys
 import os
 
-def error_exit(error_number):
+def error_exit(error_number, *error_desc):
     
     """
     TO DO organize error according to time from start
@@ -18,7 +18,9 @@ def error_exit(error_number):
            "6 - Hopping probability larger than 1, something went wrong.\n",
            "7 - Too large energy drift.\n",
            "8 - Some of the output files already exists and restart = 0)\n",
-           "9 - Input varible(s) is not properly set. See input.in." )
+           "9 - Input varible(s) is not properly set. See input.in.",
+           "10 - Required restart file was not found.",
+           "11 - Wrong input parameter {}.".format(error_desc[0]))
     print("---------------------------------")
     print(err[error_number])
     print("Program was terminated due to an error! Exiting...")
