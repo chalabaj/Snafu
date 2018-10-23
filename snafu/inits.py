@@ -156,3 +156,12 @@ def com_removal(x, y, z, am):
     
     return(x,y,z)
 
+def restart_init():
+   # truncate movie. veloc , etc after restart step
+     #https://stackoverflow.com/questions/5633988/python-truncate-a-file-to-100-lines-or-less
+    #with open("my.file", "r+") as f:
+     #  for x in xrange(100):
+      #      f.readline()
+    f.truncate()
+
+    return()

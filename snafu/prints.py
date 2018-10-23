@@ -94,21 +94,32 @@ def print_state(step, time, state):
 def print_restart(
         step, time, natoms, at_names, state, timestep,
         x, y, z, vx, vy, vz, fx, fy, fz,
-        Ekin, Epot, Etot, Etot_init, pot_eners_array):
-    with open("restart.in", "a") as rsf: 
-        infoline = ("Step: {:d}".format(step),
-                    "State: {:d}".format(state),
-                    "Natoms: {:d}".format(natoms),
-                    "Ekin: {:14.10f}".format(Ekin),
-                    "Epot: {:14.10f}".format(Epot),
-                    "Etot: {:14.10f}".format(Etot),
-                    "Etot_init: {:14.10f}".format(Etot_init),
-                    "Pot_eners_array:"
-                    )
+        Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_write):
+
+    infoline = ("Step: {:d}".format(step),
+                "State: {:d}".format(state),
+                "Natoms: {:d}".format(natoms),
+                "Ekin: {:14.10f}".format(Ekin),
+                "Epot: {:14.10f}".format(Epot),
+                "Etot: {:14.10f}".format(Etot),
+                "Etot_init: {:14.10f}".format(Etot_init),
+                "Pot_eners_array:\n"
+                )
+
+    rst_file = "restart.in"
         
+    with open(rst_file, "w") as rsf: 
         rsf.write('\n'.join(infoline))
-        np.savetxt(rsf, pot_eners_array, fmt="%.5f", delimiter=' ', newline='\n')
+        np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
     rsf.closed
+        
+    if not (step%restart_write):
+        rst_file = "restart_{}.in".format(step)
+        print("Writing restart information to {} file.".format(rst_file))
+        with open(rst_file, "w") as rsf: 
+            rsf.write('\n'.join(infoline))
+            np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
+        rsf.closed 
     #print(pot_eners_array)
     #for irow in range(0, np.size(pot_eners_array, 0)):
         #line2 = ("Epot_array: \n",

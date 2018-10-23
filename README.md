@@ -32,6 +32,12 @@ Python ver 3.5 and newer should work.
 export SNAFU_DIR="path/to/snafu/dir"
 </code>
 
+## How to restart dynamics
+
+* Restart option must be set to 1 and restart.in file must be present in an executing folder.
+The restart.in file contains all needed information from the last completed simulation step.   
+* If one wants to restart dynamics from other step in history (not the last one), one must use option restart_step (e.g. restart_step = 500) and program will search for file restart_500.in 
+
 2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
 Currently fully working:  
 CASSCF in MOLPRO (2015.1)  
@@ -72,11 +78,12 @@ timestep = 6               # in atomic unit au = 0.024 fs
 maxsteps = 600             # total number of steps  
 method  = lz-adiabatic     # bomd/lz-adibatic (Belyaev)
 abinitio  = molpro-casscf   # where to take gradients and energies, file name has to start  g09 or molpro
-restart = 0                # not yet working  
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift in eV     
-hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)  
-
+hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
+restart = 0                # 1 - restart from restart.in, 0 - unset but writes restart information
+restart_write = 100        # writes restart_$i.in file each i-th step, here i = 100
+restart_step = 500         # restart a simulation from selected step, (here 500-th step, restart_500.in must be in executing folder)
 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  

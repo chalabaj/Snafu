@@ -115,6 +115,7 @@ if __name__ == "__main__":
         hop_thresh = float(hop_thresh)
         vel_adj = int(vel_adj)
         restart = int(restart)
+        restart_write = int(restart_write)
     except ValueError as VE:
         print(VE)
         error_exit(9)
@@ -123,7 +124,7 @@ if __name__ == "__main__":
     if (not restart) and (os.path.isfile(rst_file_path)):
         print("File restart.in exists, but restart option is unset.",
               "Renaming restart.in to restart.in_old")
-        os.rename(restart.in,restart.in_old)
+        os.rename("restart.in","restart.in_old")
         
       
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
@@ -289,7 +290,8 @@ if __name__ == "__main__":
         
         print_restart(step, time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,
-                      Ekin, Epot, Etot, Etot_init, pot_eners_array)
+                      Ekin, Epot, Etot, Etot_init, pot_eners_array,
+                      restart_write)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")

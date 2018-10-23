@@ -3,10 +3,11 @@ natoms  = 3                 # number of atoms in system
 nstates = 3               # number of electronic states
 init_state = 2              # initial electronic state
 timestep = 6                # in atomic unit au = 0.024 fs 
-maxsteps = 3              # total number of steps
+maxsteps = 4              # total number of steps
 method  = lz-adioabatic     # bomd/lz-adibatic (Belyaev)/ lz-diabatic scheme
 abinitio  = molpro-casscf       # $abinitio.sh file muset exist in ABINITIO folder, has to start g09/molpro/ to distinguish between forces and gradients of different codes
 restart = 0                 # 0 - OFF, 1 - restart from the latest point. Restart.in file must exists.
 vel_adj = 1                 # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces fro new surface are included into velocity at hop point
 ener_thresh = 1.0           # energy threshold for max energy drift (in eV)
 hop_thresh = 0.5            # energy threshold for hopping between the states with energy difference less than this (in eV)
+restart_write = 2
