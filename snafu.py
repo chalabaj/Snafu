@@ -103,6 +103,7 @@ if __name__ == "__main__":
     hop_thresh = 0.5
     dt = 4.00
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
+    print(liner)
     globals().update(input_vars)
     try:
         natoms = int(natoms)
@@ -118,8 +119,13 @@ if __name__ == "__main__":
         print(VE)
         error_exit(9)
 
-    print(liner)
-
+    rst_file_path = os.path.join(cwd, "restart.in")
+    if (not restart) and (os.path.isfile(rst_file_path)):
+        print("File restart.in exists, but restart option is unset.",
+              "Renaming restart.in to restart.in_old")
+        os.rename(restart.in,restart.in_old)
+        
+      
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
     # (1D array)
     hop = False
@@ -153,8 +159,10 @@ if __name__ == "__main__":
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
     # TO DO CHECK RESTART files OR if files exist and not restart then error!!
 
-    # CENTER OF MASS REMOVAL
-    x, y, z = com_removal(x, y, z, am)
+    
+    if not restart:
+    # CENTER OF MASS REMOVAL  
+        x, y, z = com_removal(x, y, z, am)
 
     # CALC INITIAL ENERGIES AND GRADIENTS
     fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
@@ -278,10 +286,10 @@ if __name__ == "__main__":
         print_positions(step, time, natoms, at_names, x, y, z)
         print_velocities(step, time, natoms, at_names, vx, vy, vz)
         print_state(step, time, state)
-        if restart:
-            print_restart(step, time, natoms, at_names, state, timestep,
-                          x, y, z, vx, vy, vz, fx, fy, fz,
-                          Ekin, Epot, Etot, Etot_init, pot_eners_array)
+        
+        print_restart(step, time, natoms, at_names, state, timestep,
+                      x, y, z, vx, vy, vz, fx, fy, fz,
+                      Ekin, Epot, Etot, Etot_init, pot_eners_array)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")
