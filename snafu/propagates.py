@@ -28,9 +28,9 @@ ang_bohr = 1.889726132873e0  # agstroms to bohrs
 def update_positions(
         dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
     for iat in range(0,len(am)):
-        x_new[iat] = x[iat] + vx[iat] * dt + ( fx[iat] / (2 * am[iat]) * dt ** 2 )
-        y_new[iat] = y[iat] + vy[iat] * dt + ( fy[iat] / (2 * am[iat]) * dt ** 2 )
-        z_new[iat] = z[iat] + vz[iat] * dt + ( fz[iat] / (2 * am[iat]) * dt ** 2 )
+        x_new[iat] = x[iat] + vx[iat]*dt + ( fx[iat]/(2*am[iat]) * dt**2 )
+        y_new[iat] = y[iat] + vy[iat]*dt + ( fy[iat]/(2*am[iat]) * dt**2 )
+        z_new[iat] = z[iat] + vz[iat]*dt + ( fz[iat]/(2*am[iat]) * dt**2 )
     return(x_new, y_new, z_new)
 
 def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
@@ -38,9 +38,9 @@ def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
     vyy = np.copy(vy)
     vzz = np.copy(vz)
     for iat in range(0,len(am)):
-        vxx[iat] = vx[iat] + ( dt * (fx[iat] + fx_new[iat]) / (2 * am[iat]) )
-        vyy[iat] = vy[iat] + ( dt * (fy[iat] + fy_new[iat]) / (2 * am[iat]) )
-        vzz[iat] = vz[iat] + ( dt * (fz[iat] + fz_new[iat]) / (2 * am[iat]) )
+        vxx[iat] = vx[iat] + ( dt*(fx[iat] + fx_new[iat])/(2*am[iat]) )
+        vyy[iat] = vy[iat] + ( dt*(fy[iat] + fy_new[iat])/(2*am[iat]) )
+        vzz[iat] = vz[iat] + ( dt*(fz[iat] + fz_new[iat])/(2*am[iat]) )
     return(vxx, vyy, vzz)   
 
 def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
@@ -51,9 +51,9 @@ def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
     # subtract the included forces from an old state 
     # and replace them with forces of a new state
     for iat in range(0,len(am)):
-        vxx[iat] = vx[iat] + ( dt * (-fx[iat] + fx_new[iat]) / (2 * am[iat]) )
-        vyy[iat] = vy[iat] + ( dt * (-fy[iat] + fy_new[iat]) / (2 * am[iat]) )
-        vzz[iat] = vz[iat] + ( dt * (-fz[iat] + fz_new[iat]) / (2 * am[iat]) )
+        vxx[iat] = vx[iat] + ( dt*(-fx[iat] + fx_new[iat])/(2*am[iat]) )
+        vyy[iat] = vy[iat] + ( dt*(-fy[iat] + fy_new[iat])/(2*am[iat]) )
+        vzz[iat] = vz[iat] + ( dt*(-fz[iat] + fz_new[iat])/(2*am[iat]) )
     return(vxx, vyy, vzz)   
     
 def calc_forces(
@@ -100,9 +100,9 @@ def calc_forces(
             line = gef.readline().split(" ")
             # FX FY FZ, gradient to forces 
             # TO DO Gaussian has forces, molpro gradients
-            fx_new[iat] = grad * np.float64(line[0])
-            fy_new[iat] = grad * np.float64(line[1])
-            fz_new[iat] = grad * np.float64(line[2])    
+            fx_new[iat] = grad*np.float64(line[0])
+            fy_new[iat] = grad*np.float64(line[1])
+            fz_new[iat] = grad*np.float64(line[2])    
     gef.closed
     return(fx_new , fy_new, fz_new, pot_eners)
 
@@ -113,8 +113,8 @@ def calc_energies(
     Ekin = 0.000
 
     for iat in range(0,natoms):
-        vv = vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2
-        Ekin = Ekin + (0.5 * am[iat] * vv)
+        vv = vx[iat]**2 + vy[iat]**2 + vz[iat]**2
+        Ekin = Ekin + (0.5*am[iat]*vv)
 
     Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
     Etot = Ekin + Epot

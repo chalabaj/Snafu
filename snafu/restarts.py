@@ -49,7 +49,28 @@ def read_restart(rst_file_path):
         step = rstf.readline().split()[1]
         print(step)
     rstf.closed
-    a = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)  
+    pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
+
+    x = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=11, usecols=1)  
+    y = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=11, usecols=2)  
+    z = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=11, usecols=3)  
+
+    vx = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=15, usecols=1)  
+    vy = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=15, usecols=2)  
+    vz = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=15, usecols=3)
+
+    fx = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=1í, usecols=1)  
+    fy = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=1í, usecols=2)  
+    fz = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
+                   skiprows=1í, usecols=3)             
     print(a)
     return()
 
@@ -76,9 +97,9 @@ def print_restart(
         np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
 
         rsf.write("Positions AT X Y Z:\n")
-        xx = [xi * BOHR_ANG for xi in x.tolist()]
-        yy = [yi * BOHR_ANG for yi in y.tolist()]
-        zz = [zi * BOHR_ANG for zi in z.tolist()]
+        xx = [xi*BOHR_ANG for xi in x.tolist()]
+        yy = [yi*BOHR_ANG for yi in y.tolist()]
+        zz = [zi*BOHR_ANG for zi in z.tolist()]
         for iat in range(0, natoms):     
             p_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
                                                                  xx[iat],
@@ -98,7 +119,6 @@ def print_restart(
             rsf.write(v_line)
 
         rsf.write("Forces: AT FX FY FZ:\n")
-        print(fx,fy,fz)
         ffx = fx.tolist()
         ffy = fy.tolist()
         ffz = fz.tolist()
