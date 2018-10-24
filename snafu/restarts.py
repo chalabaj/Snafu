@@ -71,7 +71,15 @@ def read_restart(rst_file_path):
                    skiprows=1í, usecols=2)  
     fz = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
                    skiprows=1í, usecols=3)             
-    print(a)
+    print(x)
+    print(y)
+    print(z)
+    print(vx)
+    print(vy)
+    print(vz)
+    print(fx)
+    print(fy)
+    print(fz)
     return()
 
 def print_restart(
