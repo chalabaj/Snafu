@@ -108,7 +108,7 @@ def calc_forces(
 
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 
-    vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
+    vx, vy, vz, Etot_init, Etot_prev, ener_thresh, restart):
 
     Ekin = 0.000
 
@@ -126,8 +126,8 @@ def calc_energies(
               "larger then threshold {}.".format(ener_thresh))
         error_exit(7)
         
-    print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
-    print_pes(time, step, pot_eners)
+    print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, restart)
+    print_pes(time, step, pot_eners, restart)
 
     return(Ekin, Epot, Etot, dE, dE_step)
 

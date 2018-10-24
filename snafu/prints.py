@@ -22,9 +22,9 @@ except KeyError as ke:
           "\nHint: export SNAFU_DIR=/path/to/SNAFU")
     exit(1)
 
-def print_positions(step,time,natoms, at_names, x, y, z):
-    if step == 1 and (os.path.isfile("movie.xyz")):
-         error_exit(8)
+def print_positions(step,time,natoms, at_names, x, y, z, restart):
+    if step == 1 and (os.path.isfile("movie.xyz")) and (restart == 0):
+         error_exit(8, "movie.xyz")
     with open ("movie.xyz", "a") as mov:
      header = ("{} \n".format(natoms))
      mov.write(header)
@@ -36,9 +36,9 @@ def print_positions(step,time,natoms, at_names, x, y, z):
     mov.closed
     return()
 
-def print_velocities(step,time,natoms, at_names, vx, vy, vz):
-    if step == 1 and (os.path.isfile("velocities.xyz")):
-         error_exit(8)     
+def print_velocities(step,time,natoms, at_names, vx, vy, vz, restart):
+    if step == 1 and (os.path.isfile("velocities.xyz")) and (restart == 0):
+         error_exit(8, "velocities.xyz")     
     with open ("velocities.xyz", "a") as vel:
      header = ("{} \n".format(natoms))
      vel.write(header)
@@ -50,9 +50,9 @@ def print_velocities(step,time,natoms, at_names, vx, vy, vz):
     vel.closed
     return()
 
-def print_energies(step, time, Ekin, Epot, Etot, dE, dE_step):
-    if step == 1 and (os.path.isfile("energies.xyz")):
-         error_exit(8)   
+def print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, restart):
+    if step == 0 and (os.path.isfile("energies.dat")) and (restart == 0):
+         error_exit(8, "energies.dat")   
     with open ("energies.dat", "a") as ef:
         if step == 0:
             headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
@@ -64,9 +64,9 @@ def print_energies(step, time, Ekin, Epot, Etot, dE, dE_step):
     ef.closed
     return()  
 
-def print_pes(time, step, pot_eners):
-    if step == 1 and (os.path.isfile("PES.xyz")):
-         error_exit(8)    
+def print_pes(time, step, pot_eners, restart):
+    if step == 0 and (os.path.isfile("PES.dat")) and (restart == 0):
+         error_exit(8, "PES.dat")    
     with open ("PES.dat", "a") as pesf:
         if step == 0:
             headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
@@ -80,9 +80,9 @@ def print_pes(time, step, pot_eners):
     pesf.closed
     return()
 
-def print_state(step, time, state):
-    if step == 0 and (os.path.isfile("state.dat")):
-         error_exit(8)
+def print_state(step, time, state, restart):
+    if step == 1 and (os.path.isfile("state.dat")) and (restart == 0):
+         error_exit(8, "state.dat")
     with open ("state.dat", "a") as stf:
         if step == 1:
             headline = "# Time,  Electronic state(0 = gs)\n"

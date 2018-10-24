@@ -13,24 +13,33 @@ def check_restart(restart, cwd):
     rst_file_path = os.path.join(cwd, rst_file)
     if restart < 0:
             error_exit(11, "(restart < 0)")
-    elif restart == 0:   
+    elif restart == 0:
         if (os.path.isfile(rst_file_path)):
             print("File restart.in exists, but restart option is turned off.",
-                  "Renaming restart.in to restart.in_old")
-            os.rename("restart.in","restart.in_old")
+                  "\nRenaming restart.in to restart.in_old.")
+            try:
+                os.rename("restart.in", "restart.in_old")
+            except OsError:
+                print("Error, when renaming the restart file. Exiting...")
+                exit(1)
+        else:
+            print("Restart turned off.")
     elif restart == 1:
         rst_file = "restart.in"  
+        rst_file_path = os.path.join(cwd, rst_file)
+        if (os.path.isfile(rst_file_path)):
+            print("Restart={}, start from the last completed".format(restart),
+                  "step.\nRestart file {} found.".format(rst_file))
+        else:
+            error_exit(10, "({})".format(rst_file))
     elif restart > 1:
         rst_file = "restart_{}.in".format(restart)
-    
-    rst_file_path = os.path.join(cwd, rst_file)
-            
-    if (os.path.isfile(rst_file_path)):
-        print("Restart = {}, start from the {}".format(restart, restart),
-              "Restart file {} found".format(rst_file))
-    else:
-        error_exit(10, "({})".format(rst_file))
-        
+        rst_file_path = os.path.join(cwd, rst_file)
+        if (os.path.isfile(rst_file_path)):
+            print("Restart={}, start from {} step".format(restart, restart),
+                  "Restart file {} found".format(rst_file))
+        else:
+            error_exit(10, "({})".format(rst_file))
     return(rst_file_path)
     
 def read_restart(rst_file_path):

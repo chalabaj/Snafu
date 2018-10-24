@@ -125,7 +125,7 @@ if __name__ == "__main__":
         restart_write = int(restart_write)
     except ValueError as VE:
         print(VE)
-        error_exit(9)
+        error_exit(9, " ")
 
     rst_file_path = check_restart(restart, cwd)
     print(liner)
@@ -159,8 +159,6 @@ if __name__ == "__main__":
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
-    # TO DO CHECK RESTART files OR if files exist and not restart then error!!
-
     
     if not restart:
     # CENTER OF MASS REMOVAL  
@@ -179,7 +177,8 @@ if __name__ == "__main__":
     Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
                                                   state, pot_eners,
                                                   vx, vy, vz, Etot_init,
-                                                  Etot_prev, ener_thresh)
+                                                  Etot_prev, ener_thresh,
+                                                  restart)
     Etot_init = Etot
     
     
@@ -276,7 +275,8 @@ if __name__ == "__main__":
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
-                                                      Etot_prev, ener_thresh)
+                                                      Etot_prev, ener_thresh,
+                                                      restart)
 
         # print("Ekin {}, Epot {}, Etot{}".format(Ekin, Epot, Etot))
         print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, time, dE * AU_EV),
@@ -285,9 +285,9 @@ if __name__ == "__main__":
         #print("-----------------------------------------------------")
 
         # SAVE POSITION AND VELOCITIES AND RESTART
-        print_positions(step, time, natoms, at_names, x, y, z)
-        print_velocities(step, time, natoms, at_names, vx, vy, vz)
-        print_state(step, time, state)
+        print_positions(step, time, natoms, at_names, x, y, z, restart)
+        print_velocities(step, time, natoms, at_names, vx, vy, vz, restart)
+        print_state(step, time, state, restart)
 
         print_restart(step, time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,

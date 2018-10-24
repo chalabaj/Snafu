@@ -1,8 +1,8 @@
 #!/bin/bash
 cd ABINITIO
-printenv >ll
+
 source SetEnvironment.sh ORCA 4.0.0
-export MKL_NUM_THREADS=1
+export OMP_NUM_THREADS=1
 ########## SNAFU INPUTS ###########################################
 abinit_geom_file=$1
 natoms=$2
@@ -37,21 +37,21 @@ else                         # excited state
 fi
 
 if [[ ! -z "${NSLOTS}" ]];then
-nprocs=$NSLOTS
 cat > $input << EOF
 %maxcore $mem          # memory per core
 %pal
-   nprocs $nprocs           # number of cores
+   nprocs ${NSLOTS}           # number of cores
 end
 EOF
-touch nslostsset
 fi
 ########### END OF INPUTS ###########################################
 
 cat >> $input << EOF
 $gstask           # for small systems increase accuracy by: Grid5 FinalGrid6 
 %scf
-maxiter 200
+MaxIter 1000      # Here setting MaxIter to a very high number. Intended for systems that require sometimes 1000 iterations before converging (very rare).
+DIISMaxEq 15      # Default value is 5. A value of 15-40 necessary for difficult systems.
+directresetfreq 5 # Default value is 15. A value of 1 (very expensive) is sometimes required. A value between 1 and 15 may be more cost-effective.
 end
 ! NOPOP
 ! MiniPrint
@@ -64,8 +64,11 @@ echo '*' >>$input
 cat >> $input << EOF
 \$new_job
 $extask
-%scf
-maxiter 200
+
+%scf 
+MaxIter 1000      # Here setting MaxIter to a very high number. Intended for systems that require sometimes 1000 iterations before converging (very rare).
+DIISMaxEq 15      # Default value is 5. A value of 15-40 necessary for difficult systems.
+directresetfreq 5 # Default value is 15. A value of 1 (very expensive) is sometimes required. A value between 1 and 15 may be more cost-effective.
 end
 ! NOPOP
 ! moread
@@ -87,28 +90,24 @@ echo '*' >> $input
 $ORCAEXE $input > $input.out
 ################################
 
-if [[ $? -eq 0 ]];then
-   cp $input.out $input.out.old
-   rm *.tmp
-else
+if [[ ! $? -eq 0 ]];then
    echo "WARNING from ORCA calculation probably failed."
    echo "See $input.out.error_old"
    echo "TRYING TO RESTART JOB WITHOUT PREVIOUS WF" 
-   cp $input.out $input.out.error_old
+   cp $input.out err_$input.out._old
    mv input.com restart.inp
    rm input.*
-   mv restart.inp input.com 
+   mv restart.inp $input
    $ORCAEXE $input > $input.out
-   if [[ $? -eq 0 ]];then
-      cp $input.out $input.out.old
-      rm *.tmp
-   else
-      echo "WARNING from ORCA calculation probably failed."
-      echo "See $input.out.error"
-      exit 1
-      fi
-fi
 
+   if [[ !$? -eq 0 ]];then
+       echo "WARNING from ORCA calculation probably failed."
+       echo "See $input.out.error"
+       exit 1
+   fi
+fi
+cp $input.out $input.out_old
+rm *.tmp
 
 ### EXTRACTING ENERGY AND FORCES
 # need space at the end for numpy float reading

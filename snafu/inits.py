@@ -34,9 +34,9 @@ def file_check(cwd):
     geom_file_path  = os.path.join(cwd, geom_file)
     vel_file_path = os.path.join(cwd, veloc_file)
     if (not os.path.isfile(input_file_path)):
-         error_exit(0)
+         error_exit(0, " ")
     if (not os.path.isfile(geom_file_path)):
-         error_exit(1)
+         error_exit(1, " ")
     if (not os.path.isfile(vel_file_path)):
         print("No initial velocities.")
         init_vel = 0
@@ -65,7 +65,7 @@ def read_input(cwd, input_file_path):
     ab_initio_file_path  = os.path.join(cwd, abinit_file)
     
     if (not os.path.isfile(ab_initio_file_path)):
-         error_exit(5)
+         error_exit(5, " ")
          
     return(par, ab_initio_file_path)
 
@@ -82,7 +82,7 @@ def read_geoms(natoms, geom_file_path):
  # READ INITIAL POSITIONS:   
     with open(geom_file_path, 'r') as igf:  # igf input geom file 
      atoms = igf.readline()  # first line in geom file is number of atoms
-     if not (int(atoms) == natoms):  error_exit(2)                         
+     if not (int(atoms) == natoms):  error_exit(2, " ")                         
      garbage = igf.readline()  # comment 
      for iat in range(0, natoms):
         line = igf.readline().split()
@@ -102,7 +102,7 @@ def read_velocs(init_vel, natoms, vel_file_path):
         with open(vel_file_path, 'r') as ivf:  
             atoms = ivf.readline()  # first line is number of atoms
             if not (int(atoms) == natoms):  
-                error_exit(2)                         
+                error_exit(2, " ")                         
             garbage = ivf.readline()  # second comment line
             for iat in range(0, natoms):
                 line = ivf.readline().split()
