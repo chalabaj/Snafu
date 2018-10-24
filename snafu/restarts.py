@@ -80,6 +80,7 @@ def read_restart(rst_file_path):
     print(fx)
     print(fy)
     print(fz)
+    
     return()
 
 def print_restart(
