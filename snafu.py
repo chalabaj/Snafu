@@ -108,6 +108,11 @@ if __name__ == "__main__":
     dt = 4.00
     hop = False
     step = 0
+    dE = 0.0  # energy change since initial energies
+    Etot_init = 0.0  # setting variable , total energy at the beginning
+    Etot_prev = 0.0
+    time = 0.0
+    prob = 0.0
 
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     print(liner)
@@ -126,31 +131,57 @@ if __name__ == "__main__":
     except ValueError as VE:
         print(VE)
         error_exit(9, " ")
-
+    
+    pot_eners = init_energies(nstates)
+    fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
+    # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
     rst_file_path = check_restart(restart, cwd)
     print(liner)
-    # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
-    # (1D array)
-
     
-    # if restart: read all these from restart file
-    at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
-                                                        geom_file_path)
-
-    vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
-
-    fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
-
-    pot_eners = init_energies(nstates)
+    if restart == 0:
     
-    # OBTAIN ATOMIC MASSES:
-    masses = assign_masses(at_names)
-    am = [mm * AMU for mm in masses]  # atomic mass units conversion
+        at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
+                                                            geom_file_path)
+        vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
+
+        # OBTAIN ATOMIC MASSES:
+        masses = assign_masses(at_names)
+        am = [mm * AMU for mm in masses]  # atomic mass units conversion
+        # CENTER OF MASS REMOVAL 
+        x, y, z = com_removal(x, y, z, am)
+        # CALC INITIAL ENERGIES AND GRADIENTS
+        fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
+                                            x, y, z, fx, fy, fz, pot_eners,
+                                            ab_initio_file_path)
+        pot_eners_array = np.copy(pot_eners)      
+        
+        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
+                                                      state, pot_eners,
+                                                      vx, vy, vz, Etot_init,
+                                                      Etot_prev, ener_thresh,
+                                                      restart)
+        Etot_init = Etot
+        init_step = 1
+    else:
+        init_step, at_names, state, x, y, z, vx, vy, vz, fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array = read_restart(rst_file_path, natoms)
+        masses = assign_masses(at_names)
+        am = [mm * AMU for mm in masses]  # atomic mass units conversion
+        x_new = np.zeros_like(x)
+        y_new = np.zeros_like(y)
+        z_new = np.zeros_like(z)
+        fx_new = np.zeros_like(fx)
+        fy_new = np.zeros_like(fy)
+        fz_new = np.zeros_like(fz)
+        init_step = init_step + 1
     print("Initial geometry:\n",
-          "At    X       Y         Z         MASS:")
+          "At    X         Y          Z         MASS:")
+    xx = [xxx*BOHR_ANG for xxx in x.tolist()]
+    yy = [yyy*BOHR_ANG for yyy in y.tolist()]
+    zz = [zzz*BOHR_ANG for zzz in z.tolist()]
     for iat in range(0, natoms):
-        print("".join("%2s" " " "%3.3f" % (at_names[iat], x[iat])),
-              " %3.6f %2.6f %2.6f" % (y[iat], z[iat], masses[iat]))
+        print("{} {:12.8f}".format(at_names[iat], xx[iat]),
+              "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
+              "{:12.8f}".format(masses[iat]))
 
     print("Initial velocities:\n",
           "At    VX       VY       VZ         ")
@@ -159,34 +190,9 @@ if __name__ == "__main__":
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
-    
-    if not restart:
-    # CENTER OF MASS REMOVAL  
-        x, y, z = com_removal(x, y, z, am)
-
-    # CALC INITIAL ENERGIES AND GRADIENTS
-    fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
-                                        x, y, z, fx, fy, fz, pot_eners,
-                                        ab_initio_file_path)
-    pot_eners_array = np.copy(pot_eners)                                    
-    dE = 0.0  # energy change since initial energies
-    Etot_init = 0.0  # setting variable , total energy at the beginning
-    Etot_prev = 0.0
-    time = 0.0
-    prob = 0.0
-    Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
-                                                  state, pot_eners,
-                                                  vx, vy, vz, Etot_init,
-                                                  Etot_prev, ener_thresh,
-                                                  restart)
-    Etot_init = Etot
-    
-    if restart > 0:
-        read_restart(rst_file_path, natoms)
-    
 
     #-------------------MAIN LOOP-----------------------------------------
-    for step in range(1, maxsteps + 1):
+    for step in range(init_step, maxsteps + 1):
 
         x_new, y_new, z_new = update_positions(dt, am, 
                                                x, y, z,

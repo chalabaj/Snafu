@@ -44,34 +44,46 @@ def check_restart(restart, cwd):
     return(rst_file_path)
     
 def read_restart(rst_file_path, natoms):
-    #with open restart.in as rsf:
-    print(rst_file_path)
+    #  with open restart.in as rsf:
+    #  print(rst_file_path)
     rst_file = rst_file_path
     with open(rst_file_path, 'r') as rstf:
         for num, line in enumerate(rstf):
             print(num, line)        
             if re.search(r'Step', line):
-                step = line.split()[1]
-                print(step)
-           # if re.search(r'State', line):
-           # if re.search(r'Ekin', line):
-            #if re.search(r'Epot', line):
-            #if re.search(r'Etot', line):
-            #if re.search(r'Etot_init', line):
+                step = int(line.split()[1])
+            if re.search(r'State', line):
+                state = int(line.split()[1])
+            if re.search(r'Ekin', line):
+                Ekin = float(line.split()[1])
+            if re.search(r'Epot', line):
+                Epot = float(line.split()[1])
+            if re.search(r'Etot', line):
+                Etot = float(line.split()[1])
+            if re.search(r'Etot_init', line):
+               Etot_init = float(line.split()[1])
             if re.search(r'Positions', line):
                pnum = num
             if re.search(r'Velocities', line):
                 vnum = num
             if re.search(r'Forces', line):
                 fnum = num
-                
-                
+            if re.search(r'Pot_eners_array', line):
+                peanum = num    
+        
+        atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'),
+                                skip_header=pnum+1, max_rows=natoms, usecols=[0])
+        at_names =  atnames.tolist()
+        
+        pot_eners_array = np.genfromtxt(rst_file, dtype=np.float64,
+                                        skip_header=peanum+1, max_rows=2,
+                                        usecols=[0,1,2])         
         fx = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=fnum+1, max_rows=natoms, usecols=[1])  
+                           skip_header=fnum+1, max_rows=natoms, usecols=[1])  
         fy = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=fnum+1, max_rows=natoms, usecols=[2])
+                           skip_header=fnum+1, max_rows=natoms, usecols=[2])
         fz = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=fnum+1, max_rows=natoms, usecols=[3])
+                           skip_header=fnum+1, max_rows=natoms, usecols=[3])
                                    
                                    
         x = np.genfromtxt(rst_file, dtype=np.float64,
@@ -90,7 +102,7 @@ def read_restart(rst_file_path, natoms):
                    
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
-    np.set_printoptions(precision=10)        
+    np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
     print(x)
     print(y)
     print(z)
@@ -100,8 +112,11 @@ def read_restart(rst_file_path, natoms):
     print(fx)
     print(fy)
     print(fz)
-    
-    return()
+    print(at_names)
+    print(pot_eners_array)
+    return(step, at_names, state, 
+           x, y, z, vx, vy, vz, 
+           fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array)
 
 def print_restart(
         step, time, natoms, at_names, state, timestep,
@@ -125,10 +140,10 @@ def print_restart(
 
         np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
 
-        rsf.write("Positions AT X Y Z:\n")
-        xx = [xi*BOHR_ANG for xi in x.tolist()]
-        yy = [yi*BOHR_ANG for yi in y.tolist()]
-        zz = [zi*BOHR_ANG for zi in z.tolist()]
+        rsf.write("Positions AT X Y Z (Bohrs):\n")
+        xx = x.tolist()
+        yy = y.tolist()
+        zz = z.tolist()
         for iat in range(0, natoms):     
             p_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
                                                                  xx[iat],
@@ -136,7 +151,7 @@ def print_restart(
                                                                  zz[iat])
             rsf.write(p_line)
             
-        rsf.write("Velocities: AT VX VY VZ:\n")
+        rsf.write("Velocities: AT VX VY VZ (a.u.):\n")
         vvx = vx.tolist()
         vvy = vy.tolist()
         vvz = vz.tolist()
@@ -147,7 +162,7 @@ def print_restart(
                                                                  vvz[iat])
             rsf.write(v_line)
 
-        rsf.write("Forces: AT FX FY FZ:\n")
+        rsf.write("Forces: AT FX FY FZ (a.u.):\n")
         ffx = fx.tolist()
         ffy = fy.tolist()
         ffz = fz.tolist()
