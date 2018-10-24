@@ -45,7 +45,7 @@ def check_restart(restart, cwd):
 def read_restart(rst_file_path):
     #with open restart.in as rsf:
     rst_file = "restart.in"
-    with open(rst_file, 'r') as rstf:
+    with open(rst_file_path, 'r') as rstf:
         step = rstf.readline().split()[1]
         print(step)
     rstf.closed
@@ -76,23 +76,38 @@ def print_restart(
         np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
 
         rsf.write("Positions AT X Y Z:\n")
-        header = ("{} \n".format(natoms))
-        comment = ("Step: {}      Time_fs: {}\n".format(step,time))
-        rsf.write(header)
-        rsf.write(comment)
+        xx = [xi * BOHR_ANG for xi in x.tolist()]
+        yy = [yi * BOHR_ANG for yi in y.tolist()]
+        zz = [zi * BOHR_ANG for zi in z.tolist()]
         for iat in range(0, natoms):     
-            pos_line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],x[iat]*BOHR_ANG,y[iat]*BOHR_ANG,z[iat]*BOHR_ANG)))
-            rsf.write(pos_line)
+            p_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
+                                                                 xx[iat],
+                                                                 yy[iat],
+                                                                 zz[iat])
+            rsf.write(p_line)
             
         rsf.write("Velocities: AT VX VY VZ:\n")
-        header = ("{} \n".format(natoms))
-        comment = ("Step: {}      Time_fs: {}\n".format(step,time))
-        rsf.write(header)
-        rsf.write(comment)
+        vvx = vx.tolist()
+        vvy = vy.tolist()
+        vvz = vz.tolist()
         for iat in range(0, natoms):     
-            vel_line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
-            rsf.write(vel_line)
+            v_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
+                                                                 vvx[iat],
+                                                                 vvy[iat],
+                                                                 vvz[iat])
+            rsf.write(v_line)
 
+        rsf.write("Forces: AT FX FY FZ:\n")
+        print(fx,fy,fz)
+        ffx = fx.tolist()
+        ffy = fy.tolist()
+        ffz = fz.tolist()
+        for iat in range(0, natoms):
+            f_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
+                                                               ffx[iat],
+                                                               ffy[iat],
+                                                               ffz[iat])
+            rsf.write(f_line)
     rsf.closed
 
     if not (step%restart_write):
