@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import shutil
+import re
 try:
     from errors import error_exit
     from constants import *
@@ -42,35 +43,54 @@ def check_restart(restart, cwd):
             error_exit(10, "({})".format(rst_file))
     return(rst_file_path)
     
-def read_restart(rst_file_path):
+def read_restart(rst_file_path, natoms):
     #with open restart.in as rsf:
-    rst_file = "restart.in"
+    print(rst_file_path)
+    rst_file = rst_file_path
     with open(rst_file_path, 'r') as rstf:
-        step = rstf.readline().split()[1]
-        print(step)
+        for num, line in enumerate(rstf):
+            print(num, line)        
+            if re.search(r'Step', line):
+                step = line.split()[1]
+                print(step)
+           # if re.search(r'State', line):
+           # if re.search(r'Ekin', line):
+            #if re.search(r'Epot', line):
+            #if re.search(r'Etot', line):
+            #if re.search(r'Etot_init', line):
+            if re.search(r'Positions', line):
+               pnum = num
+            if re.search(r'Velocities', line):
+                vnum = num
+            if re.search(r'Forces', line):
+                fnum = num
+                
+                
+        fx = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=fnum+1, max_rows=natoms, usecols=[1])  
+        fy = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=fnum+1, max_rows=natoms, usecols=[2])
+        fz = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=fnum+1, max_rows=natoms, usecols=[3])
+                                   
+                                   
+        x = np.genfromtxt(rst_file, dtype=np.float64,
+                                  skip_header=pnum+1, max_rows=natoms, usecols=[1])  
+        y = np.genfromtxt(rst_file, dtype=np.float64, 
+                                  skip_header=pnum+1, max_rows=natoms, usecols=[2])
+        z = np.genfromtxt(rst_file, dtype=np.float64,
+                                  skip_header=pnum+1, max_rows=natoms, usecols=[3])
+                                  
+        vx = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=vnum+1, max_rows=natoms, usecols=[1])  
+        vy = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=vnum+1, max_rows=natoms, usecols=[2])
+        vz = np.genfromtxt(rst_file, dtype=np.float64,
+                                   skip_header=vnum+1, max_rows=natoms, usecols=[3])
+                   
     rstf.closed
-    pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
-
-    x = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=11, usecols=1)  
-    y = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=11, usecols=2)  
-    z = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=11, usecols=3)  
-
-    vx = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=15, usecols=1)  
-    vy = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=15, usecols=2)  
-    vz = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=15, usecols=3)
-
-    fx = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=1í, usecols=1)  
-    fy = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=1í, usecols=2)  
-    fz = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, 
-                   skiprows=1í, usecols=3)             
+    #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
+    np.set_printoptions(precision=10)        
     print(x)
     print(y)
     print(z)

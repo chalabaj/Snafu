@@ -181,6 +181,8 @@ if __name__ == "__main__":
                                                   restart)
     Etot_init = Etot
     
+    if restart > 0:
+        read_restart(rst_file_path, natoms)
     
 
     #-------------------MAIN LOOP-----------------------------------------
