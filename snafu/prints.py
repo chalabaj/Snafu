@@ -101,7 +101,7 @@ def print_snafu():
    print( "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F::::F              U:::::D     D:::::U ")
    print( " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F:::::FFFFFFFFFF    U:::::D     D:::::U ")
    print( "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F::::::::::::::F    U:::::D     D:::::U ")
-   print( "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F::::::::::::::F    U:::::D     D:::::U ")
+   print( "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A *** A:::::A         F::::::::::::::F    U:::::D     D:::::U ")
    print( "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F:::::FFFFFFFFFF    U:::::D     D:::::U ")
    print( "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F::::F              U:::::D     D:::::U ")
    print( "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F::::F              U::::::U   U::::::U ")

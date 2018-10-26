@@ -14,7 +14,7 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.
 ## Status
 The code is in **development** stage with no guarantees of its accuracy, precision or fitness. 
 
-* Energy conservation from tests is about 10^-4 eV - 10^-1 eV between hops  and 10^5 eV for the regions without hops. The WF electronic structure is as the critical point in this context. The CASSCF might produce energy jumps in regions with significant structural changes, so one should examine the PES of a given trajectory. 
+* Energy conservation from tests is about 10^-4 eV - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. The WF electronic structure is as the critical point in this context. The CASSCF might produce energy jumps in regions with significant structural changes, so one should examine the PES of a given trajectory. 
 
 * Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
 
