@@ -35,7 +35,7 @@ export SNAFU_DIR="path/to/snafu/dir"
 ## How to restart dynamics
 
 * Restart option must be set to 1 and restart.in file must be present in an executing folder.
-The restart.in file contains all needed information from the last completed simulation step.   
+The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the restart_write option which sets interval for writing restart file (restart_400.in contain restart information from the step 400).   
 * If one wants to restart dynamics from other step in history (not the last one), one must use option restart_step (e.g. restart_step = 500) and program will search for file restart_500.in 
 
 2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
