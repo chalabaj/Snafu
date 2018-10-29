@@ -27,21 +27,23 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 The code was tested on Linux/Debian 4.7.2-5 platform with Anaconda 3.6 package.
 Python ver 3.5 and newer should work.
 
-1) Set up environment, i.e.  set an envir. variable SNAFU_DIR in .bashrc or before launching the code by:
+1) Set up environment variable SNAFU_DIR in .bashrc or export it before launching the code by (see LAUNCHER folder):
 <code>
 export SNAFU_DIR="path/to/snafu/dir"
 </code>
 
 
-2) ABINITIO folder have to contain one of the script from INTERFACES folder, and option **abinitio** in input.in muset equal name of the script without .sh extention (e.g. abinitio=molpro-casscf for molpro-casscf.sh script in /ABINITIO folder)
+
+2) **ABINITIO** folder have to contain one of the script from INTERFACES folder (or you can add your own interface, see below).  
+Option **abinitio** in input.in must equal to the name of the script without the .sh extention (e.g. abinitio=molpro-casscf for molpro-casscf.sh script in /ABINITIO folder)
 Currently fully working:  
 CASSCF in MOLPRO (2015.1)  
 ORCA(4.0.1): tddft -  working  
-GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge  
+GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0 - weird)
 BOMD:  MP2 in gaussian or MOLPRO  
 
-TODO: EOM-IP, EOM-EA in QCHEM/ORCA, 
-It is straight forward to implement a new ab initio as at each step, the code reads gradients.dat file in the running directory with a structure:  
+TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
+It is straight forward to implement a new ab initio interface as at each step, the code reads the gradients.dat file in the running directory with the following structure:  
 energy-gs  
 energy-1ex state  
 ....  
@@ -54,8 +56,8 @@ Environment variables for particular ab initio code have to be adjusted to your 
 
 
 3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a folder.
-The veloc.in files with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
-The geom.in and veloc.in files have to be in the XYZ format:  
+The **veloc.in*** file with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
+The geom.in and veloc.in files have to be in the XYZ format and velocities in atomic units:  
 3  
 water xyz  
 O 0.0 0.0 0.0   
@@ -65,7 +67,8 @@ H 0.0 1.0 0.0
 
 ## How to restart dynamics
 
-You can restart dynamics from the last completed step or from the choosen step depending on how often you wrote restart file in original dynamics. The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_write** option which sets interval for writing restart file (restart_400.in contain restart information from the step 400).   
+You can restart dynamics from the last completed step or from the chosen step depending on how often you wrote restart file in original dynamics.  
+The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_write** option which sets the interval for writing a restart file (restart_400.in contains restart information from the step number 400).   
 * To restart simuluation from the last completed step, **restart** option must be set to 1 and restart.in file must be in executing folder.
 * To restart simuluation from some other step , **restart** option must be set to XX and restart_XX.in file must be in executing folder.
 
