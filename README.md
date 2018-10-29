@@ -32,13 +32,8 @@ Python ver 3.5 and newer should work.
 export SNAFU_DIR="path/to/snafu/dir"
 </code>
 
-## How to restart dynamics
 
-* Restart option must be set to 1 and restart.in file must be present in an executing folder.
-The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the restart_write option which sets interval for writing restart file (restart_400.in contain restart information from the step 400).   
-* If one wants to restart dynamics from other step in history (not the last one), one must use option restart_step (e.g. restart_step = 500) and program will search for file restart_500.in 
-
-2) ABINITIO folder should contain one of the script from INTERFACES folder, depending on the ab initio code you use:  
+2) ABINITIO folder have to contain one of the script from INTERFACES folder, and option **abinitio** in input.in muset equal name of the script without .sh extention (e.g. abinitio=molpro-casscf for molpro-casscf.sh script in /ABINITIO folder)
 Currently fully working:  
 CASSCF in MOLPRO (2015.1)  
 ORCA(4.0.1): tddft -  working  
@@ -55,8 +50,8 @@ Fx(1at) Fy(1at) Fz(1at)
 ....  
 Fx(n_at) Fy(n_at) Fz(n_at)  
 
-
 Environment variables for particular ab initio code have to be adjusted to your machine environment (e.g. if Molpro is used then $MOLPROEXE variable should be set up).
+
 
 3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a folder.
 The veloc.in files with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
@@ -67,6 +62,12 @@ O 0.0 0.0 0.0
 H 1.0 0.0 0.0   
 H 0.0 1.0 0.0   
 
+
+## How to restart dynamics
+
+You can restart dynamics from the last completed step or from the choosen step depending on how often you wrote restart file in original dynamics. The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_write** option which sets interval for writing restart file (restart_400.in contain restart information from the step 400).   
+* To restart simuluation from the last completed step, **restart** option must be set to 1 and restart.in file must be in executing folder.
+* To restart simuluation from some other step , **restart** option must be set to XX and restart_XX.in file must be in executing folder.
 
 ## Input.in options:
 
