@@ -27,9 +27,9 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 The code was tested on Linux/Debian 4.7.2-5 platform with Anaconda 3.6 package.
 Python ver 3.5 and newer should work.
 
-1) Set up environment variable SNAFU_DIR in .bashrc or export it before launching the code by (see LAUNCHER folder):
+1) Set up environment variable SNAFU_DIR in .bashrc or export it before launching the code (see LAUNCHER folder).
 <code>
-export SNAFU_DIR="path/to/snafu/dir"
+   export SNAFU_DIR="path/to/snafu/dir"
 </code>
 
 
