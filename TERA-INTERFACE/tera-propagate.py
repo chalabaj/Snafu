@@ -1,4 +1,7 @@
-# Terachem interface adapted from ABIN code
+"""" 
+Terachem MPI interface adapted from the ABIN code
+Modules: forces_tera.F90 forces_terash.F90
+"""
 
 import numpy as np
 import os
@@ -8,11 +11,6 @@ from datetime import datetime
 #sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
 start = 1 # first geometry to process
 from mpi4py import MPI
-end = 0 # last geometry to process. set to 0 to process all geometries to the end of the movie.
-name = "NH3"
-suffix = "com.xyz"
-movie = "movie.xyz" # file with geometries to process
-output = "energies_ground.dat" # name of the output file with resulting energies
 
 def finish_tera(comm):
     print("Exiting MPI Terachem communication.")
@@ -39,7 +37,33 @@ def tera_connect():
         print("MPI connection to Terachem failed.")
         exit(1)
     return(comm)
+    
+def send_terash(comm, natoms, state, coords, vx, vy, vz):
+    FMSinit = 0
+    bufints = np.array(12,order='C',dtype=np.intc)
+    bufints[1]=FMSinit
+    bufints[2]=natoms
+    bufints[3]=1               # doCoup
+    bufints[4]=0               # TrajID=0 for SH
+    bufints[5]=0               # T_FMS%CentID(1)
+    bufints[6]=0               # T_FMS%CentID(2)
+    bufints[7]=state  # T_FMS%StateID ! currently not used in fms.cpp
+    bufints[8]=oldWfn   # does ABIN have info about WF?
+    bufints[9]=state    # iCalcState-1 ! TC Target State
+    bufints[10]=state   # jCalcState-1
+    bufints[11]=0              # first_call, not used
+    bufints[12]=0              # FMSRestart, not used
 
+    comm.Send([bufints, 12, MPI_INT], 0, 2)
+    
+    #  We need to get upper-triangle matrix
+    #  Diagonal elements are gradients, other NAC
+    tocacl = np.zeros((nstates, nstates), dtype=np.intc, order='C')
+    uti = np.triu_indices(nstates)   #  upper-triangle indices
+    bufints = tocacl[uti]
+    comm.Send([bufints, nstates*(nstates-1)/2+nstates, MPI_INT], 0, 2, newcomm, ierr )
+    
+    return()
 def alloc_tera_arrays(civec, nbf, blobsize, natoms, nstates=4):
     
     startTime = datetime.now()
@@ -74,21 +98,21 @@ def move_old2new_terash(MO, MO_old, CIVecs, CIVecs_old, blob, blob_old):
     blob = np.copy(blob_old)
     return(MO, MO_old, CIVecs, CIVecs_old, blob, blob_old)
 
-def tera_init(comm, natoms = 6):
+def tera_init(comm, at_names, natoms, nstates, coordinates):
     """ Initial data transfer to Terachem through MPI
     Terachem is very sensitive to type, lenght and order of transferred data        
     We take advantage of NUMPY which can set C-like ordering and data types
     .tobytes for numpy arraay is not needed as numpy keep daty in byte anyways, yet dtype must be set     
     """   
-    print("Sending data to Terachem:")        
+    print("Sending data to Terachem:")     
+    
     FMSinit = 1
     natoms = 6
     natmm_tera = 0 
-    at_names = ["O","O","H","H ","H ","H "]  # taken from input
     at_names = [(at + " ") if len(at) == 1 else at for at in at_names ]   
    
-    byte_ints = np.array([FMSinit, natoms, natmm_tera],order='C',dtype=np.intc).tobytes() #cant be 8 byte     
-    byte_natoms = np.array([natoms], dtype=np.int8).tobytes() #must be 8 byte number...           
+    byte_ints = np.array([FMSinit, natoms, natmm_tera],order='C',dtype=np.intc) #.tobytes() #cant be 8 byte     
+    byte_natoms = np.array([natoms], dtype=np.int8).tobytes() #must 8 byte number, not int standard -> tobytes           
     byte_names = np.array(at_names, order='C', dtype=np.character) #.tobytes()
 
     #### ABIN initialize_terache(comm) #####################################
@@ -115,36 +139,43 @@ def tera_init(comm, natoms = 6):
     print("Sending QM atom names to TeraChem.")
 
     #  Send coordinates
-    byte_coords = np.loadtxt(movie, usecols=(1,2,3),dtype=np.float64)  #.tobytes('C')
-    # call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
-    comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
+    #  Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
+    comm.Send([coordinates, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
     print("Sent initial coordinates to TeraChem.")
     status = MPI.Status()
     print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
     
-    #call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, &
-    #               MPI_ANY_TAG, newcomm, status, ierr)
+    #  Lets wait until Tera finished first ES calc.
     while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
         print("Waiting for Terachem to finish calculations")
         time.sleep(1)            
     buffer = bytearray(32*3)
     buffer = np.empty(3,dtype=np.intc) #.tobytes()
+    #  Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
     comm.Recv([buffer, 3, MPI.INT],source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG,status=status)
-    #civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0]
-    #nbf   = np.frombuffer(buffer,dtype=np.intc,count=-1)[1]
-    #blobsize = np.frombuffer(buffer,dtype=np.intc,count=-1)[2]
+    #civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
     civec = buffer[0]
     nbf = buffer[1]
     blobsize = buffer[2]      
     print(civec,nbf, blobsize)
     
-    MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix = alloc_tera_arrays(civec, nbf, blobsize, natoms, nstates = 4)
+    MO, MO_old, CiVecs, CiVecs_old, \
+    NAC, blob, blob_old, SMatrix = alloc_tera_arrays(civec, nbf, blobsize,
+                                                     natoms, nstates)
     blob = 0.0
     blob_old = 0.0
-    return()
+    return(MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix)
     
 if __name__ == "__main__":
+    at_names = ["O","O","H","H ","H ","H "]  # taken from input
+    natoms = 6
+    nstates = 4
+    coordinates = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)  #.tobytes('C') # join x,y,z numpy arrays
     comm = tera_connect()
-    tera_init(comm)
+    
+    MO, MO_old, CiVecs, CiVecs_old, \
+    NAC, blob, blob_old, SMatrix = tera_init(comm, at_names, natoms, 
+                                             nstates, coordinates)
+    send_terash(comm, natoms, state, coords, vx, vy, vz)
     finish_tera(comm)
     exit(0)
