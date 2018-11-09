@@ -1,6 +1,0 @@
-/bin/bash: module: line 1: syntax error: unexpected end of file
-/bin/bash: error importing function definition for `BASH_FUNC_module'
-Usage: grep [OPTION]... PATTERN [FILE]...
-Try `grep --help' for more information.
-/bin/bash: module: line 1: syntax error: unexpected end of file
-/bin/bash: error importing function definition for `BASH_FUNC_module'
