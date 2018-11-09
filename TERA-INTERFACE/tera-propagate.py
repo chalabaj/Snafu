@@ -98,7 +98,7 @@ def move_old2new_terash(MO, MO_old, CIVecs, CIVecs_old, blob, blob_old):
     blob = np.copy(blob_old)
     return(MO, MO_old, CIVecs, CIVecs_old, blob, blob_old)
 
-def tera_init(comm, at_names, natoms, nstates, coordinates):
+def tera_init(comm, at_names, natoms, nstates, byte_coords):
     """ Initial data transfer to Terachem through MPI
     Terachem is very sensitive to type, lenght and order of transferred data        
     We take advantage of NUMPY which can set C-like ordering and data types
@@ -140,7 +140,7 @@ def tera_init(comm, at_names, natoms, nstates, coordinates):
 
     #  Send coordinates
     #  Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
-    comm.Send([coordinates, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
+    comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
     print("Sent initial coordinates to TeraChem.")
     status = MPI.Status()
     print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
@@ -170,12 +170,12 @@ if __name__ == "__main__":
     at_names = ["O","O","H","H ","H ","H "]  # taken from input
     natoms = 6
     nstates = 4
-    coordinates = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)  #.tobytes('C') # join x,y,z numpy arrays
+    byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)  #.tobytes('C') # join x,y,z numpy arrays
     comm = tera_connect()
     
     MO, MO_old, CiVecs, CiVecs_old, \
     NAC, blob, blob_old, SMatrix = tera_init(comm, at_names, natoms, 
-                                             nstates, coordinates)
-    send_terash(comm, natoms, state, coords, vx, vy, vz)
+                                             nstates, byte_coords)
+    #send_terash(comm, natoms, state, coords, vx, vy, vz)
     finish_tera(comm)
     exit(0)
