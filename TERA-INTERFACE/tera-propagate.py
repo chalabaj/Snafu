@@ -87,9 +87,9 @@ def tera_init(comm, natoms = 6):
     at_names = ["O","O","H","H ","H ","H "]  # taken from input
     at_names = [(at + " ") if len(at) == 1 else at for at in at_names ]   
    
-    byte_ints = np.array([FMSinit, natoms, natmm_tera],order='C',dtype=np.intc) #.tobytes(), cant be 8 byte     
-    byte_natoms = np.array([natoms], dtype=np.int8) #.tobytes() must be 8 byte number...           
-    byte_names = np.array(at_names, order='C', dtype=np.character).tobytes()
+    byte_ints = np.array([FMSinit, natoms, natmm_tera],order='C',dtype=np.intc).tobytes() #cant be 8 byte     
+    byte_natoms = np.array([natoms], dtype=np.int8).tobytes() #must be 8 byte number...           
+    byte_names = np.array(at_names, order='C', dtype=np.character) #.tobytes()
 
     #### ABIN initialize_terache(comm) #####################################
     print("Sending initial number of QM atoms to TeraChem.")

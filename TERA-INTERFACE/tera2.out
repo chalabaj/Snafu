@@ -1,0 +1,290 @@
+Using MPI to get atom types and coordinates instead of reading user input file. 
+
+Terachem server available at port_name:   tag#0$description#a34$port#44732$ifname#192.168.3.34$  
+Will publish this port_name to 'teraport22533'. 
+Waiting to accept MPI communication from MPI client. 
+MPI communication accepted.  
+Reading non xyz job parameters from tera2.inp.  
+Receiving initial QM atoms via MPI. We need these to determine whether there are d-functions.  
+
+O O H H H H 
+
+
+       ***********************************************************
+       *                    TeraChem v1.93                       *
+       *                 Hg Version: 95e7944ca4e4+               *
+       *                   Development Version                   *
+       *                Compiled without textures                *
+       *           Chemistry at the Speed of Graphics!           *
+       ***********************************************************
+       * This program may only be used in connection with        *
+       * a valid license from PetaChem, LLC. Use of this program *
+       * or results thereof indicates acceptance of all terms    *
+       * and conditions stated in the license and that a valid   *
+       * license agreement between the user and PetaChem, LLC    *
+       * exists. PetaChem, LLC does not warrant the correctness  *
+       * of results or their suitability for any purpose.        *
+       * Please email bugs, suggestions, and comments to         *
+       *                  help@petachem.com                      *
+       *                                                         *
+       ***********************************************************
+
+
+       ***********************************************************
+       *  Compiled by hollas       Tue Oct 24 13:00:29 CEST 2017  *
+       *  Supported architectures: sm_20 sm_30 sm_35 sm_50       *
+       *  Cuda compilation tools, release 7.5, V7.5.17           *
+       ***********************************************************
+
+
+ Job started   Fri Nov  9 10:46:30 2018
+ On a34 (available memory: 2766 MB)
+
+######################################### RUNTIME INFO ##########################################
+/usr/local/programs/custom/terachem/terachem-1.9dev/build/terachem --inputfile=tera2.inp --UseMPI=2 --MPIPort=teraport22533 
+
+NVRM version: NVIDIA UNIX x86_64 Kernel Module  352.79  Wed Jan 13 16:17:53 PST 2016
+GCC version:  gcc version 4.4.5 (Debian 4.4.5-8) 
+
+	linux-vdso.so.1 =>  (0x00007ffd2215f000)
+	libcurl.so.4 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcurl.so.4 (0x00002b2bcc63d000)
+	libOpenMM.so => /usr/local/programs/custom/anaconda/anaconda-4.3.0/arch/x86_64/anaconda3/pkgs/openmm-7.1.1-py36_0/lib/libOpenMM.so (0x00002b2bcc89b000)
+	libintbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libintbox.so.1 (0x00002b2bccdbd000)
+	libthcbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libthcbox.so.1 (0x00002b2beb54a000)
+	libgridbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libgridbox.so.1 (0x00002b2bed116000)
+	libdftbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libdftbox.so.1 (0x00002b2bed5f3000)
+	libcuda.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcuda.so.1 (0x00002b2bed8d5000)
+	libcudart.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcudart.so.7.5 (0x00002b2bee88a000)
+	libcublas.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcublas.so.7.5 (0x00002b2beeae8000)
+	libcufft.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcufft.so.7.5 (0x00002b2bf03c7000)
+	libcrypto.so.1.0.0 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcrypto.so.1.0.0 (0x00002b2bf7002000)
+	libssl.so.1.0.0 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libssl.so.1.0.0 (0x00002b2bf73dc000)
+	libm.so.6 => /lib/libm.so.6 (0x00002b2bf7646000)
+	libcilkrts.so.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcilkrts.so.5 (0x00002b2bf78c8000)
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 (0x00002b2bf7b09000)
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 (0x00002b2bf7e1d000)
+	libpthread.so.0 => /lib/libpthread.so.0 (0x00002b2bf8033000)
+	libc.so.6 => /lib/libc.so.6 (0x00002b2bf824f000)
+	/lib64/ld-linux-x86-64.so.2 (0x00002b2bcc41d000)
+	libdl.so.2 => /lib/libdl.so.2 (0x00002b2bf85b1000)
+	libz.so.1 => /usr/lib/libz.so.1 (0x00002b2bf87b5000)
+	librt.so.1 => /lib/librt.so.1 (0x00002b2bf89cc000)
+#################################################################################################
+
+Cannot find license.dat file in the TeraChem installation directory /usr/local/programs/custom/terachem/terachem-1.9dev/build
+
+
+TRYING THE NETWORK LICENSE...
+Connecting to license server '403-a324-01' port '8080'...
+Connected!
+Checking your license...
+
+**************************************************************
+  Greetings, Petr Slavicek! You have 14 licenses in total
+  IN USE: 4
+  AVAILABLE: 10
+**************************************************************
+
+Scratch directory: ./scratch001
+Random number seed: 279205675
+Molden File Output: ./scratch001/mpi_job.molden
+Using basis set: 6-31gss
+Spin multiplicity: 1
+DIIS will use up to 10 vectors.
+WF convergence threshold: 1.00e-07
+Using DIIS (in Converger class) to converge WF with ADIIS+DIIS as backup
+ADIIS will switch to DIIS when the DIIS error drops below 1.00e-03
+Maximum number of SCF iterations: 100
+Incremental fock with rebuild every 8 iterations
+Will switch to conventional Fock if diffuse functions are detected
+X-matrix tolerance: 1.00e-04
+PRECISION: MIXED
+Single/Double precision threshold: 1.00e-03
+Using fractional orbital occupations
+Fractional occupations determined by gaussian broadening
+6 occupied orbitals will have integer occupation
+5 occupied orbitals will have fractional occupation
+kT is set to  0.350 a.u.
+DFT Functional requested: hf
+Method: Hartree-Fock 
+Wavefunction: RESTRICTED
+Initial guess generated by maximum overlap
+
+********************************************
+**** SINGLE POINT GRADIENT CALCULATIONS ****
+********************************************
+SCF:   Initial guess is taken from previous step
+
+using 1 out of 1 CUDA devices
+   Device 0:   GeForce GTX 980 Ti,  6143MB, CC 5.2 -- CPU THREAD 0
+-------------------------------------------------------------------
+Compiled with MAGMA support.  MAGMA parameters:
+    Matrices larger than 5000 square will be treated with MAGMA
+       (Change by setting the MagmaMinN environment variable)
+    Magma will use 1 out of 1 GPUs
+       (Change by setting the MagmaNGPUs environment variable)
+-------------------------------------------------------------------
+ CPU Memory Available: 4002.50 MegaWords 
+ GPU Memory Available: 511.98 MegaWords 
+ Maximum recommended basis set size: 8100 basis functions
+ (limited by GPU memory)
+-------------------------------------------------------------------
+Using d-functions. Configuring GPUs accordingly.
+0: CUBLAS initialized, available GPU memory: 3630MB
+Receiving first set of data from FMS
+Got a 2 tag from client --> FMS mode.  
+Receiving atom types from FMS
+Receiving coordinates from FMS
+O         0.00000000        0.00000000        0.00000000
+O         0.00000000        0.00000000        1.55397238
+H         0.45940470        0.00000000       -0.22051398
+H        -0.25266256       -0.39087043       -0.20756978
+H        -0.00969823        0.02499410        1.04292634
+H        -0.21608953        0.43145197        1.71538044
+
+
+
+Basis set:       6-31gss
+Total atoms:     6
+Total charge:    0
+Total electrons: 20 (10-alpha, 10-beta)
+Number electrons modeled by ECPs: 0
+Total orbitals:  50
+Total AO shells: 24 (14 S-shells; 8 P-shells; 2 D-shells; 0 F-shells; 0 G-shells)
+Spin multiplicity: 1
+Allocating space for FMS data
+Nuclear repulsion energy (QM atoms): 68.663662363244 a.u.
+
+Made it to ES calculation!
+Entering CASCI/FMS function
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change         Energy        Time(s)
+------------------------------------------------------------------------
+Skip purify step
+   1     0.7931781836    -146.9170745452    -146.9170745452     0.07  
+   2     0.1900039271      -1.6388918026    -148.5559663479     0.09  
+   3     0.0789457061      +0.0847862339    -148.4711801140     0.07  
+   4     0.0094816951      -0.0445302128    -148.5157103268     0.08  
+   5     0.0054672875      +0.0059924282    -148.5097178987     0.06  
+   6     0.0009599968      +0.0004886229    -148.5092292758     0.05  
+   7     0.0003153386      -0.0007088278    -148.5099381036     0.05  
+   8     0.0000450339      +0.0001441736    -148.5097939299     0.04  
+   9     0.0000073425      -0.0000093827    -148.5098033127     0.05  
+  10     0.0000010656      -0.0000016142    -148.5098049268     0.02  
+  11     0.0000002084      +0.0000002383    -148.5098046885     0.02  
+  12     0.0000000235      +0.0000000754    -148.5098046131     0.02  
+------------------------------------------------------------------------
+FINAL ENERGY: -148.5098046131 a.u.
+WARNING: Final energy is higher than the lowest energy by    0.0059057.
+Fractional Occupation Entropy: 1.5528990541
+Mermin Free Energy:            -149.0533192820
+CENTER OF MASS: {-0.000533, 0.001835, 0.755227} ANGS
+DIPOLE MOMENT: {-0.263403, 0.521696, -0.075372} (|D| = 0.589261) DEBYE
+
+  Active Space Parameters
+--------------------------------------------
+Number of closed orbitals:               6
+Number of active orbitals:               5
+Number of virtual orbitals:             39
+Number of molecular orbitals:           50
+Number of basis functions:              50
+Number of active electrons:              7
+Number of alpha electrons:               4
+Number of beta electrons:                3
+
+  Orbital      Energy        Occupation
+-----------------------------------------
+      5       -1.159649        1.000000
+      6       -1.118048        1.000000
+      7       -0.760613        0.977328
+      8       -0.624965        0.946724
+      9       -0.574616        0.929224
+     10       -0.521253        0.906176
+     11        0.186487        0.240547
+     12        0.298505        0.000000
+     13        0.340669        0.000000
+
+  CAS Parameters
+--------------------------------------------
+Number of determinants:                 50
+Number of singlet CSFs:                  0
+Number of doublet CSFs:                 50
+Number of triplet CSFs:                  0
+Number of quartet CSFs:                  0
+Number of quintet CSFs:                  0
+Number of sextet CSFs:                   0
+Number of septet CSFs:                   0
+Number of singlet states:                0
+Number of doublet states:                4
+Number of triplet states:                0
+Number of quartet states:                0
+Number of quintet states:                0
+Number of sextet states:                 0
+Number of septet states:                 0
+
+Doublet state  1 energy:       -148.42108841566181
+
+       -0.98189079218479  X7 X8 X9 A10
+        0.18786441017601  X7 A8 X9 X10
+
+Doublet state  2 energy:       -148.39977739950081
+
+       -0.99954292532781  X7 X8 A9 X10
+
+Doublet state  3 energy:       -148.33787571923159
+
+        0.96345539421425  X7 A8 X9 X10
+       -0.19327729236145  A7 X8 X9 X10
+        0.18343059681458  X7 X8 X9 A10
+
+Doublet state  4 energy:       -148.21352512669867
+
+       -0.98082858906619  A7 X8 X9 X10
+       -0.18884336707601  X7 A8 X9 X10
+       -0.04150224506105  X7 X8 X9 A10
+
+  Root   Mult.   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-------------------------------------------------------------------------------------------------
+     1  doublet       -148.42108842
+     2  doublet       -148.39977740          0.02131102          0.57990216       2138.01964326
+     3  doublet       -148.33787572          0.08321270          2.26433230        547.55311539
+     4  doublet       -148.21352513          0.20756329          5.64808353        219.51555787
+
+Doublet state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1     0.0437     0.0064    -3.1855     3.1858
+     2    -0.0365     0.2054     1.4376     1.4527
+     3     0.0864    -0.2045    -1.4959     1.5122
+     4    -0.1492     0.3367    -2.9698     2.9925
+
+Doublet state electronic transitions:
+
+ Transition      Tx        Ty        Tz       |T|    Osc. (a.u.) 
+-----------------------------------------------------------------
+   1 ->  2     0.0767    0.0399    0.0073    0.0868    0.0001
+   1 ->  3    -0.0158    0.0157    0.8465    0.8468    0.0398
+   1 ->  4     0.0670   -0.1342    0.3004    0.3357    0.0156
+   2 ->  3     0.2070    0.1030   -0.0395    0.2346    0.0023
+   2 ->  4     0.1720    0.0723    0.0623    0.1967    0.0048
+   3 ->  4     0.1669   -0.3242    1.4009    1.4476    0.1737
+
+
+Total CASCI Time
+----------------------------
+ Total Time:       0.21 sec
+----------------------------
+
+Passed ES calculation!
+Total processing time: 0.84 sec 
+
+
+Receiving new FMS data...  
+Got an EXIT tag from client. 
+Freeing and finalizing MPI.
+
+ Job finished: Fri Nov  9 10:46:34 2018
+
