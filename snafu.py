@@ -102,7 +102,8 @@ if __name__ == "__main__":
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
 
     # READ INPUT VARIABLES SET THEM AS GLOBAL VARIABLES
-    # DEFAULTS:
+    # DEFAULTS: 
+    # TODO: move these to init routine and import them before reading the input
     ener_thresh = 1.000
     hop_thresh = 0.5
     dt = 4.00
@@ -111,7 +112,7 @@ if __name__ == "__main__":
     dE = 0.0  # energy change since initial energies
     Etot_init = 0.0  # setting variable , total energy at the beginning
     Etot_prev = 0.0
-    time = 0.0
+    sim_time = 0.0
     prob = 0.0
 
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
@@ -155,7 +156,7 @@ if __name__ == "__main__":
                                             ab_initio_file_path)
         pot_eners_array = np.copy(pot_eners)      
         
-        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
+        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
                                                       Etot_prev, ener_thresh,
@@ -278,26 +279,26 @@ if __name__ == "__main__":
         y = np.copy(y_new)
         z = np.copy(z_new)
 
-        time = step * dt * AU_FS
+        sim_time = step * dt * AU_FS
         Etot_prev = Etot
-        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, time, natoms, am,
+        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
                                                       Etot_prev, ener_thresh,
                                                       restart)
 
         # print("Ekin {}, Epot {}, Etot{}".format(Ekin, Epot, Etot))
-        print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, time, dE * AU_EV),
+        print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, sim_time, dE * AU_EV),
               " {:<13.4f}".format(dE_step * AU_EV),
               "{}     {}".format(str(hop)[0], state))
         #print("-----------------------------------------------------")
 
         # SAVE POSITION AND VELOCITIES AND RESTART
-        print_positions(step, time, natoms, at_names, x, y, z, restart)
-        print_velocities(step, time, natoms, at_names, vx, vy, vz, restart)
-        print_state(step, time, state, restart)
+        print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
+        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
+        print_state(step, sim_time, state, restart)
 
-        print_restart(step, time, natoms, at_names, state, timestep,
+        print_restart(step, sim_time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,
                       Ekin, Epot, Etot, Etot_init, pot_eners_array,
                       restart_write)
@@ -308,7 +309,7 @@ if __name__ == "__main__":
           "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
     print(liner)
     stopTime = datetime.now()
-    simtime = (datetime.now() - startTime)
+    calc_time = (datetime.now() - startTime)
     print("Simulation ended at: {}".format(stopTime))
-    print("Overall simulation time (hh:mm:ss): {}".format(simtime))
+    print("Overall simulation sim_time (hh:mm:ss): {}".format(calc_time))
 exit(0)

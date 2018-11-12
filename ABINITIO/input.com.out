@@ -4,15 +4,15 @@
  Wavefunction directory         : /home/chalabaj/SNAFU/ABINITIO/scratch/
  Main file repository           : /home/chalabaj/SNAFU/ABINITIO/
 
- SHA1      : 41aa48e1468dac041f2eaabdf410f3ce2ee7f8bf
- NAME      : 2015.1.0
+ SHA1      : ff24c56d2a0a94969fcbec04a36b96e977f08fcb
+ NAME      : 2015.1.28
  ARCHNAME  : linux/x86_64
  FC        : /opt/intel/composer_xe_2015.1.133/bin/intel64/ifort
  BLASLIB   : -Wl,-_start-group /opt/intel/mkl/lib/intel64/libmkl_intel_ilp64.a /opt/intel/mkl/lib/intel64/libmkl_intel_thread.a /opt/intel/mkl/lib/intel64/libmkl_core.a -Wl,-_end-group
  id        : vscht
 
- Nodes      nprocs
- 403-as67-01    1
+ Nodes     nprocs
+ a33          1
 
  Using customized tuning parameters: mindgm=1; mindgv=20; mindgc=4; mindgr=1; noblas=0; minvec=7
  default implementation of scratch files=df  
@@ -75,7 +75,7 @@
 
  Variables initialized (889), CPU time= 0.00 sec
  Commands  initialized (702), CPU time= 0.01 sec, 572 directives.
- Default parameters read. Elapsed time= 0.04 sec
+ Default parameters read. Elapsed time= 0.06 sec
 
  Checking input...
  Passed
@@ -84,22 +84,22 @@
 
                                          ***  PROGRAM SYSTEM MOLPRO  ***
                                        Copyright, TTI GmbH Stuttgart, 2015
-                                    Version 2015.1 linked Nov 26 2015 20:23:21
+                                    Version 2015.1 linked Dec 21 2017 14:32:04
 
 
  **********************************************************************************************************************************
  LABEL *                                                                                 
-  64 bit serial version                                                                  DATE: 24-Oct-18          TIME: 17:48:57  
+  64 bit serial version                                                                  DATE: 12-Nov-18          TIME: 10:55:11  
  **********************************************************************************************************************************
 
- SHA1:             41aa48e1468dac041f2eaabdf410f3ce2ee7f8bf
+ SHA1:             ff24c56d2a0a94969fcbec04a36b96e977f08fcb
  **********************************************************************************************************************************
 
  Variable memory set to 1000000000 words,  buffer space   230000 words
 
 
 
- Permanent file  2  input.wfu        assigned.  Implementation=df    Size=  1.66 MB
+ Permanent file  2  input.wfu        assigned.  Implementation=df    Size=  3.93 MB
  
 
  PROGRAM * RESTART 
@@ -112,21 +112,22 @@
  _FOCKDONE       =      1.00000000
  _GRADONE        =      1.00000000
  _INTDONE        =      1.00000000
+ _MODUL_BLOCK    =      0.00000000
  _DIRECT         =      0.00000000
  _DKHO           =     -1.00000000
  _BASIS          =    6-31G**
  _ZUNIT          =    ANG
  _NELEC          =      9.00000000
  _PROGRAM        =    FORCES
- _CPUSTEP        =      0.04000000
+ _CPUSTEP        =      0.03000000
  _SYSSTEP        =      0.00000000
  _WALLSTEP       =      0.03000000
  _BASINP         =    610.00000000
- _CPUTOT         =      0.52000000
+ _CPUTOT         =      0.54000000
  _DFTEXFAC       =      1.00000000
- _DMX(1:3)       =      0.86809856     0.74759678     1.09518211
- _DMY(1:3)       =      0.00000000     0.00000000     0.00000000
- _DMZ(1:3)       =      0.70919919     0.60718050     0.84847147
+ _DMX(1:3)       =      0.85450349     0.72823828     1.07854033
+ _DMY(1:3)       =     -0.00000000    -0.00000000    -0.00000000
+ _DMZ(1:3)       =      0.69854430     0.59006295     0.83808857
  _DMX_SCF        =      0.82287042
  _DMY_SCF        =     -0.00000000
  _DMZ_SCF        =      0.64289675
@@ -136,52 +137,53 @@
                        -0.03821331     0.59344802     0.64943819     0.64956023     0.74670738     0.86103426
                         1.13263371     1.30422684     1.34702425     1.41583124     2.08125730     2.15015639
                         2.33505470     2.49870392     2.52393342     2.92537502     3.27844797     3.46460561
- _ENERGY(1:3)    =    -75.63445258   -75.53914999   -75.41009028
+ _ENERGY(1:3)    =    -75.63540737   -75.54122904   -75.40660005
  _ENERGY_METHOD  =    MULTI
  _ENERGY_BASIS   =    6-31G**
  _GEOMETRY_METHOD=     
  _GEOMETRY_BASIS =     
- _ENUC           =      8.64148851
- _EPS1(1:6)      =    -21.09467381    -1.78573267    -0.99521742    -0.88215413    -1.01567406     0.33368529
- _GRADENERG      =    -75.41009028
+ _ENUC           =      8.72726474
+ _EPS1(1:6)      =    -21.09557442    -1.79170460    -0.99889273    -0.88454353    -1.02224618     0.35031865
+ _GRADENERG      =    -75.40660005
  _GRADEXFAC      =   9999.00000000
  _GRADMETHOD     =      5.00000000
- _VIRIAL         =     -0.20863504
+ _VIRIAL         =     -0.24157257
  _ITERATIONS     =      4.00000000
  _LASTNELEC      =      5.00000000
  _LASTSPIN       =      1.00000000
  _LASTSYM        =      1.00000000
  _ORBITAL        =   2140.20000000
- _SEIG_MIN       =      0.04797904
+ _SEIG_MIN       =      0.04715041
  _SEWPROP        =      1.00000000
  _STATUS         =      1.00000000
- _SYSTOT         =      0.63000000
- _WALLTOT        =      1.17000000
+ _SYSTOT         =      0.31000000
+ _WALLTOT        =      3.14000000
  _DATE           =    23-Oct-18
  _LASTORB        =    MCSCF
  _PGROUP         =    C1  
  _TIME           =    11:01:44
- _DMX_CC(1:3)    =     -0.02237259    -0.02237259    -0.02237259
- _DMY_CC(1:3)    =      0.00000000     0.00000000     0.00000000
- _DMZ_CC(1:3)    =     -0.18144655    -0.18144655    -0.18144655
- _DMX_NUC(1:3)   =      0.86296205     0.86296205     0.86296205
+ _LIBMOL         =    /usr/local/programs/custom/molpro/molpro2015.1.0/arch/molprop_2015_1_linux_x86_64_i8/lib/
+ _DMX_CC(1:3)    =     -0.03616836    -0.03616836    -0.03616836
+ _DMY_CC(1:3)    =     -0.00000000    -0.00000000    -0.00000000
+ _DMZ_CC(1:3)    =     -0.18521545    -0.18521545    -0.18521545
+ _DMX_NUC(1:3)   =      0.84730685     0.84730685     0.84730685
  _DMY_NUC(1:3)   =      0.00000000     0.00000000     0.00000000
- _DMZ_NUC(1:3)   =      0.66600778     0.66600778     0.66600778
- _TRDMX(1:3)     =      0.00000000    -0.00000000    -0.08906321
- _TRDMY(1:3)     =     -0.15767683    -0.01203044    -0.00000000
- _TRDMZ(1:3)     =      0.00000000    -0.00000000     0.08998476
+ _DMZ_NUC(1:3)   =      0.65528323     0.65528323     0.65528323
+ _TRDMX(1:3)     =      0.00000000     0.00000000    -0.08520087
+ _TRDMY(1:3)     =     -0.15942117    -0.01126277     0.00000000
+ _TRDMZ(1:3)     =      0.00000000     0.00000000     0.08643788
 
  Geometry written to block  1 of record 700
 
 
  **********************************************************************************************************************************
  DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
-              2       8        1.74       500      700      610     1000      520     2100     2140     5101   
+              2       8        4.12       500      700      610     1000      520     2100     2140     5101   
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL   RESTART
  CPU TIMES  *         0.11      0.00
- REAL TIME  *         0.12 SEC
+ REAL TIME  *         0.20 SEC
  DISK USED  *         0.03 MB      
  **********************************************************************************************************************************
 
@@ -204,13 +206,13 @@ Geometry recognized as XYZ
 
  **********************************************************************************************************************************
  DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
-              2       7        1.73       500      700      610     1000      520     2100     2140   
+              2       7        4.11       500      700      610     1000      520     2100     2140   
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   
 
  PROGRAMS   *        TOTAL      DATA   RESTART
- CPU TIMES  *         0.12      0.00      0.00
- REAL TIME  *         0.12 SEC
- DISK USED  *         2.89 MB      
+ CPU TIMES  *         0.11      0.00      0.00
+ REAL TIME  *         0.22 SEC
+ DISK USED  *         6.07 MB      
  **********************************************************************************************************************************
 
 
@@ -225,7 +227,8 @@ Geometry recognized as XYZ
  Library entry H      S 6-31G                selected for orbital group  2
  Library entry H      P 6-31G**              selected for orbital group  2
 
-1PROGRAM * SEWARD (Integral evaluation for generally contracted gaussian basis sets)     Author: Roland Lindh, 1990
+
+ PROGRAM * SEWARD (Integral evaluation for generally contracted gaussian basis sets)     Author: Roland Lindh, 1990
 
  Geometry written to block  1 of record 700
 
@@ -238,18 +241,18 @@ Geometry recognized as XYZ
 
  NR  ATOM    CHARGE       X              Y              Z
 
-   1  O       8.00   -0.111749508    0.000000000   -0.086056108
-   2  H       1.00   -0.032048249    0.000000000    1.849267279
-   3  H       1.00    1.805844668    0.000000000   -0.483301354
+   1  O       8.00   -0.109610758    0.000000000   -0.084594236
+   2  H       1.00   -0.043630881    0.000000000    1.832419250
+   3  H       1.00    1.783479009    0.000000000   -0.489657591
 
  Bond lengths in Bohr (Angstrom)
 
- 1-2  1.936963835  1-3  1.958308252
-     ( 1.024997120)     ( 1.036292099)
+ 1-2  1.918148599  1-3  1.935940389
+     ( 1.015040526)     ( 1.024455535)
 
  Bond angles
 
-  2-1-3   99.34549616
+  2-1-3  100.10619906
 
  NUCLEAR CHARGE:                   10
  NUMBER OF PRIMITIVE AOS:          42
@@ -259,19 +262,19 @@ Geometry recognized as XYZ
  NUMBER OF VALENCE ORBITALS:        6   (   6A   )
 
 
- NUCLEAR REPULSION ENERGY    8.55207573
+ NUCLEAR REPULSION ENERGY    8.64148851
 
  EXTRA SYMMETRY OF AOS IN SYMMETRY 1:   1 1 1 1 2 1 1 2 1 1   2 1 1 2 1 1 1 2 1 1   1 1 2 1
 
  Eigenvalues of metric
 
-         1 0.489E-01 0.835E-01 0.180E+00 0.246E+00 0.386E+00 0.393E+00 0.416E+00 0.431E+00
+         1 0.480E-01 0.807E-01 0.176E+00 0.242E+00 0.380E+00 0.389E+00 0.410E+00 0.429E+00
 
 
  Contracted 2-electron integrals neglected if value below      1.0D-11
  AO integral compression algorithm  1   Integral accuracy      1.0D-11
 
-     0.262 MB (compressed) written to integral file ( 73.7%)
+     0.262 MB (compressed) written to integral file ( 73.9%)
 
 
  NUMBER OF SORTED TWO-ELECTRON INTEGRALS:      45150.     BUFFER LENGTH:  32768
@@ -280,30 +283,31 @@ Geometry recognized as XYZ
  Memory used in sort:       0.60 MW
 
  SORT1 READ       59680. AND WROTE       22139. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
- SORT2 READ       22139. AND WROTE       45150. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.00 SEC
+ SORT2 READ       22139. AND WROTE       45150. INTEGRALS IN      1 RECORDS. CPU TIME:     0.00 SEC, REAL TIME:     0.01 SEC
 
- FILE SIZES:   FILE 1:    16.7 MBYTE,  FILE 4:     4.2 MBYTE,   TOTAL:     20.9 MBYTE
+ FILE SIZES:   FILE 1:    20.2 MBYTE,  FILE 4:     4.2 MBYTE,   TOTAL:     24.4 MBYTE
 
  OPERATOR DM      FOR CENTER  0  COORDINATES:    0.000000    0.000000    0.000000
 
 
  **********************************************************************************************************************************
  DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
-              1      19       16.57       500      700      610      900      950      970     1000      129      960     1100   
+              1      19       20.05       500      700      610      900      950      970     1000      129      960     1100   
                                           VAR     GEOM    BASINP   SYMINP    ZMAT    AOBASIS   BASIS     P2S    ABASIS      S 
                                          1400     1410     1200     1210     1080     1600     1650     1300     1700   
                                            T        V       H0       H01     AOSYM     SMH    MOLCAS    ERIS     OPER   
 
-              2       7        1.73       500      700      610     1000      520     2100     2140   
+              2       7        4.11       500      700      610     1000      520     2100     2140   
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   
 
  PROGRAMS   *        TOTAL       INT      DATA   RESTART
- CPU TIMES  *         0.39      0.27      0.00      0.00
- REAL TIME  *         1.08 SEC
- DISK USED  *        22.69 MB      
+ CPU TIMES  *         0.45      0.34      0.00      0.00
+ REAL TIME  *         2.91 SEC
+ DISK USED  *        28.56 MB      
  **********************************************************************************************************************************
 
-1PROGRAM * MULTI (Direct Multiconfiguration SCF)       Authors: P.J. Knowles, H.-J. Werner (1984)     S.T. Elbert (1988)
+
+ PROGRAM * MULTI (Direct Multiconfiguration SCF)       Authors: P.J. Knowles, H.-J. Werner (1984)     S.T. Elbert (1988)
 
 
  Number of closed-shell orbitals:   2 (   2 )
@@ -336,15 +340,15 @@ Geometry recognized as XYZ
 
  ITER. MIC  NCI  NEG     ENERGY(VAR)     ENERGY(PROJ)   ENERGY CHANGE     GRAD(0)  GRAD(ORB)   GRAD(CI)     STEP       TIME
 
-   1   27    7    0     -75.52764581     -75.52771494   -0.00006913    0.01558112 0.00000001 0.00000000  0.11D-01      0.00
-   2   20   13    0     -75.52771498     -75.52771498   -0.00000000    0.00001323 0.00000004 0.00000000  0.73D-04      0.01
-   3   20   10    0     -75.52771498     -75.52771498   -0.00000000    0.00000004 0.00000001 0.00000000  0.14D-05      0.02
-   4   20   10    0     -75.52771498     -75.52771498    0.00000000    0.00000001 0.00000000 0.00000000  0.22D-06      0.02
+   1   27    7    0     -75.52783532     -75.52789759   -0.00006227    0.01484847 0.00000001 0.00000000  0.11D-01      0.01
+   2   20   13    0     -75.52789762     -75.52789762   -0.00000000    0.00001191 0.00000004 0.00000000  0.76D-04      0.02
+   3   20   10    0     -75.52789762     -75.52789762   -0.00000000    0.00000004 0.00000001 0.00000000  0.17D-05      0.03
+   4   20   10    0     -75.52789762     -75.52789762   -0.00000000    0.00000001 0.00000000 0.00000000  0.28D-06      0.04
 
- ** WVFN ****  CONVERGENCE REACHED, FINAL GRADIENT:  0.89D-09
+ ** WVFN ****  CONVERGENCE REACHED, FINAL GRADIENT:  0.11D-08
 
  Solving MCSCF z-vector equations for state  3.1, requested accuracy=      0.10D-08
- Convergence reached in  20 iterations ( 20 expansion vectors), accuracy=  0.26D-09
+ Convergence reached in  20 iterations ( 20 expansion vectors), accuracy=  0.23D-09
 
  SA-Gradient information saved on record      5101.2
 
@@ -353,56 +357,56 @@ Geometry recognized as XYZ
  Results for state 1.1
  =====================
 
- !MCSCF STATE 1.1 Energy              -75.633116515611
- Nuclear energy                         8.55207573
- Kinetic energy                        75.26713591
- One electron energy                 -116.85308026
- Two electron energy                   32.66788802
- Virial ratio                           2.00486242
+ !MCSCF STATE 1.1 Energy              -75.634452583913
+ Nuclear energy                         8.64148851
+ Kinetic energy                        75.29717634
+ One electron energy                 -117.00110517
+ Two electron energy                   32.72516407
+ Virial ratio                           2.00447927
 
- !MCSCF STATE 1.1 Dipole moment         0.88264378     0.00000000     0.72063695
- Dipole moment /Debye                   2.24330977     0.00000000     1.83155645
+ !MCSCF STATE 1.1 Dipole moment         0.86809856    -0.00000000     0.70919919
+ Dipole moment /Debye                   2.20634193    -0.00000000     1.80248647
 
  Results for state 2.1
  =====================
 
- !MCSCF STATE 2.1 Energy              -75.536619209429
- Nuclear energy                         8.55207573
- Kinetic energy                        75.40839779
- One electron energy                 -117.06298838
- Two electron energy                   32.97429345
- Virial ratio                           2.00170036
+ !MCSCF STATE 2.1 Energy              -75.539149988853
+ Nuclear energy                         8.64148851
+ Kinetic energy                        75.43303941
+ One electron energy                 -117.20400309
+ Two electron energy                   33.02336460
+ Virial ratio                           2.00140669
 
- !MCSCF STATE 2.1 Dipole moment         0.76829112    -0.00000000     0.62580700
- Dipole moment /Debye                   1.95267334    -0.00000000     1.59053854
+ !MCSCF STATE 2.1 Dipole moment         0.74759678    -0.00000000     0.60718050
+ Dipole moment /Debye                   1.90007703    -0.00000000     1.54319782
 
  Results for state 3.1
  =====================
 
- !MCSCF STATE 3.1 Energy              -75.413409203211
- Nuclear energy                         8.55207573
- Kinetic energy                        75.63947229
- One electron energy                 -117.10086830
- Two electron energy                   33.13538337
- Virial ratio                           1.99701131
+ !MCSCF STATE 3.1 Energy              -75.410090280607
+ Nuclear energy                         8.64148851
+ Kinetic energy                        75.66864779
+ One electron energy                 -117.23891737
+ Two electron energy                   33.18733858
+ Virial ratio                           1.99658303
 
- !MCSCF STATE 3.1 Dipole moment         1.11295134     0.00000000     0.85950724
- Dipole moment /Debye                   2.82865486     0.00000000     2.18450642
+ !MCSCF STATE 3.1 Dipole moment         1.09518211    -0.00000000     0.84847147
+ Dipole moment /Debye                   2.78349294    -0.00000000     2.15645812
 
  State-averaged charge density matrix saved on record  2140.2 (density set 1)
 
- !MCSCF expec         <1.1|DMX|1.1>     0.882643778184 au =     2.243309773757 Debye
- !MCSCF expec         <2.1|DMX|2.1>     0.768291119865 au =     1.952673344426 Debye
- !MCSCF trans         <3.1|DMX|2.1>    -0.093112474136 au =    -0.236652802014 Debye
- !MCSCF expec         <3.1|DMX|3.1>     1.112951337920 au =     2.828654861431 Debye
+ !MCSCF expec         <1.1|DMX|1.1>     0.868098558468 au =     2.206341934232 Debye
+ !MCSCF expec         <2.1|DMX|2.1>     0.747596780890 au =     1.900077026375 Debye
+ !MCSCF trans         <3.1|DMX|2.1>    -0.089063210879 au =    -0.226361275505 Debye
+ !MCSCF expec         <3.1|DMX|3.1>     1.095182109004 au =     2.783492944602 Debye
 
- !MCSCF trans         <2.1|DMY|1.1>    -0.155793926419 au =    -0.395962727509 Debye
- !MCSCF trans         <3.1|DMY|1.1>    -0.012801013288 au =    -0.032534799353 Debye
+ !MCSCF trans         <2.1|DMY|1.1>    -0.157676831285 au =    -0.400748280856 Debye
+ !MCSCF trans         <3.1|DMY|1.1>    -0.012030444093 au =    -0.030576336099 Debye
 
- !MCSCF expec         <1.1|DMZ|1.1>     0.720636946083 au =     1.831556449426 Debye
- !MCSCF expec         <2.1|DMZ|2.1>     0.625806995137 au =     1.590538542701 Debye
- !MCSCF trans         <3.1|DMZ|2.1>     0.093764597440 au =     0.238310225561 Debye
- !MCSCF expec         <3.1|DMZ|3.1>     0.859507243538 au =     2.184506420032 Debye
+ !MCSCF expec         <1.1|DMZ|1.1>     0.709199186179 au =     1.802486467609 Debye
+ !MCSCF expec         <2.1|DMZ|2.1>     0.607180503444 au =     1.543197823942 Debye
+ !MCSCF trans         <3.1|DMZ|2.1>     0.089984764221 au =     0.228703477049 Debye
+ !MCSCF expec         <3.1|DMZ|3.1>     0.848471471240 au =     2.156458121874 Debye
 
 
  NATURAL ORBITALS (state averaged)
@@ -414,29 +418,29 @@ Geometry recognized as XYZ
                                    1 3d2-    1 3d1+    1 3d2+    1 3d1-    2 1s      2 1s      2 2px     2 2py     2 2pz     3 1s   
                                    3 1s      3 2px     3 2py     3 2pz  
 
-   1.1  2.00000   -21.093733     0.995792  0.021490 -0.006276  0.001213 -0.000000  0.000885 -0.000906  0.000000 -0.000700  0.000110
-                                 0.000000 -0.000048  0.000086  0.000000 -0.000097  0.001208  0.000089  0.000000  0.000789 -0.000016
-                                 0.001201  0.000736 -0.000000 -0.000099
+   1.1  2.00000   -21.094674     0.995783  0.021546 -0.006248  0.001243  0.000000  0.000903 -0.000876 -0.000000 -0.000682  0.000126
+                                 0.000000 -0.000065  0.000119  0.000000 -0.000153  0.001213  0.000085 -0.000000  0.000836 -0.000079
+                                 0.001208  0.000790  0.000000 -0.000115
 
-   2.1  2.00000    -1.779512    -0.216037  0.508955  0.453722  0.067136  0.000000  0.079492  0.039171  0.000000  0.045304  0.004323
-                                 0.000000  0.002560  0.005113  0.000000  0.135533 -0.005391  0.000949  0.000000 -0.028035  0.112210
-                                -0.011466 -0.024311  0.000000  0.007750
+   2.1  2.00000    -1.785733    -0.215836  0.508161  0.450164  0.068706  0.000000  0.079657  0.038682  0.000000  0.044300  0.004157
+                                 0.000000  0.002538  0.004914 -0.000000  0.137807 -0.005946  0.001201  0.000000 -0.028431  0.115498
+                                -0.011750 -0.024795  0.000000  0.008087
 
-   3.1  1.66609    -0.991339     0.063659 -0.171207 -0.193244  0.170321  0.000000  0.566348  0.109168  0.000000  0.318892  0.019771
-                                 0.000000  0.024088  0.004053  0.000000  0.241847  0.075990  0.005334  0.000000 -0.026553 -0.020399
-                                 0.006634  0.006818  0.000000  0.014460
+   3.1  1.66609    -0.995217     0.063731 -0.171215 -0.194894  0.173410 -0.000000  0.566705  0.111222 -0.000000  0.316948  0.019369
+                                -0.000000  0.024116  0.004156 -0.000000  0.242309  0.073441  0.005616 -0.000000 -0.026579 -0.021300
+                                 0.006933  0.007093 -0.000000  0.014622
 
-   4.1  1.66574    -0.879652     0.000000 -0.000000  0.000000  0.000000  0.698132 -0.000000  0.000000  0.436765 -0.000000 -0.000000
-                                 0.022513  0.000000  0.000000  0.017508 -0.000000  0.000000  0.000000  0.019396  0.000000  0.000000
-                                -0.000000  0.000000  0.018704 -0.000000
+   4.1  1.66579    -0.882154     0.000000 -0.000000 -0.000000  0.000000  0.698271  0.000000  0.000000  0.436161  0.000000  0.000000
+                                 0.022549  0.000000  0.000000  0.017500  0.000000  0.000000  0.000000  0.019700 -0.000000  0.000000
+                                -0.000000  0.000000  0.019087  0.000000
 
-   5.1  1.65353    -1.008778    -0.037226  0.103768  0.125276 -0.563589  0.000000  0.131664 -0.312698  0.000000  0.057851  0.020627
-                                 0.000000 -0.007263 -0.024113 -0.000000  0.087035  0.020102 -0.014871  0.000000 -0.009587 -0.276483
-                                -0.090758  0.027423  0.000000 -0.008129
+   5.1  1.65414    -1.015674    -0.037392  0.103960  0.126741 -0.564085  0.000000  0.132962 -0.310450  0.000000  0.057128  0.020482
+                                -0.000000 -0.007316 -0.023797 -0.000000  0.090028  0.019544 -0.014963 -0.000000 -0.010037 -0.277501
+                                -0.087250  0.027515  0.000000 -0.008286
 
-   6.1  0.01464     0.316270     0.030892 -0.041893 -0.254778 -0.753580  0.000000  0.275866  0.151073 -0.000000  0.029671 -0.078400
-                                -0.000000 -0.029940  0.130061  0.000000 -0.124128 -0.085791  0.005189 -0.000000  0.006363  0.623457
-                                 0.242033 -0.032457 -0.000000  0.014217
+   6.1  0.01399     0.333685     0.030347 -0.038571 -0.259178 -0.756230  0.000000  0.282845  0.155574 -0.000000  0.030356 -0.080453
+                                 0.000000 -0.030963  0.132603 -0.000000 -0.129029 -0.085896  0.005852  0.000000  0.006929  0.627545
+                                 0.235206 -0.033364 -0.000000  0.015077
 
  Total charge:   1.000000000000
  
@@ -447,33 +451,34 @@ Geometry recognized as XYZ
  CI vector
  =========
 
- 2a20      0.9948256   0.0000000  -0.0000000
- 22a0      0.0000000  -0.5502271   0.8332983
- a220     -0.0000000   0.8303212   0.5472667
- 2a02     -0.0957907  -0.0000000   0.0000000
- a202      0.0000000  -0.0812640  -0.0537477
+ 2a20      0.9950663   0.0000000   0.0000000
+ 22a0      0.0000000  -0.5504925   0.8331885
+ a220     -0.0000000   0.8303491   0.5476777
+ 2a02     -0.0936169  -0.0000000  -0.0000000
+ a202      0.0000000  -0.0793405  -0.0524807
 
- TOTAL ENERGIES                       -75.63311652   -75.53661921   -75.41340920
+ TOTAL ENERGIES                       -75.63445258   -75.53914999   -75.41009028
 
 
 
  **********************************************************************************************************************************
  DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
-              1      20       16.72       500      700      610      900      950      970     1000      129      960     1100   
+              1      20       20.21       500      700      610      900      950      970     1000      129      960     1100   
                                           VAR     GEOM    BASINP   SYMINP    ZMAT    AOBASIS   BASIS     P2S    ABASIS      S 
                                          1400     1410     1200     1210     1080     1600     1650     1300     1700     1380   
                                            T        V       H0       H01     AOSYM     SMH    MOLCAS    ERIS     OPER     JKOP   
 
-              2       8        1.74       500      700      610     1000      520     2100     2140     5101   
+              2       8        4.12       500      700      610     1000      520     2100     2140     5101   
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL     MULTI       INT      DATA   RESTART
- CPU TIMES  *         0.43      0.04      0.27      0.00      0.00
- REAL TIME  *         1.13 SEC
- DISK USED  *        22.69 MB      
+ CPU TIMES  *         0.51      0.06      0.34      0.00      0.00
+ REAL TIME  *         3.17 SEC
+ DISK USED  *        28.56 MB      
  **********************************************************************************************************************************
 
-1PROGRAM * FORCE (Gradient of the energy)
+
+ PROGRAM * FORCE (Gradient of the energy)
 
  SA-MCSCF information from    5101.2
  Orbitals from record         2140.2
@@ -492,32 +497,33 @@ Geometry recognized as XYZ
 
  Atom          dE/dx               dE/dy               dE/dz
 
-   1         0.110459873        -0.000000000         0.072013315
-   2        -0.049808733        -0.000000000        -0.035796256
-   3        -0.060651140         0.000000000        -0.036217059
+   1         0.121738718        -0.000000000         0.080749725
+   2        -0.051497472         0.000000000        -0.045206522
+   3        -0.070241246         0.000000000        -0.035543202
 
- Nuclear force contribution to virial =        -0.175164368
+ Nuclear force contribution to virial =        -0.208635044
 
 
  **********************************************************************************************************************************
  DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
-              1      20       16.72       500      700      610      900      950      970     1000      129      960     1100   
+              1      20       20.21       500      700      610      900      950      970     1000      129      960     1100   
                                           VAR     GEOM    BASINP   SYMINP    ZMAT    AOBASIS   BASIS     P2S    ABASIS      S 
                                          1400     1410     1200     1210     1080     1600     1650     1300     1700     1380   
                                            T        V       H0       H01     AOSYM     SMH    MOLCAS    ERIS     OPER     JKOP   
 
-              2       8        1.74       500      700      610     1000      520     2100     2140     5101   
+              2       8        4.12       500      700      610     1000      520     2100     2140     5101   
                                           VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
 
  PROGRAMS   *        TOTAL    FORCES     MULTI       INT      DATA   RESTART
- CPU TIMES  *         0.45      0.02      0.04      0.27      0.00      0.00
- REAL TIME  *         1.16 SEC
- DISK USED  *        22.69 MB      
+ CPU TIMES  *         0.53      0.02      0.06      0.34      0.00      0.00
+ REAL TIME  *         3.21 SEC
+ DISK USED  *        28.56 MB      
  **********************************************************************************************************************************
 
- MULTI/6-31G** energy=    -75.413409203211
+ MULTI/6-31G** energy=    -75.410090280607
 
         MULTI   
-    -75.41340920
+    -75.41009028
  **********************************************************************************************************************************
+ Molpro calculation terminated
  Variable memory released

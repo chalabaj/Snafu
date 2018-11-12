@@ -6,7 +6,7 @@ Modules: forces_tera.F90 forces_terash.F90
 import numpy as np
 import os
 import sys
-import time
+import time as timm
 from datetime import datetime
 #sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
 start = 1 # first geometry to process
@@ -39,7 +39,7 @@ def tera_connect():
     return(comm)
     
 def send_terash(comm, 
-        natoms, nstates, state, time
+        natoms, nstates, state, time,
         byte_coords, 
         MO, CiVecs, blob):
     
@@ -178,7 +178,7 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     #  Lets wait until Tera finished first ES calc.
     while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
         print("Waiting for Terachem to finish calculations")
-        time.sleep(1)            
+        timm.sleep(1)            
     buffer = bytearray(32*3)
     buffer = np.empty(3,dtype=np.intc) #.tobytes()
     #  Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
