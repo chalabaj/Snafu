@@ -18,8 +18,10 @@ function ifkill {
 	fi
 
 }
+
 trap $(ifkill $terapid) SIGUSR2 
-echo "$MPIRUN_TERA $TERAEXE --inputfile=tera2.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera2.out 2>&1 &"
+trap $(ifkill $terapid) EXIT 
+
 $MPIRUN_TERA $TERAEXE --inputfile=tera2.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera2.out 2>&1 &
 terapid=$!
 #sleep 15
@@ -37,11 +39,14 @@ done
 port_2=`grep port_name: tera2.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
 $MPIRUN_TERA python tera-propagate.py
-if [ $? -ne 0 ]; then
+pythonpid=$!
+if [[ $? -ne 0 ]]; then
     echo "python failed"
-    ifkill $pythonpid
+    ifkill $terapid
 fi
 pythonpid=$!
 sleep 1
 ifkill $terapid
 ifkill $pythonpid
+
+exit(0)

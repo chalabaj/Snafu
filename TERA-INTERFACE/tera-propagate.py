@@ -38,8 +38,18 @@ def tera_connect():
         exit(1)
     return(comm)
     
-def send_terash(comm, natoms, state, coords, vx, vy, vz):
+def send_terash(comm, 
+        natoms, nstates, state, time
+        byte_coords, 
+        MO, CiVecs, blob):
+    
     FMSinit = 0
+    civec = np.size(CiVecs,0)
+    nbf = np.size(MO,1)
+    blobsize = np.size(blob)
+    vels = np.zeros((natoms,3), dtype=np.float64)
+    print( blobsize, civec, nbf)
+    
     bufints = np.array(12,order='C',dtype=np.intc)
     bufints[1]=FMSinit
     bufints[2]=natoms
@@ -57,13 +67,33 @@ def send_terash(comm, natoms, state, coords, vx, vy, vz):
     comm.Send([bufints, 12, MPI_INT], 0, 2)
     
     #  We need to get upper-triangle matrix
-    #  Diagonal elements are gradients, other NAC
+    #  Diagonal elements are gradients, other NACs
     tocacl = np.zeros((nstates, nstates), dtype=np.intc, order='C')
     uti = np.triu_indices(nstates)   #  upper-triangle indices
-    bufints = tocacl[uti]
-    comm.Send([bufints, nstates*(nstates-1)/2+nstates, MPI_INT], 0, 2, newcomm, ierr )
+    tocacl[state][state] = 1 # gradients for current state only, no NACs
+
+    comm.Send([tocacl[uti], nstates*(nstates-1)/2+nstates, MPI_INT], 0, 2, newcomm, ierr )
     
+    # Send time
+    comm.Send([time, 1, MPI.DOUBLE], dest=0, tag=2)
+
+    # Send coordinates
+    comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
+    print("Sent coordinates to TeraChem.")
+
+    # Send previous diabatic MOs
+    print("Sending previous orbitals.")
+    comm.Send([MO, nbf*nbf, MPI.DOUBLE], dest=0, tag=2)
+
+    #  Send previous CI vecs
+    comm.Send([CIvecs, civec*nstate, MPI.DOUBLE], dest=0, tag=2)
+    comm.Send([blob, blobsize, MPI.DOUBLE], dest=0, tag=2)
+    #  Only needed for numerical NACME, so send 0 instead 
+    comm.Send([vels, 3*natom, MPI.DOUBLE], dest=0, tag=2)
+    # Imaginary velocities for FMS, not needed here, sending zeros...
+    comm.Send([vels , 3*natom, MPI.DOUBLE], dest=0, tag=2)
     return()
+    
 def alloc_tera_arrays(civec, nbf, blobsize, natoms, nstates=4):
     
     startTime = datetime.now()
@@ -170,12 +200,13 @@ if __name__ == "__main__":
     at_names = ["O","O","H","H ","H ","H "]  # taken from input
     natoms = 6
     nstates = 4
+    time = 0.0005
     byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)  #.tobytes('C') # join x,y,z numpy arrays
     comm = tera_connect()
     
     MO, MO_old, CiVecs, CiVecs_old, \
     NAC, blob, blob_old, SMatrix = tera_init(comm, at_names, natoms, 
                                              nstates, byte_coords)
-    #send_terash(comm, natoms, state, coords, vx, vy, vz)
+    send_terash(comm, natoms, nstates, state, time, byte_coords, MO, CiVecs, blob)
     finish_tera(comm)
     exit(0)
