@@ -2,7 +2,7 @@
 # Script for launching terachem server and python server for fast calculation of bunch of jobs
 # Stepan Srsen
 # -V
-export PATH="/home/srsen/bin/anaconda3/bin:$PATH"
+#export PATH="/home/srsen/bin/anaconda3/bin:$PATH"
 export LD_LIBRARY_PATH=
 source SetEnvironment.sh TERACHEM 1.9-dev
 MPIRUN_TERA="$MPIRUN -np 1 "
@@ -28,7 +28,8 @@ terapid=$!
 for i in {1..100}
 do
 	if grep -q port_name: tera2.out; then
-		break
+		echo "not yet"
+    break
 	elif [ $i -eq 100 ]; then
 		ifkill $terapid
 		echo "The port for the terachem connection was not published in the time limit."
