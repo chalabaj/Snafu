@@ -6,10 +6,10 @@ Modules: forces_tera.F90 forces_terash.F90
 import numpy as np
 import os
 import sys
-import time as timm
+import time
 from datetime import datetime
 #sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
-start = 1 # first geometry to process
+
 from mpi4py import MPI
 
 def finish_tera(comm):
@@ -37,32 +37,44 @@ def tera_connect():
         print("MPI connection to Terachem failed.")
         exit(1)
     return(comm)
+
+def recieve_tera(comm, nstates, en_array):
+    while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
+        print("Waiting for Terachem to finish calculations",
+              "\n Probe status: {}".format(status.Get_error()))
+        time.sleep(1) 
+    en_array = np.array(4, dtype=np.float64) 
+    comm.Recv([en_array, nstates, MPI.DOUBLE],source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)   
+    print("Data received",
+          "\n Probe status: {}".format(status.Get_error()),
+          "Energies: {} {} {} {}, Nstate: {}".format(en_array.tolist()[:], nstates))
+    return()
     
-def send_terash(comm, 
-        natoms, nstates, state, time,
+def send_tera(comm, 
+        natoms, nstates, state, sim_time,
         byte_coords, 
         MO, CiVecs, blob):
     
     FMSinit = 0
     civec = np.size(CiVecs,0)
     nbf = np.size(MO,1)
-    blobsize = np.size(blob)
+    blobsize = np.size(blob,0)
     vels = np.zeros((natoms,3), dtype=np.float64)
-    print( blobsize, civec, nbf)
+    print(civec, nbf, blobsize)
     
     bufints = np.array(12,order='C',dtype=np.intc)
-    bufints[1]=FMSinit
-    bufints[2]=natoms
-    bufints[3]=1               # doCoup
-    bufints[4]=0               # TrajID=0 for SH
-    bufints[5]=0               # T_FMS%CentID(1)
-    bufints[6]=0               # T_FMS%CentID(2)
-    bufints[7]=state  # T_FMS%StateID ! currently not used in fms.cpp
-    bufints[8]=oldWfn   # does ABIN have info about WF?
+    bufints[0]=FMSinit
+    bufints[1]=natoms
+    bufints[2]=1               # doCoup
+    bufints[3]=0               # TrajID=0 for SH
+    bufints[4]=0               # T_FMS%CentID(1)
+    bufints[5]=0               # T_FMS%CentID(2)
+    bufints[6]=state  # T_FMS%StateID ! currently not used in fms.cpp
+    bufints[7]=oldWfn   # does ABIN have info about WF?
     bufints[9]=state    # iCalcState-1 ! TC Target State
-    bufints[10]=state   # jCalcState-1
-    bufints[11]=0              # first_call, not used
-    bufints[12]=0              # FMSRestart, not used
+    bufints[9]=state   # jCalcState-1
+    bufints[10]=0              # first_call, not used
+    bufints[10]=0              # FMSRestart, not used
 
     comm.Send([bufints, 12, MPI_INT], 0, 2)
     
@@ -75,7 +87,7 @@ def send_terash(comm,
     comm.Send([tocacl[uti], nstates*(nstates-1)/2+nstates, MPI_INT], 0, 2, newcomm, ierr )
     
     # Send time
-    comm.Send([time, 1, MPI.DOUBLE], dest=0, tag=2)
+    comm.Send([sim_time, 1, MPI.DOUBLE], dest=0, tag=2)
 
     # Send coordinates
     comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
@@ -92,7 +104,9 @@ def send_terash(comm,
     comm.Send([vels, 3*natom, MPI.DOUBLE], dest=0, tag=2)
     # Imaginary velocities for FMS, not needed here, sending zeros...
     comm.Send([vels , 3*natom, MPI.DOUBLE], dest=0, tag=2)
+    print("Data send.")
     return()
+
     
 def alloc_tera_arrays(civec, nbf, blobsize, natoms, nstates=4):
     
@@ -176,9 +190,10 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
     
     #  Lets wait until Tera finished first ES calc.
-    while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG):
-        print("Waiting for Terachem to finish calculations")
-        timm.sleep(1)            
+    while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
+        print("Waiting for Terachem to finish calculations",
+              "\n Probe status: {}".format(status.Get_error()))
+        time.sleep(1)            
     buffer = bytearray(32*3)
     buffer = np.empty(3,dtype=np.intc) #.tobytes()
     #  Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
@@ -200,13 +215,22 @@ if __name__ == "__main__":
     at_names = ["O","O","H","H ","H ","H "]  # taken from input
     natoms = 6
     nstates = 4
-    time = 0.0005
+    state = 0
+    sim_time = 0.0005
     byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)  #.tobytes('C') # join x,y,z numpy arrays
     comm = tera_connect()
+   
+    try:
+        MO, MO_old, CiVecs, CiVecs_old, \
+        NAC, blob, blob_old, SMatrix = tera_init(comm, at_names, natoms, 
+                                                 nstates, byte_coords)
     
-    MO, MO_old, CiVecs, CiVecs_old, \
-    NAC, blob, blob_old, SMatrix = tera_init(comm, at_names, natoms, 
-                                             nstates, byte_coords)
-    send_terash(comm, natoms, nstates, state, time, byte_coords, MO, CiVecs, blob)
-    finish_tera(comm)
+        send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO, CiVecs, blob)
+        print("send ok")
+        recieve_tera(comm, nstates, en_array)
+        
+    except Exception:
+        finish_tera(comm)
+    else:
+        finish_tera(comm)
     exit(0)

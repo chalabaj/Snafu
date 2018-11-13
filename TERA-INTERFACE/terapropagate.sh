@@ -27,7 +27,7 @@ terapid=$!
 #sleep 15
 for i in {1..100}
 do
-	if grep --quiet port_name: tera2.out; then
+	if grep -q port_name: tera2.out; then
 		break
 	elif [ $i -eq 100 ]; then
 		ifkill $terapid
@@ -38,15 +38,14 @@ do
 done
 port_2=`grep port_name: tera2.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
-$MPIRUN_TERA python tera-propagate.py
-pythonpid=$!
+$MPIRUN_TERA python -u tera-propagate.py
+
 if [[ $? -ne 0 ]]; then
     echo "python failed"
     ifkill $terapid
 fi
+
 pythonpid=$!
 sleep 1
 ifkill $terapid
 ifkill $pythonpid
-
-exit(0)
