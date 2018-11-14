@@ -9,7 +9,7 @@ import sys
 import time
 from datetime import datetime
 sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
-
+ANG_BOHR = 1.889726132873e0
 from mpi4py import MPI
 
 def finish_tera(comm):
@@ -32,20 +32,21 @@ def tera_connect():
     print("Trying to connect to Terachem server:")
     try:
         mpi_port = os.environ['MPI_TERA_PORT']
-        print("MPI_TERA_PORT {} found ".format(mpi_port))                
+        print("MPI_TERA_PORT {} found ".format(mpi_port)) 
+        comm = MPI.COMM_WORLD.Connect(mpi_port, MPI.INFO_NULL, 0)  #  ,MPI.INFO_NULL     
     except KeyError as PE:
-        print("MPI port for communication with TERAPORT was not exported. Check tera.out.")
-        
-    comm = MPI.COMM_WORLD.Connect(mpi_port, MPI.INFO_NULL, 0)  #  ,MPI.INFO_NULL
-    if comm:
-        print("Terachem connection established.")
-    else:
-        print("MPI connection to Terachem failed.")
+        print("MPI port for communication with TERAPORT was not exported.",
+              "Check tera.out.") 
+    except Exception as ANYE:
+        print("MPI connection to Terachem failed.",
+              "\n{}".format(ANYE))
         exit(1)
+    else:
+        print("Terachem connection established.")          
     return(comm)
 
 def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
-        NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size):
+        NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size, state):
     
     status = MPI.Status()
     
@@ -56,7 +57,7 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
     
     try:
         comm.Recv([en_array, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-               tag=MPI.ANY_TAG, status=status)  
+                  tag=MPI.ANY_TAG, status=status)  
         comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE,
                   tag=MPI.ANY_TAG, status=status)  
         comm.Recv([Dip, nstates*3, MPI.DOUBLE], source=MPI.ANY_SOURCE,
@@ -71,23 +72,29 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
                   tag=MPI.ANY_TAG, status=status)
         comm.Recv([blob, blob_size, MPI.DOUBLE], source=MPI.ANY_SOURCE,
                   tag=MPI.ANY_TAG, status=status)
-        comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)             
+        for st1 in range(nstates):
+            for st2 in range(st1,nstates):
+                comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE,
+                          tag=MPI.ANY_TAG, status=status)
+                #if (st1 == st2) and (st1 == state):   
+                print(st1, st2, NAC)            
+        print(type(en_array))
+        print(type(CiVecs))
+        print(type(MO))         
     except Exception as excpt:
         print(traceback.format_exc())
         raise RuntimeError("Problem during receiving dat from Terachem: {}".format(excpt))
     else:
         print("DATA RECEIVED",
               "\n Probe status: {}".format(status.Get_error()),
-              "Energies: {}, Nstates: {}".format(en_array.tolist()), nstates))
-        return()
+              "Energies: {}, Nstates: {}".format(en_array.tolist(), nstates))
+        return(en_array, MO, CiVecs, blob, SMatrix, NAC)
     
 def send_tera(comm, natoms, nstates, state, sim_time, byte_coords, 
         MO, CiVecs, blob, civec_size, nbf_size, blob_size):
     
     FMSinit = 0
     vels = np.zeros((natoms,3), dtype=np.float64)
-    sim_time = np.array(sim_time, dtype=np.float64)
     
     bufints = np.empty(12,order='C',dtype=np.intc)
     bufints[0]=FMSinit
@@ -169,9 +176,9 @@ def move_old2new_terash(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old):
 
 def tera_init(comm, at_names, natoms, nstates, byte_coords):
     """ Initial data transfer to Terachem through MPI
-    Terachem is very sensitive to type, lenght and order of transferred data        
+    Terachem is very sensitive to the type, lenght and order of transferred data        
     We take advantage of NUMPY which can set C-like ordering and data types
-    .tobytes for numpy arraay is not needed as numpy keep daty in byte anyways, yet dtype must be set     
+    .tobytes for numpy arraay is not needed with some exceptions 
     """   
     print("Sending initial data to Terachem:")     
     
@@ -243,37 +250,43 @@ if __name__ == "__main__":
     nstates = 4
     state = 0
     sim_time = 0.0005
+    sim_time = np.array(sim_time, dtype=np.float64)
     # These will be in INIT ROUTINE
     en_array = np.zeros(nstates, dtype=np.float64) 
     TDip =  np.zeros(((nstates-1)*3), dtype=np.float64)
     Dip = np.zeros((nstates*3), dtype=np.float64)
     qmcharges = np.zeros(natoms, dtype=np.float64)
     
-    byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)
+    byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)*ANG_BOHR
     
 
-    
-    try:
-        comm = tera_connect()
+    comm = tera_connect()
 
-        MO, MO_old, CiVecs, CiVecs_old, \
-        NAC, blob, blob_old, SMatrix,   \
-        civec_size, nbf_size, blob_size = tera_init(comm, at_names, natoms, 
-                                                    nstates, byte_coords)
-   
-    
-    
-        send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO,
-                  CiVecs, blob, civec_size, nbf_size, blob_size) 
+    MO, MO_old, CiVecs, CiVecs_old, \
+    NAC, blob, blob_old, SMatrix,   \
+    civec_size, nbf_size, blob_size = tera_init(comm, at_names, natoms, nstates,
+                                                byte_coords)
+    for i in range(4):
+        print("#######{}######".format(i))
+        byte_coords = byte_coords *0.99
+        sim_time = sim_time * 0.95
+        try:
+            send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO,
+                      CiVecs, blob, civec_size, nbf_size, blob_size) 
 
-        recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, 
-                     SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size,
-                     blob_size)
-    except Exception as excpt:
-        print("Something went wrong during MPI SEND/RECEIVE.",
-              "\n{}".format(excpt))
-        exit_tera(comm)
-        exit(1)
-    else:
-        finish_tera(comm)
+            en_array, MO, CiVecs, blob, \
+            SMatrix, NAC = recieve_tera(comm, natoms, nstates, en_array, MO,
+                                        CiVecs, blob, SMatrix, NAC, TDip, Dip,
+                                        qmcharges, civec_size, nbf_size, 
+                                        blob_size, state)
+                                      
+            print(en_array, MO, CiVecs, SMatrix, NAC)
+            print("\n \n \n ----------------------------------------------")
+        except Exception as excpt:
+            print("Something went wrong during MPI SEND/RECEIVE.",
+                  "\n{}".format(excpt))
+            exit_tera(comm)
+            exit(1)
+    print("ALL DONE OK")
+    finish_tera(comm)
     exit(0)
