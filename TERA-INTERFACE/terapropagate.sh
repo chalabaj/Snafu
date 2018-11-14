@@ -1,7 +1,8 @@
-
+#!/bin/bash
 # Script for launching terachem server and python server for fast calculation of bunch of jobs
 # Stepan Srsen
-# -V
+# -V -cwd
+
 #export PATH="/home/srsen/bin/anaconda3/bin:$PATH"
 export LD_LIBRARY_PATH=
 source SetEnvironment.sh TERACHEM 1.9-dev
@@ -10,7 +11,7 @@ source SetEnvironment.sh ABIN mpi
 MPITYPE=2
 port=teraport$$
 #rm RecalcGeometriesTERA.sh.*
-rm -rf tera2.out* scr
+rm -rf tera2.out* test.out
 
 function ifkill {
 	if `ps|grep -q $1` ;then
@@ -39,7 +40,7 @@ do
 done
 port_2=`grep port_name: tera2.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
-$MPIRUN_TERA python -u tera-propagate.py
+$MPIRUN_TERA python -u tera-propagate.py >> test.out 2>&1 
 
 if [[ $? -ne 0 ]]; then
     echo "python failed"
