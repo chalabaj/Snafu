@@ -61,9 +61,12 @@ def read_input(cwd, input_file_path):
        par[p]=par[p].split("#",1)[0].strip(" ")  
         
     # Now that we know everything - check for ab initio interface
-    abinit_file = "ABINITIO/{}.sh".format(par['abinitio'])
-    ab_initio_file_path  = os.path.join(cwd, abinit_file)
-    
+    if not par['tera_mpi']:
+        abinit_file = "ABINITIO/{}.sh".format(par['abinitio'])
+        ab_initio_file_path  = os.path.join(cwd, abinit_file)
+    else 
+        abinit_file = "ABINITIO/{}".format(par['abinitio'])
+        ab_initio_file_path  = os.path.join(cwd, abinit_file)
     if (not os.path.isfile(ab_initio_file_path)):
          error_exit(5, " ")
          

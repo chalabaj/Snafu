@@ -7,6 +7,7 @@ import time
 import re
 import numpy as np
 from datetime import datetime
+
 startTime = datetime.now()
 
 # ENVIRONMENT LAYER & LOCAL IMPORT
@@ -55,6 +56,10 @@ try:
         print_restart, check_restart, read_restart
     )
     from constants import *
+    from tera_propagates import (
+        finish_tera, exit_tera, tera_connect, tera_init
+
+    )
 except ImportError as ime:
     # module could have been removed or module file renamed
     if ime.name is None:  
@@ -114,6 +119,7 @@ if __name__ == "__main__":
     Etot_prev = 0.0
     sim_time = 0.0
     prob = 0.0
+    tera_mpi = 0
 
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     print(liner)
@@ -129,6 +135,7 @@ if __name__ == "__main__":
         vel_adj = int(vel_adj)
         restart = int(restart)
         restart_write = int(restart_write)
+        tera_mpi = int(tera_mpi)
     except ValueError as VE:
         print(VE)
         error_exit(9, " ")
@@ -139,6 +146,15 @@ if __name__ == "__main__":
     rst_file_path = check_restart(restart, cwd)
     print(liner)
     
+    if tera_mpi:
+        byte_coords = np.dstack((x,y,z)))  # x,y,z must stack to single array
+        comm = tera_connect()
+        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+        blob_old, SMatrix, civec_size, nbf_size,  \
+        blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
+                                         byte_coords) 
+    print(liner)
+
     if restart == 0:
     
         at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
@@ -164,7 +180,11 @@ if __name__ == "__main__":
         Etot_init = Etot
         init_step = 1
     else:
-        init_step, at_names, state, x, y, z, vx, vy, vz, fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array = read_restart(rst_file_path, natoms)
+        init_step, at_names, state, \
+        x, y, z, vx, vy, vz, fx, fy, fz, \ 
+        Ekin, Epot, Etot, Etot_init, \
+        pot_eners_array = read_restart(rst_file_path, natoms)
+        
         masses = assign_masses(at_names)
         am = [mm * AMU for mm in masses]  # atomic mass units conversion
         x_new = np.zeros_like(x)
@@ -190,7 +210,7 @@ if __name__ == "__main__":
         print("".join("%2s" " " "%3.3f" % (at_names[iat], vx[iat])),
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
-          "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State")
+          "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
 
     #-------------------MAIN LOOP-----------------------------------------
     for step in range(init_step, maxsteps + 1):

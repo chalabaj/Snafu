@@ -41,6 +41,8 @@ CASSCF in MOLPRO (2015.1)
 ORCA(4.0.1): tddft -  working  
 GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0 - weird)
 BOMD:  MP2 in gaussian or MOLPRO  
+TERACHEM: works through FMS interface, testing
+
 
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
 It is straight forward to implement a new ab initio interface as at each step, the code reads the gradients.dat file in the running directory with the following structure:  
@@ -81,7 +83,7 @@ init_state = 2             # initial electronic state, 0 => ground state, 1 => f
 timestep = 6               # in atomic unit au = 0.024 fs   
 maxsteps = 600             # total number of steps  
 method  = lz-adiabatic     # bomd/lz-adibatic (Belyaev)
-abinitio  = molpro-casscf   # where to take gradients and energies, file name has to start  g09 or molpro
+abinitio  = molpro-casscf  # where to take gradients and energies, file name has to start  g09 or molpro, terachem input file (e.g. tera.inp)
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift in eV     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
@@ -89,7 +91,7 @@ restart = 0                # N - restart from N-th step, file restart_N.in must 
                            # 1 - restart from the last completed step (i.e. restart.in)
                            # 0 - unset but writes restart information
 restart_write = 100        # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.)
-
+tera_mpi = 0               # use Terachem abinitio interface via MPI, 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  
 add restart option
