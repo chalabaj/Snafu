@@ -75,11 +75,10 @@ The restart.in file contains all needed information from the last completed simu
 * To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
 
-During each restart, all previous output files (i.e. movie.xyz, energies.dat, restart*.in, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be:    
-a) copied if you restart from the last completed point (restart = 1)  
-b) moved if you restart from the XX step (restart = XX)  
-to the folder named **PREV_RUN${N}** where N depends on number of previous restarts.  
-The reason is that, the output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out) after XX step.
+During each restart, all previous output files (i.e. movie.xyz, energies.dat, restart*.in, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data).
+Copying files is executed on the launcher (launchSNAFU) level, is if one uses other launcher or runs the code directly with queing system, there will be no back-up of original files and you can LOST trimmed data (if restart > 1).
+
+The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out) after XX step.
 ## Input.in options:
 
 [Settings]  
