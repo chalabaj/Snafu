@@ -62,7 +62,7 @@ def read_input(cwd, input_file_path):
         
     # Now that we know everything - check for ab initio interface
     if not par['tera_mpi']:
-        abinit_file = "ABINITIO/{}.sh".format(par['abinitio'])
+        abinit_file = "ABINITIO/{}".format(par['abinitio'])
         ab_initio_file_path  = os.path.join(cwd, abinit_file)
     else 
         abinit_file = "ABINITIO/{}".format(par['abinitio'])
@@ -71,7 +71,24 @@ def read_input(cwd, input_file_path):
          error_exit(5, " ")
          
     return(par, ab_initio_file_path)
-
+def check_output_file(cwd, natoms)
+    if (restart >=1):
+    #trime output files by os call
+    elif (restart == 0):
+        if (os.path.isfile("movie.xyz")):
+         error_exit(8, "movie.xyz")
+        if (os.path.isfile("velocities.xyz")):
+         error_exit(8, "velocities.xyz")     
+        if (os.path.isfile("energies.dat")):
+         error_exit(8, "energies.dat")  
+        if (os.path.isfile("PES.dat")):
+         error_exit(8, "PES.dat")     
+        if (os.path.isfile("state.dat")):
+         error_exit(8, "state.dat")
+        if (os.path.isfile("restart.in")
+         print("File restart.in exists, but restart option is turned off.")
+         error_exit(8, "restart.in")
+     return()   
 def read_geoms(natoms, geom_file_path):
     #if restart == 1 : read  last two geoms
     x = np.zeros(natoms, dtype=np.float64)  

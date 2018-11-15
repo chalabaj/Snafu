@@ -9,22 +9,12 @@ except ImportError as ime:
     print("Module {} not found.".format(ime.name))
     exit(1)
 
-def check_restart(restart, cwd):
+def check_restart_files(restart, cwd):
     rst_file = "restart.in"
     rst_file_path = os.path.join(cwd, rst_file)
     if restart < 0:
             error_exit(11, "(restart < 0)")
-    elif restart == 0:
-        if (os.path.isfile(rst_file_path)):
-            print("File restart.in exists, but restart option is turned off.",
-                  "\nRenaming restart.in to restart.in_old.")
-            try:
-                os.rename("restart.in", "restart.in_old")
-            except OsError:
-                print("Error, when renaming the restart file. Exiting...")
-                exit(1)
-        else:
-            print("Restart turned off.")
+    #  elif restart == 0 dealt in check_output_files
     elif restart == 1:
         rst_file = "restart.in"  
         rst_file_path = os.path.join(cwd, rst_file)
@@ -121,7 +111,7 @@ def read_restart(rst_file_path, natoms):
 def print_restart(
         step, time, natoms, at_names, state, timestep,
         x, y, z, vx, vy, vz, fx, fy, fz,
-        Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_write):
+        Ekin, Epot, Etot, Etot_init, pot_eners_array):
 
     inits_line = ("Step: {:d}".format(step),
                 "State: {:d}".format(state),
@@ -174,18 +164,11 @@ def print_restart(
             rsf.write(f_line)
     rsf.closed
 
+
     if not (step%restart_write):
         rst_file = "restart_{}.in".format(step)
         print("Writing restart information to {} file.".format(rst_file))
         shutil.copy("restart.in", rst_file, follow_symlinks=True) 
-
-    #print(pot_eners_array)
-    #for irow in range(0, np.size(pot_eners_array, 0)):
-        #line2 = ("Epot_array: \n",
-        #         "{5.8f}".format(' '.join(str(pot_eners_array[irow,:]))))
-    
-    #print(np.array2string(pot_eners_array,precision=10))
-          #formatter={'float_kind':lambda x: "{}".format(x)}))
-      # line2 = ("".join("{2s} {5.8f} {5.8f} {5.8f}\n".format(at_names[iat],vx[iat] ,vy[iat],vz[iat])))        
+      
     return()
     

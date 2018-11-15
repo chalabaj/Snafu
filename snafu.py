@@ -35,7 +35,7 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
     from inits import (
-        file_check, read_input, read_geoms, read_velocs,
+        file_check, read_input, check_output_files, read_geoms, read_velocs,
         com_removal, init_forces, init_energies
     )
     from masses import assign_masses
@@ -55,7 +55,7 @@ try:
     from restarts import (
         print_restart, check_restart, read_restart
     )
-    from constants import *
+    from constants import *   #  import conversion factors and default values
     from tera_propagates import (
         finish_tera, exit_tera, tera_connect, tera_init
 
@@ -78,12 +78,10 @@ except KeyError as ke:
           "\nHint: export SNAFU_DIR=/path/to/SNAFU")
     exit(1)
 else:
-    print("All modules loaded succesfully. Starting...\n \n")
+    print("All modules loaded succesfully.\n \n")
     print_snafu()
 
-
 liner = ("_") * 100
-
 # ---------------INIT--------------------------------------------------------
 
 if __name__ == "__main__":
@@ -107,20 +105,6 @@ if __name__ == "__main__":
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
 
     # READ INPUT VARIABLES SET THEM AS GLOBAL VARIABLES
-    # DEFAULTS: 
-    # TODO: move these to init routine and import them before reading the input
-    ener_thresh = 1.000
-    hop_thresh = 0.5
-    dt = 4.00
-    hop = False
-    step = 0
-    dE = 0.0  # energy change since initial energies
-    Etot_init = 0.0  # setting variable , total energy at the beginning
-    Etot_prev = 0.0
-    sim_time = 0.0
-    prob = 0.0
-    tera_mpi = 0
-
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     print(liner)
     globals().update(input_vars)
@@ -134,7 +118,7 @@ if __name__ == "__main__":
         hop_thresh = float(hop_thresh)
         vel_adj = int(vel_adj)
         restart = int(restart)
-        restart_write = int(restart_write)
+        restart_freq int(restart_freq)
         tera_mpi = int(tera_mpi)
     except ValueError as VE:
         print(VE)
@@ -143,20 +127,10 @@ if __name__ == "__main__":
     pot_eners = init_energies(nstates)
     fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
     # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
-    rst_file_path = check_restart(restart, cwd)
+    rst_file_path = check_restart_files(restart, cwd)
     print(liner)
-    
-    if tera_mpi:
-        byte_coords = np.dstack((x,y,z)))  # x,y,z must stack to single array
-        comm = tera_connect()
-        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-        blob_old, SMatrix, civec_size, nbf_size,  \
-        blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                         byte_coords) 
-    print(liner)
-
     if restart == 0:
-    
+        check_output_file(cwd)  # there should not be any output file (e.g. from previous run)
         at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
                                                             geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
@@ -187,6 +161,7 @@ if __name__ == "__main__":
         
         masses = assign_masses(at_names)
         am = [mm * AMU for mm in masses]  # atomic mass units conversion
+        # move this to restart
         x_new = np.zeros_like(x)
         y_new = np.zeros_like(y)
         z_new = np.zeros_like(z)
@@ -194,6 +169,9 @@ if __name__ == "__main__":
         fy_new = np.zeros_like(fy)
         fz_new = np.zeros_like(fz)
         init_step = init_step + 1
+
+    check_output_files(cwd, restart, natoms)
+    
     print("Initial geometry:\n",
           "At    X         Y          Z         MASS:")
     xx = [xxx*BOHR_ANG for xxx in x.tolist()]
@@ -211,8 +189,18 @@ if __name__ == "__main__":
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
+    
+    if tera_mpi:
+        byte_coords = np.dstack((x,y,z)))  # x,y,z must stack to single array
+        comm = tera_connect()
+        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+        blob_old, SMatrix, civec_size, nbf_size,  \
+        blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
+                                         byte_coords) 
+    print(liner)
 
     #-------------------MAIN LOOP-----------------------------------------
+    
     for step in range(init_step, maxsteps + 1):
 
         x_new, y_new, z_new = update_positions(dt, am, 
@@ -314,14 +302,14 @@ if __name__ == "__main__":
         #print("-----------------------------------------------------")
 
         # SAVE POSITION AND VELOCITIES AND RESTART
-        print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
-        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
-        print_state(step, sim_time, state, restart)
-
-        print_restart(step, sim_time, natoms, at_names, state, timestep,
-                      x, y, z, vx, vy, vz, fx, fy, fz,
-                      Ekin, Epot, Etot, Etot_init, pot_eners_array,
-                      restart_write)
+        if not (step%write_freq):
+            print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
+            print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
+            print_state(step, sim_time, state, restart)
+        if not (step%restart_freq):
+            print_restart(step, sim_time, natoms, at_names, state, timestep,
+                          x, y, z, vx, vy, vz, fx, fy, fz,
+                          Ekin, Epot, Etot, Etot_init, pot_eners_array)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")

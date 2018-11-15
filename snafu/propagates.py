@@ -74,7 +74,8 @@ def calc_forces(
             state = state + 1 #molpro index starts from 1
     elif re.search(r'orca', ab_initio_file_path):
             grad = -1  #orca exports gradients
-                        
+    elif re.search(r'tera', ab_initio_file_path):
+            grad = -1  #orca exports gradients                    
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:

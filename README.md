@@ -69,11 +69,17 @@ H 0.0 1.0 0.0
 
 ## How to restart dynamics
 
-You can restart dynamics from the last completed step or from the chosen step depending on how often you wrote restart file in original dynamics.  
-The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_write** option which sets the interval for writing a restart file (restart_400.in contains restart information from the step number 400).   
-* To restart simuluation from the last completed step, **restart** option must be set to 1 and restart.in file must be in executing folder.
-* To restart simuluation from some other step , **restart** option must be set to XX and restart_XX.in file must be in executing folder.
+You can restart dynamics from the last completed step or from the chosen step depending on how often you wrote restart file in an original simulation.  
+The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_freq** option which sets the interval for writing a restart file (restart_400.in contains restart information from the 400th step). File **input.in** should not be changed with an exception to extend the simulation time by increasing the **maxsteps** option.
 
+* To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
+* To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
+
+During each restart, all previous output files (i.e. movie.xyz, energies.dat, restart*.in, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be:    
+a) copied if you restart from the last completed point (restart = 1)  
+b) moved if you restart from the XX step (restart = XX)  
+to the folder named **PREV_RUN${N}** where N depends on number of previous restarts.  
+The reason is that, the output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out) after XX step.
 ## Input.in options:
 
 [Settings]  
@@ -83,15 +89,16 @@ init_state = 2             # initial electronic state, 0 => ground state, 1 => f
 timestep = 6               # in atomic unit au = 0.024 fs   
 maxsteps = 600             # total number of steps  
 method  = lz-adiabatic     # bomd/lz-adibatic (Belyaev)
-abinitio  = molpro-casscf  # where to take gradients and energies, file name has to start  g09 or molpro, terachem input file (e.g. tera.inp)
+abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file (e.g. tera.inp)
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift in eV     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
-restart = 0                # N - restart from N-th step, file restart_N.in must exist depending on restart_write period
+restart = 0                # N - restart from N-th step, restart_N.in must exist
                            # 1 - restart from the last completed step (i.e. restart.in)
                            # 0 - unset but writes restart information
-restart_write = 100        # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.)
-tera_mpi = 0               # use Terachem abinitio interface via MPI, 
+restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
+tera_mpi = 0               # use Terachem abinitio interface via MPI   
+write_freq = 100           # how often print output, default 10
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  
 add restart option

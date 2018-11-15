@@ -30,6 +30,22 @@ else
 queue=$2
 echo $queue
 fi
+N=0
+grep "restart = [0-9]" input.in
+if [[ $? -eq 0 ]];
+  restart=$(grep "restart = [0-9]" input.in | awk '{print $3}')
+  if [[ $restart -ne "0" ]];
+       while [[ -d "PREV_RUN${N}" ]] ; do
+          N=$(($N+1))
+          done
+          mkdir PREV_RUN${N}
+          cp movie.xyz energies.dat restart*.in input.in state.dat snafu.out velocities.xyz PES.dat PREV_RUN${N}/.
+          echo "DATA MOVED TO PREV_RUN${N}"
+  fi
+else
+    echo "Wrong restart option in input.in file"
+    echo "Required format must be restart = X including spaces."
+fi
 
 cat > r.$name << EOF
 #!/bin/bash
