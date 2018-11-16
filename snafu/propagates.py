@@ -126,9 +126,6 @@ def calc_energies(
         print("Total energy change since start {} ".format(dE * AU_EV),
               "larger then threshold {}.".format(ener_thresh))
         error_exit(7)
-        
-    print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, restart)
-    print_pes(time, step, pot_eners, restart)
 
     return(Ekin, Epot, Etot, dE, dE_step)
 

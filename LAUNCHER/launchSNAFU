@@ -1,4 +1,8 @@
 #!/bin/bash
+# Launching script for SNAFU code
+# Written for SGE queuing system
+# The queue part should be modified for your node names
+# Resulting file r.$name should be modified if one uses diferent queuing system
 
 function PrintHelp {
    echo " "
@@ -16,7 +20,7 @@ if ! [[ $nproc =~ ^[1-9]+$ ]] ; then
    PrintHelp
 fi
 
-#which queue
+# WHICH QUEUE:
 cluster=$(uname -a | awk {'print $2'})
 if [[ ! -n "$2" ]]; then
 if [ "$cluster" = "as67-1" ]; then
@@ -30,6 +34,9 @@ else
 queue=$2
 echo $queue
 fi
+
+# RESTART PART - CREATING BACKUP OF OUTPUT FILES
+# move to restart module
 N=0
 while [[ -d "PREV_RUN${N}" ]] ; do
           N=$(($N+1))
@@ -46,6 +53,9 @@ else
     echo "Wrong restart option in input.in file"
     echo "Required format must be restart = X including spaces."
 fi
+
+
+# FILE SUBMITTED TO QUE (SGE-like)
 
 cat > r.$name << EOF
 #!/bin/bash

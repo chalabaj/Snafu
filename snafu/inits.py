@@ -14,6 +14,9 @@ import numpy as np
 
 try:
     from errors import error_exit
+    from restart import (
+        truncate_output_files, back_output_files
+    )
 except ImportError as ime:
     print("Module {} not found.".format(ime.name))
     exit(1)
@@ -71,9 +74,12 @@ def read_input(cwd, input_file_path):
          error_exit(5, " ")
          
     return(par, ab_initio_file_path)
-def check_output_file(cwd, natoms)
-    if (restart >=1):
-    #trime output files by os call
+def check_output_file(cwd, natoms, restart, init_step):
+    if (restart == 1):
+        back_output_files()
+    elif (restart >= 1):
+        back_output_files()
+        truncate_output_files(init_step, natoms):
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):
          error_exit(8, "movie.xyz")
@@ -94,10 +100,7 @@ def read_geoms(natoms, geom_file_path):
     x = np.zeros(natoms, dtype=np.float64)  
     y = np.zeros(natoms, dtype=np.float64)  
     z = np.zeros(natoms, dtype=np.float64)  
-    
-    x_new = np.zeros(natoms, dtype=np.float64)  
-    y_new = np.zeros(natoms, dtype=np.float64)  
-    z_new = np.zeros(natoms, dtype=np.float64)  
+
     at_names = []
  # READ INITIAL POSITIONS:   
     with open(geom_file_path, 'r') as igf:  # igf input geom file 
@@ -112,7 +115,7 @@ def read_geoms(natoms, geom_file_path):
         z[iat] = np.float64(line[3]) * ang_bohr
      
      igf.close()
-     return(at_names, x, y, z, x_new, y_new, z_new)
+     return(at_names, x, y, z)
  # READ INITIAL VELOCITIES:
 def read_velocs(init_vel, natoms, vel_file_path):  
     vx = np.zeros(natoms, dtype=np.float64)  
@@ -137,8 +140,8 @@ def capitalize_2th(s):
     # avoid problems with different name for atoms in ab initio codes
     return s[:1].capitalize() + s[1:].lower()
 
-def init_forces(natoms, nstates):
-    # Initialize empty forces array
+def init_fep_arrays(natoms, nstates):
+    # Initialize empty forces, energies and pos_new arrays
     
     #f(t)
     fx = np.zeros(natoms, dtype = np.float64)  
@@ -149,13 +152,18 @@ def init_forces(natoms, nstates):
     fx_new = np.zeros(natoms, dtype = np.float64)    
     fy_new = np.zeros(natoms, dtype = np.float64)  
     fz_new = np.zeros(natoms, dtype = np.float64)  
-        
-    return(fx, fy, fz, fx_new, fy_new, fz_new)
+
+    # potential energie array
+    pot_eners = np.zeros(nstates, dtype = np.float64)   
     
-def init_energies(nstates):
-    # Initialize empty potential energies array
-    pot_eners = np.zeros(nstates, dtype = np.float64)     
-    return(pot_eners)
+    # new positions in shift_pos in verlet step
+    x_new = np.zeros(natoms, dtype=np.float64)  
+    y_new = np.zeros(natoms, dtype=np.float64)  
+    z_new = np.zeros(natoms, dtype=np.float64)  
+        
+    return(fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new)
+    
+
     
 def com_removal(x, y, z, am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0

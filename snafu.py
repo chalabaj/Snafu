@@ -103,10 +103,10 @@ if __name__ == "__main__":
 
     # FILE CHECK - OBTAIN PATH TO FILES
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
-
-    # READ INPUT VARIABLES SET THEM AS GLOBAL VARIABLES
-    input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     print(liner)
+
+    # READ INPUT OPTIONS AND SET THEM AS VARIABLES:
+    input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     globals().update(input_vars)
     try:
         natoms = int(natoms)
@@ -124,15 +124,16 @@ if __name__ == "__main__":
         print(VE)
         error_exit(9, " ")
     
-    pot_eners = init_energies(nstates)
-    fx, fy, fz, fx_new, fy_new, fz_new = init_forces(natoms, nstates)
-    # READ INITIAL GEOMETRY AND VELOCITIES AND CREATE ARRAYS FOR FORCES
+
+    fx, fy, fz, fx_new, fy_new, fz_new, \
+    pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
+
+    # READ INITIAL OR RESTART DATA
     rst_file_path = check_restart_files(restart, cwd)
     print(liner)
     if restart == 0:
         check_output_file(cwd)  # there should not be any output file (e.g. from previous run)
-        at_names, x, y, z, x_new, y_new, z_new = read_geoms(natoms,
-                                                            geom_file_path)
+        at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 
         # OBTAIN ATOMIC MASSES:
@@ -161,16 +162,9 @@ if __name__ == "__main__":
         
         masses = assign_masses(at_names)
         am = [mm * AMU for mm in masses]  # atomic mass units conversion
-        # move this to restart
-        x_new = np.zeros_like(x)
-        y_new = np.zeros_like(y)
-        z_new = np.zeros_like(z)
-        fx_new = np.zeros_like(fx)
-        fy_new = np.zeros_like(fy)
-        fz_new = np.zeros_like(fz)
         init_step = init_step + 1
 
-    check_output_files(cwd, restart, natoms)
+    check_output_file(cwd, natoms, restart, init_step)
     
     print("Initial geometry:\n",
           "At    X         Y          Z         MASS:")
@@ -199,6 +193,7 @@ if __name__ == "__main__":
                                          byte_coords) 
     print(liner)
 
+    with open(rst_file, "w") as rsf: 
     #-------------------MAIN LOOP-----------------------------------------
     
     for step in range(init_step, maxsteps + 1):
@@ -301,15 +296,15 @@ if __name__ == "__main__":
               "{}     {}".format(str(hop)[0], state))
         #print("-----------------------------------------------------")
 
-        # SAVE POSITION AND VELOCITIES AND RESTART
-        if not (step%write_freq):
-            print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
-            print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
-            print_state(step, sim_time, state, restart)
-        if not (step%restart_freq):
-            print_restart(step, sim_time, natoms, at_names, state, timestep,
-                          x, y, z, vx, vy, vz, fx, fy, fz,
-                          Ekin, Epot, Etot, Etot_init, pot_eners_array)
+        # SAVE POSITION, VELOCITIES, ENERGIES AND RESTART
+        print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
+        print_pes(time, step, pot_eners)
+        print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
+        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
+        print_state(step, sim_time, state, restart)
+        print_restart(step, sim_time, natoms, at_names, state, timestep,
+                      x, y, z, vx, vy, vz, fx, fy, fz,
+                      Ekin, Epot, Etot, Etot_init, pot_eners_array)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")

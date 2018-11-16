@@ -2,6 +2,8 @@ import numpy as np
 import os
 import shutil
 import re
+import subprocess
+
 try:
     from errors import error_exit
     from constants import *
@@ -111,7 +113,8 @@ def read_restart(rst_file_path, natoms):
 def print_restart(
         step, time, natoms, at_names, state, timestep,
         x, y, z, vx, vy, vz, fx, fy, fz,
-        Ekin, Epot, Etot, Etot_init, pot_eners_array):
+        Ekin, Epot, Etot, Etot_init, pot_eners_array,
+        rsf):
 
     inits_line = ("Step: {:d}".format(step),
                 "State: {:d}".format(state),
@@ -124,8 +127,9 @@ def print_restart(
                 )
 
     rst_file = "restart.in"
-
-    with open(rst_file, "w") as rsf: 
+    os.ftruncate(rsf, 0)
+    os.lseek(rsf, 0, os.SEEK_SET)
+    
         rsf.write('\n'.join(inits_line))
 
         np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
@@ -172,3 +176,35 @@ def print_restart(
       
     return()
     
+def truncate_output_files(init_step, natoms):
+# movie.xyz energies.dat input.in state.dat snafu.out velocities.xyz PES.dat 
+# init_step is read from restart file
+    print("Restart from {} step. Output file will be truncated".format(init_step))
+    natoms_lines = (natoms+2)*init_step   #  header
+    step_lines = init_step                
+    input_files = []
+    input_files.append(["movie.xyz", natoms_lines])
+    input_files.append(["velocities.xyz", natoms_lines])
+    input_files.append(["PES.dat", step_lines])
+    input_files.append(["energies.dat", step_lines])
+    input_files.append(["state.dat", step_lines])
+    
+    for xx in range(len(input_files)):
+        nlines = input_files[xx][1]
+        input_file = input_files[xx][0]
+        cmd_trunc = "head -n{} {} > temp_file; mv temp_file {} ".format(nlines, input_file, input_file)    
+        try:
+            trim_file = subprocess.run(cmd_trunc, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
+        except subprocess.CalledProcessError as cpe: 
+            print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
+            exit(1)
+        else:
+            print("File {} was truncated after {} steps.".format(input_file,init_step))
+def backup_output_files():
+    input_files.append("movie.xyz")
+    input_files.append("velocities.xyz")
+    input_files.append("PES.dat")
+    input_files.append("energies.dat")
+    input_files.append("state.dat")
+    input_files.append("snafu.out")
+    input_files.append("restart.in")

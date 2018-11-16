@@ -24,18 +24,11 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 
 
 ## How to run
-The code was tested on Linux/Debian 4.7.2-5 platform with Anaconda 3.6 package.
-Python ver 3.5 and newer should work.
+1) System requirements:
+The code was tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package. MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
 
-1) Set up environment variable **SNAFU_DIR** in .bashrc or export it before launching the code (see LAUNCHER folder). 
-  <code>
-   export SNAFU_DIR="path/to/snafu/dir"
-  </code>
-
-
-
-2) **ABINITIO** folder have to contain one of the script from INTERFACES folder (or you can add your own interface, see below).  
-Option **abinitio** in input.in must equal to the name of the script without the .sh extention (e.g. abinitio=molpro-casscf for molpro-casscf.sh script in /ABINITIO folder)
+1) **ABINITIO** folder has to contain one of the script from INTERFACES folder (or you can add your own interface, see below) or a terachem input file.  
+Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh and file ABINITIO/molpro-casscf.sh must exist). Some with terachem input file.
 Currently fully working:  
 CASSCF in MOLPRO (2015.1)  
 ORCA(4.0.1): tddft -  working  
@@ -43,9 +36,8 @@ GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vecto
 BOMD:  MP2 in gaussian or MOLPRO  
 TERACHEM: works through FMS interface, testing
 
-
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
-It is straight forward to implement a new ab initio interface as at each step, the code reads the gradients.dat file in the running directory with the following structure:  
+It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step. This file is created by an interface script after an ab-initio code completes ES calculations and saves the data to gradients.dat file in a running directory. The interface script have to export data with the following structure:  
 energy-gs  
 energy-1ex state  
 ....  
@@ -54,29 +46,51 @@ Fx(1at) Fy(1at) Fz(1at)
 ....  
 Fx(n_at) Fy(n_at) Fz(n_at)  
 
-Environment variables for particular ab initio code have to be adjusted to your machine environment (e.g. if Molpro is used then $MOLPROEXE variable should be set up).
-
-
-3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a folder.
-The **veloc.in*** file with initial velocities can be also used, otherwise the dynamics will start with zero velocities.
-The geom.in and veloc.in files have to be in the XYZ format and velocities in atomic units:  
+3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
+The **veloc.in*** file with initial velocities is not mandatory. If there are no initial velocities, a simulation will start with zero velocities.
+The geom.in and veloc.in files have to be in the XYZ format. Positions are in **ANGSTROM** units (so you can modify it with e.g. molden), but velocities have to be in **ATOMIC** units:  
+Examples of water molecule in geom.in:
 3  
-water xyz  
-O 0.0 0.0 0.0   
-H 1.0 0.0 0.0   
-H 0.0 1.0 0.0   
+water molecule in angstorm units
+ O     0.000000     0.000000     0.000000
+ H     0.000000     0.000000     0.947000
+ H     0.892841     0.000000    -0.315663  
 
+4) Launching:
+The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (e.g. SGE, PBS). 
+The launchSNAFU is not needed when running directly without queuing. 
+The launcher:  
+- submit the job to que (back-up files if restart)  
+- export environment variables   
+- create folder on scratch  
+- start the simulation on scratch
+- copy data back to folder
+
+The code requires to find **SNAFU_DIR** variable in your environment (in python this is os.environ['SNAFU_DIR']). This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here.
+
+If the launcher is not used, just export **SNAFU_DIR** the variable:
+  <code>
+   export SNAFU_DIR="path/to/snafu/dir"
+  </code>
+and then run the code:
+ <code>
+ python snafu.py
+ </code>
+ 
+Environment variables for particular ab-initio code are exported in the interfaces scripts and have to be adjusted to your machine environment (see interface scripts in INTERFACE folder).
 
 ## How to restart dynamics
 
-You can restart dynamics from the last completed step or from the chosen step depending on how often you wrote restart file in an original simulation.  
-The restart.in file contains all needed information from the last completed simulation step. Similarly, checkpoints are created according to the **restart_freq** option which sets the interval for writing a restart file (restart_400.in contains restart information from the 400th step). File **input.in** should not be changed with an exception to extend the simulation time by increasing the **maxsteps** option.
+You can restart dynamics from the last completed step or from the chosen step XX depending on how often you wrote restart file during the original simulation.  
+The **restart.in** file contains all needed information from the last completed simulation step. Similarly, **restart_freq = XX** option sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). To restart simulation, the **input.in** file should NOT be changed with an exception to extend the simulation time by increasing the **maxsteps** option.
 
 * To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
+* No restart when **restart = 0**, but restart files are created.
 
-During each restart, all previous output files (i.e. movie.xyz, energies.dat, restart*.in, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data).
-Copying files is executed on the launcher (launchSNAFU) level, is if one uses other launcher or runs the code directly with queing system, there will be no back-up of original files and you can LOST trimmed data (if restart > 1).
+If you restart from some step, existing restart files with the same name will be overwritten.
+If you use launchSNAFU from LAUNCHER folder, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data).
+
 
 The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out) after XX step.
 ## Input.in options:

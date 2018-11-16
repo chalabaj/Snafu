@@ -49,7 +49,7 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, restart):
 
 def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, restart):
     with open ("energies.dat", "a") as ef:
-        if step == 0:
+        if step == 1:
             headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
             ef.write(str(headline))
             dE = 0.0
@@ -59,9 +59,9 @@ def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, restart):
     ef.closed
     return()  
 
-def print_pes(sim_time, step, pot_eners, restart):
+def print_pes(sim_time, step, pot_eners):
     with open ("PES.dat", "a") as pesf:
-        if step == 0:
+        if step == 1:
             headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
             pesf.write(str(headline))
 
@@ -73,7 +73,7 @@ def print_pes(sim_time, step, pot_eners, restart):
     pesf.closed
     return()
 
-def print_state(step, sim_time, state, restart):
+def print_state(step, sim_time, state):
     with open ("state.dat", "a") as stf:
         if step == 1:
             headline = "# Time,  Electronic state(0 = gs)\n"
