@@ -127,8 +127,7 @@ def print_restart(
                 )
 
     rst_file = "restart.in"
-    os.ftruncate(rsf, 0)
-    os.lseek(rsf, 0, os.SEEK_SET)
+    rsf.truncate(0)  #  empty file
     
         rsf.write('\n'.join(inits_line))
 
@@ -200,11 +199,40 @@ def truncate_output_files(init_step, natoms):
             exit(1)
         else:
             print("File {} was truncated after {} steps.".format(input_file,init_step))
-def backup_output_files():
-    input_files.append("movie.xyz")
-    input_files.append("velocities.xyz")
-    input_files.append("PES.dat")
-    input_files.append("energies.dat")
-    input_files.append("state.dat")
-    input_files.append("snafu.out")
-    input_files.append("restart.in")
+    return()
+def backup_output_files(cwd):
+    # RESTART PART - CREATING BACKUP OF OUTPUT FILES
+        
+    N=0
+    while os.path.isdir(os.path.join(os.getcwd(),"PREV_RUN"+str(N))):
+        print("{} backup folder already exists".format("PREV_RUN"+str(N)))
+        N += 1
+    else:
+        backup_folder = os.path.join(os.getcwd(),"PREV_RUN"+str(N))
+        os.mkdir(backup_folder)
+        print("Creating back-up folder {}".format("PREV_RUN"+str(N)))
+
+    output_files.append("movie.xyz")
+    output_files.append("velocities.xyz")
+    output_files.append("PES.dat")
+    output_files.append("energies.dat")
+    output_files.append("state.dat")
+    output_files.append("snafu.out")
+    output_files.append("restart.in")
+    restart_files = [ rf for rf in rest_files if re.search(r'restart', rf)]
+    backup_files = output_files + restart_files
+    for bf in backup_files:
+        shutil.copy(bf,backup_folder)
+    print("Output data were backed-up.\n"format(os.listdir(backup_folder)))
+   
+if [[ $? -eq 0 ]];then
+  restart=$(grep "restart = [0-9]" input.in | awk '{print $3}')
+  if [[ $restart -ne "0" ]];then
+       mkdir PREV_RUN${N}
+       cp movie.xyz energies.dat restart*.in input.in state.dat snafu.out velocities.xyz PES.dat PREV_RUN${N}/.
+       echo "DATA COPIED TO PREV_RUN${N}"
+  fi
+else
+    echo "Wrong restart option in input.in file"
+    echo "Required format must be restart = X including spaces."
+fi

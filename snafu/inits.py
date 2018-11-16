@@ -78,7 +78,7 @@ def check_output_file(cwd, natoms, restart, init_step):
     if (restart == 1):
         back_output_files()
     elif (restart >= 1):
-        back_output_files()
+        backup_output_files()
         truncate_output_files(init_step, natoms):
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):
