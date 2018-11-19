@@ -6,9 +6,12 @@ timestep = 6                # in atomic unit au = 0.024 fs
 maxsteps = 10               # total number of steps
 method  = lz-adioabatic     # bomd/lz-adibatic (Belyaev)/ lz-diabatic scheme
 abinitio  = molpro-casscf   # $abinitio.sh file must exist in ABINITIO folder, has to start g09/molpro/ to distinguish between forces and gradients of different codes
-restart = 1000                 # 0 - OFF, 1 - restart from the latest point. Restart.in file must exists.
-vel_adj = 1                 # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces fro new surface are included into velocity at hop point
-ener_thresh = 1.0           # energy threshold for max energy drift (in eV)
-hop_thresh = 0.5            # energy threshold for hopping between the states with energy difference less than this (in eV)
-restart_write = 2
-tera_mpi = 1
+abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file (e.g. tera.inp)
+vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point
+ener_thresh = 1.0          # threshold for max energy drift in eV
+hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)
+restart = 0                # N - restart from N-th step, restart_N.in must exist
+restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
+tera_mpi = 0               # use Terachem abinitio interface via MPI
+write_freq = 100           # how often print output, default 10
+

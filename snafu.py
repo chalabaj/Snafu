@@ -107,6 +107,7 @@ if __name__ == "__main__":
 
     # READ INPUT OPTIONS AND SET THEM AS VARIABLES:
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
+    #  need to pass variables to function so that modules wont used defaults from constats mod
     globals().update(input_vars)
     try:
         natoms = int(natoms)
@@ -132,7 +133,6 @@ if __name__ == "__main__":
     rst_file_path = check_restart_files(restart, cwd)
     print(liner)
     if restart == 0:
-        check_output_file(cwd)  # there should not be any output file (e.g. from previous run)
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 

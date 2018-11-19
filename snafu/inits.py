@@ -17,14 +17,10 @@ try:
     from restart import (
         truncate_output_files, back_output_files
     )
+    from constants import *
 except ImportError as ime:
     print("Module {} not found.".format(ime.name))
     exit(1)
-
-au_fs = 0.02418884326505e0      #atomic units to femtosecs
-au_eV = 27.21139
-amu   = 1822.888484264545e0             # atomic mass unit  me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873e0     # agstroms to bohrs
 
 def file_check(cwd):
     # input files names - these are defaults otherwise not found
@@ -74,10 +70,11 @@ def read_input(cwd, input_file_path):
          error_exit(5, " ")
          
     return(par, ab_initio_file_path)
+
 def check_output_file(cwd, natoms, restart, init_step):
     if (restart == 1):
         back_output_files()
-    elif (restart >= 1):
+    elif (restart > 1):
         backup_output_files()
         truncate_output_files(init_step, natoms):
     elif (restart == 0):
@@ -95,6 +92,7 @@ def check_output_file(cwd, natoms, restart, init_step):
          print("File restart.in exists, but restart option is turned off.")
          error_exit(8, "restart.in")
      return()   
+
 def read_geoms(natoms, geom_file_path):
     #if restart == 1 : read  last two geoms
     x = np.zeros(natoms, dtype=np.float64)  
@@ -183,13 +181,3 @@ def com_removal(x, y, z, am):
         z[iat] = z[iat] - zcom 
     
     return(x,y,z)
-
-def restart_init():
-   # truncate movie. veloc , etc after restart step
-     #https://stackoverflow.com/questions/5633988/python-truncate-a-file-to-100-lines-or-less
-    #with open("my.file", "r+") as f:
-     #  for x in xrange(100):
-      #      f.readline()
-    f.truncate()
-
-    return()
