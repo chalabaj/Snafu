@@ -22,65 +22,60 @@ except KeyError as ke:
           "\nHint: export SNAFU_DIR=/path/to/SNAFU")
     exit(1)
 
-def print_positions(step,sim_time,natoms, at_names, x, y, z, restart):
-    
-    with open ("movie.xyz", "a") as mov:
-     header = ("{} \n".format(natoms))
-     mov.write(header)
-     comment = ("Step: {}      Time_fs: {}\n".format(step,sim_time))
-     mov.write(comment)
-     for iat in range(0, natoms):     
-      line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],x[iat]*BOHR_ANG,y[iat]*BOHR_ANG,z[iat]*BOHR_ANG)))
-      mov.write(line)
+def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
+    mov = mov_file
+    header = ("{} \n".format(natoms))
+    mov.write(header)
+    comment = ("Step: {}      Time_fs: {}\n".format(step,sim_time))
+    mov.write(comment)
+    xx = (x*BOHR_ANG).tolist()
+    yy = (y*BOHR_ANG).tolist()
+    zz = (z*BOHR_ANG).tolist()
+    for iat in range(0, natoms):
+        line = ("{} {:12.8f}".format(at_names[iat], xx[iat]),
+                "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]))
+    mov.write(line)
     mov.closed
     return()
 
-def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, restart):
-    with open ("velocities.xyz", "a") as vel:
-     header = ("{} \n".format(natoms))
-     vel.write(header)
-     comment = ("Step: {}      Time_fs:{}\n".format(step,sim_time))
-     vel.write(comment)
-     for iat in range(0, natoms):
+def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
+    vel = vel_file
+    header = ("{} \n".format(natoms))
+    vel.write(header)
+    comment = ("Step: {}      Time_fs:{}\n".format(step, sim_time))
+    vel.write(comment)
+    for iat in range(0, natoms):
        line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
        vel.write(line)
-    vel.closed
+    
     return()
 
-def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, restart):
-    with open ("energies.dat", "a") as ef:
-        if step == 1:
-            headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
-            ef.write(str(headline))
-            dE = 0.0
-            dE_step  = 0.0
-        line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
-        ef.write(str(line))
-    ef.closed
+def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file:
+    ef = eners_file
+    if step == 1:
+        headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
+        ef.write(str(headline))
+    line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
+    ef.write(str(line))
     return()  
 
-def print_pes(sim_time, step, pot_eners):
-    with open ("PES.dat", "a") as pesf:
-        if step == 1:
-            headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
-            pesf.write(str(headline))
-
-        line = ("{:10.10f}".format(sim_time)
+def print_pes(sim_time, step, pot_eners, pes_file):
+    if step == 1:
+        headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
+        pes_file.write(str(headline))
+    line = ("{:10.10f}".format(sim_time)
                 + ' '.join('{:20.10f}'.format(pot_eners[st]) 
                 for st in range(0, len(pot_eners)))
                 + "\n")
-        pesf.write(str(line))
-    pesf.closed
+    pes_file.write(str(line))
     return()
 
-def print_state(step, sim_time, state):
-    with open ("state.dat", "a") as stf:
-        if step == 1:
-            headline = "# Time,  Electronic state(0 = gs)\n"
-            stf.write(str(headline)) 
-        line = ("{:7.4f} {:4d}\n".format(sim_time, state)) 
-        stf.write(str(line))   
-    stf.closed
+def print_state(step, sim_time, state, state_file):
+    if step == 1:
+        headline = "# Time,  Electronic state(0 = gs)\n"
+        state_files.write(str(headline)) 
+    line = ("{:7.4f} {:4d}\n".format(sim_time, state)) 
+    state_file.write(str(line))   
     return()
 
 def print_snafu():

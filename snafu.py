@@ -56,6 +56,8 @@ try:
         print_restart, check_restart, read_restart
     )
     from constants import *   #  import conversion factors and default values
+    
+    from defaults import *    # import all defualt values, only here otherwise could overwritte in some modules
     from tera_propagates import (
         finish_tera, exit_tera, tera_connect, tera_init
 
@@ -164,13 +166,13 @@ if __name__ == "__main__":
         am = [mm * AMU for mm in masses]  # atomic mass units conversion
         init_step = init_step + 1
 
-    check_output_file(cwd, natoms, restart, init_step)
+    mov_file, eners_file, pes_file, vel_file, state_file = check_output_file(cwd, natoms, restart, init_step)
     
     print("Initial geometry:\n",
-          "At    X         Y          Z         MASS:")
-    xx = [xxx*BOHR_ANG for xxx in x.tolist()]
-    yy = [yyy*BOHR_ANG for yyy in y.tolist()]
-    zz = [zzz*BOHR_ANG for zzz in z.tolist()]
+          "At    X         Y         Z         MASS:")
+    xx = (x*BOHR_ANG).tolist()
+    yy = (y*BOHR_ANG).tolist()
+    zz = (z*BOHR_ANG).tolist()
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
@@ -297,11 +299,11 @@ if __name__ == "__main__":
         #print("-----------------------------------------------------")
 
         # SAVE POSITION, VELOCITIES, ENERGIES AND RESTART
-        print_energies(step, time, Ekin, Epot, Etot, dE, dE_step)
-        print_pes(time, step, pot_eners)
-        print_positions(step, sim_time, natoms, at_names, x, y, z, restart)
-        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, restart)
-        print_state(step, sim_time, state, restart)
+        print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, eners_file)
+        print_pes(time, step, pot_eners, pes_file)
+        print_positions(step, sim_time, natoms, at_names, x, y, z, mov_file)
+        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, vel_file)
+        print_state(step, sim_time, state, state_file)
         print_restart(step, sim_time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,
                       Ekin, Epot, Etot, Etot_init, pot_eners_array)
