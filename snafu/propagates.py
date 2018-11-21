@@ -1,7 +1,6 @@
 """
 Velocity verlet integrator scheme
 """
-
 import math
 import sys
 import os
@@ -18,19 +17,13 @@ try:
 except ImportError as ime:
     print("Module {} not found.".format(ime.name))
     exit(1)
-        
-# CONSTANTS
-au_fs = 0.02418884326505e0   # atomic units to femtosecs
-au_eV = 27.21139
-amu = 1822.888484264545e0    # atomic mass unit me = 1 AMU*atomic weight
-ang_bohr = 1.889726132873e0  # agstroms to bohrs
 
 def update_positions(
         dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
     for iat in range(0,len(am)):
-        x_new[iat] = x[iat] + vx[iat]*dt + ( fx[iat]/(2*am[iat]) * dt**2 )
-        y_new[iat] = y[iat] + vy[iat]*dt + ( fy[iat]/(2*am[iat]) * dt**2 )
-        z_new[iat] = z[iat] + vz[iat]*dt + ( fz[iat]/(2*am[iat]) * dt**2 )
+        x_new[iat] = x[iat] + vx[iat]*dt + ( fx[iat]/(2*am[iat])*dt**2 )
+        y_new[iat] = y[iat] + vy[iat]*dt + ( fy[iat]/(2*am[iat])*dt**2 )
+        z_new[iat] = z[iat] + vz[iat]*dt + ( fz[iat]/(2*am[iat])*dt**2 )
     return(x_new, y_new, z_new)
 
 def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
@@ -75,7 +68,7 @@ def calc_forces(
     elif re.search(r'orca', ab_initio_file_path):
             grad = -1  #orca exports gradients
     elif re.search(r'tera', ab_initio_file_path):
-            grad = -1  #orca exports gradients                    
+            grad = -1  #tera exports gradients                    
     # Create geom file for which the forces will be calculated
     abinit_geom_file = "abinit_geom.xyz"
     with open (abinit_geom_file, "w") as agf:
@@ -100,7 +93,6 @@ def calc_forces(
         for iat in range(0, natoms):
             line = gef.readline().split(" ")
             # FX FY FZ, gradient to forces 
-            # TO DO Gaussian has forces, molpro gradients
             fx_new[iat] = grad*np.float64(line[0])
             fy_new[iat] = grad*np.float64(line[1])
             fz_new[iat] = grad*np.float64(line[2])    
@@ -109,7 +101,7 @@ def calc_forces(
 
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 
-    vx, vy, vz, Etot_init, Etot_prev, ener_thresh, restart):
+    vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
 
     Ekin = 0.000
 
@@ -130,14 +122,4 @@ def calc_energies(
     return(Ekin, Epot, Etot, dE, dE_step)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
-
-    vx = [xx * v_scaling_fac for xx in vx] 
-    vy = [yy * v_scaling_fac for yy in vy] 
-    vz = [zz * v_scaling_fac for zz in vz] 
-
-    return(vx, vy, vz)
-    # Windows installed ubuntu has rather complicated path
-    # if re.search(r'win',sys.platform):
-    # testpath = "/mnt/c/Users/chalabaj/Documents/Coding/snafu-master/ABINITIO/test.sh" 
-    # abinit_inputs = "wsl {} {}  {}  {}  {}".format(testpath, abinit_geom_file, natoms, state, nstates, step)
-    # elif re.search(r'linux',sys.platform):  
+    return(vx*v_scaling_fac, vy*v_scaling_fac, vz*v_scaling_fac)

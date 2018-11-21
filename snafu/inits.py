@@ -123,6 +123,7 @@ def read_geoms(natoms, geom_file_path):
      
      igf.close()
      return(at_names, x, y, z)
+
  # READ INITIAL VELOCITIES:
 def read_velocs(init_vel, natoms, vel_file_path):  
     vx = np.zeros(natoms, dtype=np.float64)  
@@ -150,12 +151,10 @@ def capitalize_2th(s):
 def init_fep_arrays(natoms, nstates):
     # Initialize empty forces, energies and pos_new arrays
     
-    #f(t)
+    #f(t) f_new(t+dt)
     fx = np.zeros(natoms, dtype = np.float64)  
     fy = np.zeros(natoms, dtype = np.float64)   
     fz = np.zeros(natoms, dtype = np.float64)  
-    
-    #f_new(t+dt)
     fx_new = np.zeros(natoms, dtype = np.float64)    
     fy_new = np.zeros(natoms, dtype = np.float64)  
     fz_new = np.zeros(natoms, dtype = np.float64)  

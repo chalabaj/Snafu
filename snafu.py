@@ -36,7 +36,7 @@ try:
     sys.path.append(SNAFU_EXE)
     from inits import (
         file_check, read_input, check_output_files, read_geoms, read_velocs,
-        com_removal, init_forces, init_energies
+        com_removal, init_fep_arrays
     )
     from masses import assign_masses
     from errors import error_exit
@@ -97,8 +97,7 @@ if __name__ == "__main__":
     # local runs dont create HOST env var, qsub SGE system does
     try:
         print("Working directory: {}".format(cwd),
-              "on {}.".format(os.environ['HOSTNAME'])
-             )
+              "on {}.".format(os.environ['HOSTNAME']))
     except KeyError:
         print("Working directory: {}".format(cwd))
     print(liner)
@@ -107,9 +106,9 @@ if __name__ == "__main__":
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
     print(liner)
 
-    # READ INPUT OPTIONS AND SET THEM AS VARIABLES:
+    #  READ INPUT OPTIONS AND SET THEM AS VARIABLES:
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
-    #  need to pass variables to function so that modules wont used defaults from constats mod
+    #  Need to pass variables to function so that modules wont used defaults from constats mod
     globals().update(input_vars)
     try:
         natoms = int(natoms)
@@ -126,7 +125,6 @@ if __name__ == "__main__":
     except ValueError as VE:
         print(VE)
         error_exit(9, " ")
-    
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
@@ -151,8 +149,8 @@ if __name__ == "__main__":
         
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                       state, pot_eners,
-                                                      vx, vy, vz, Etot_init,
-                                                      Etot_prev, ener_thresh,
+                                                      vx, vy, vz, Etot_init = 0.0,
+                                                      Etot_prev = 0.0, ener_thresh,
                                                       restart)
         Etot_init = Etot
         init_step = 1
@@ -299,14 +297,16 @@ if __name__ == "__main__":
         #print("-----------------------------------------------------")
 
         # SAVE POSITION, VELOCITIES, ENERGIES AND RESTART
-        print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, eners_file)
-        print_pes(time, step, pot_eners, pes_file)
-        print_positions(step, sim_time, natoms, at_names, x, y, z, mov_file)
-        print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, vel_file)
-        print_state(step, sim_time, state, state_file)
+        if (step%write_freq == 0):
+            print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, eners_file)
+            print_pes(time, step, pot_eners, pes_file)
+            print_positions(step, sim_time, natoms, at_names, x, y, z, mov_file)
+            print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, vel_file)
+            print_state(step, sim_time, state, state_file)
+        
         print_restart(step, sim_time, natoms, at_names, state, timestep,
                       x, y, z, vx, vy, vz, fx, fy, fz,
-                      Ekin, Epot, Etot, Etot_init, pot_eners_array)
+                      Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")

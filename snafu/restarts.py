@@ -114,7 +114,7 @@ def print_restart(
         step, time, natoms, at_names, state, timestep,
         x, y, z, vx, vy, vz, fx, fy, fz,
         Ekin, Epot, Etot, Etot_init, pot_eners_array,
-        rsf):
+        restart_freq):
 
     inits_line = ("Step: {:d}".format(step),
                 "State: {:d}".format(state),
@@ -167,8 +167,7 @@ def print_restart(
             rsf.write(f_line)
     rsf.closed
 
-
-    if not (step%restart_write):
+    if not (step%restart_freq):
         rst_file = "restart_{}.in".format(step)
         print("Writing restart information to {} file.".format(rst_file))
         shutil.copy("restart.in", rst_file, follow_symlinks=True) 
@@ -200,18 +199,19 @@ def truncate_output_files(init_step, natoms):
         else:
             print("File {} was truncated after {} steps.".format(input_file,init_step))
     return()
+
 def backup_output_files(cwd):
     # RESTART PART - CREATING BACKUP OF OUTPUT FILES
         
     N=0
-    while os.path.isdir(os.path.join(os.getcwd(),"PREV_RUN"+str(N))):
+    while os.path.isdir(os.path.join(cwd,"PREV_RUN"+str(N))):
         print("{} backup folder already exists".format("PREV_RUN"+str(N)))
         N += 1
     else:
-        backup_folder = os.path.join(os.getcwd(),"PREV_RUN"+str(N))
+        backup_folder = os.path.join(cwd,"PREV_RUN"+str(N))
         os.mkdir(backup_folder)
-        print("Creating back-up folder {}".format("PREV_RUN"+str(N)))
-
+        print("Creating backup folder {}".format("PREV_RUN"+str(N)))
+    output_files= []
     output_files.append("movie.xyz")
     output_files.append("velocities.xyz")
     output_files.append("PES.dat")
@@ -224,15 +224,4 @@ def backup_output_files(cwd):
     for bf in backup_files:
         shutil.copy(bf,backup_folder)
     print("Output data were backed-up.\n"format(os.listdir(backup_folder)))
-   
-if [[ $? -eq 0 ]];then
-  restart=$(grep "restart = [0-9]" input.in | awk '{print $3}')
-  if [[ $restart -ne "0" ]];then
-       mkdir PREV_RUN${N}
-       cp movie.xyz energies.dat restart*.in input.in state.dat snafu.out velocities.xyz PES.dat PREV_RUN${N}/.
-       echo "DATA COPIED TO PREV_RUN${N}"
-  fi
-else
-    echo "Wrong restart option in input.in file"
-    echo "Required format must be restart = X including spaces."
-fi
+    return()

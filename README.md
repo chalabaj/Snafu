@@ -14,30 +14,31 @@ AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.
 ## Status
 The code is in **development** stage with no guarantees of its accuracy, precision or fitness. 
 
-* Energy conservation from tests is about 10^-4 eV - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. The WF electronic structure is as the critical point in this context. The CASSCF might produce energy jumps in regions with significant structural changes, so one should examine the PES of a given trajectory. 
+* Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
 
 * Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
 
 * Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
 
-* Hops are only allowed for pot. energy differences with less than 0.5 eV by default. Higher energy transitions lead to poor energy conservation.
+* Hops are only allowed for pot. energy differences with less than 0.5 eV by default. Higher energy transitions generally lead to poor energy conservation.
 
 
 ## How to run
 1) System requirements:
 The code was tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package. MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
 
-1) **ABINITIO** folder has to contain one of the script from INTERFACES folder (or you can add your own interface, see below) or a terachem input file.  
-Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh and file ABINITIO/molpro-casscf.sh must exist). Some with terachem input file.
+1) **ABINITIO** folder has to contain one of the .sh script from INTERFACES folder or a terachem input file (or you can add your own interface, see below) .  
+Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
 Currently fully working:  
 CASSCF in MOLPRO (2015.1)  
 ORCA(4.0.1): tddft -  working  
 GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0 - weird)
-BOMD:  MP2 in gaussian or MOLPRO  
+BOMD: MP2 in gaussian or MOLPRO  
 TERACHEM: works through FMS interface, testing
 
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
-It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step. This file is created by an interface script after an ab-initio code completes ES calculations and saves the data to gradients.dat file in a running directory. The interface script have to export data with the following structure:  
+** New abinitio interface **
+It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step. This file is created by an interface script after an ab-initio code completes ES calculations. It simply greps energies and gradients to gradients.dat file in a running directory with the following structure:  
 energy-gs  
 energy-1ex state  
 ....  
@@ -58,9 +59,9 @@ water molecule in angstorm units
 
 4) Launching:
 The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (e.g. SGE, PBS). 
-The launchSNAFU is not needed when running directly without queuing. 
+The launchSNAFU is not needed when running directly without queuing, however, SNAFUS scripts must be adjusted as it takes SGE queuing parameters like JOB_ID env variable. 
 The launcher:  
-- submit the job to que (back-up files if restart)  
+- submit the job to que
 - export environment variables   
 - create folder on scratch  
 - start the simulation on scratch
@@ -68,7 +69,7 @@ The launcher:
 
 The code requires to find **SNAFU_DIR** variable in your environment (in python this is os.environ['SNAFU_DIR']). This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here.
 
-If the launcher is not used, just export **SNAFU_DIR** the variable:
+If the launcher is not used, just export the **SNAFU_DIR** variable:
   <code>
    export SNAFU_DIR="path/to/snafu/dir"
   </code>
@@ -101,17 +102,17 @@ nstates = 3                # number of electronic states
 init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state  
 timestep = 6               # in atomic unit au = 0.024 fs   
 maxsteps = 600             # total number of steps  
-method  = lz-adiabatic     # bomd/lz-adibatic (Belyaev)
+method  = lz-adiabatic     # lz-adibatic (Belyaev) or BOMD on selected state(no hops allowed)
 abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file (e.g. tera.inp)
-vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point    
-ener_thresh = 1.0          # threshold for max energy drift in eV     
+vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
+ener_thresh = 1.0          # threshold for max energy drift (in eV)     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
 restart = 0                # N - restart from N-th step, restart_N.in must exist
                            # 1 - restart from the last completed step (i.e. restart.in)
                            # 0 - unset but writes restart information
 restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
+write_freq = 100           # how often print output, default 1 (each step)
 tera_mpi = 0               # use Terachem abinitio interface via MPI   
-write_freq = 100           # how often print output, default 10
+
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  
-add restart option
