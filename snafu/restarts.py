@@ -8,7 +8,7 @@ try:
     from errors import error_exit
     from constants import *
 except ImportError as ime:
-    print("Module {} not found.".format(ime.name))
+    print("Module {} in restarts not found.".format(ime.name))
     exit(1)
 
 def check_restart_files(restart, cwd):
@@ -222,5 +222,5 @@ def backup_output_files(cwd):
     backup_files = output_files + restart_files
     for bf in backup_files:
         shutil.copy(bf,backup_folder)
-    print("Output data were backed-up.\n"format(os.listdir(backup_folder)))
+    print("Output data were backed-up.\n{}".format(os.listdir(backup_folder)))
     return()

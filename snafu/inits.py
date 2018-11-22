@@ -14,12 +14,12 @@ import numpy as np
 
 try:
     from errors import error_exit
-    from restart import (
-        truncate_output_files, back_output_files
+    from restarts import (
+        truncate_output_files, backup_output_files
     )
     from constants import *
 except ImportError as ime:
-    print("Module {} not found.".format(ime.name))
+    print("Module {} in inits not found.".format(ime.name))
     exit(1)
 
 def file_check(cwd):
@@ -63,7 +63,7 @@ def read_input(cwd, input_file_path):
     if not par['tera_mpi']:
         abinit_file = "ABINITIO/{}".format(par['abinitio'])
         ab_initio_file_path  = os.path.join(cwd, abinit_file)
-    else 
+    else:
         abinit_file = "ABINITIO/{}".format(par['abinitio'])
         ab_initio_file_path  = os.path.join(cwd, abinit_file)
     if (not os.path.isfile(ab_initio_file_path)):
@@ -76,7 +76,7 @@ def check_output_file(cwd, natoms, restart, init_step):
         back_output_files()
     elif (restart > 1):
         backup_output_files()
-        truncate_output_files(init_step, natoms):
+        truncate_output_files(init_step, natoms)
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):
          error_exit(8, "movie.xyz")
@@ -91,16 +91,8 @@ def check_output_file(cwd, natoms, restart, init_step):
         if (os.path.isfile("restart.in")):
          print("File restart.in exists, but restart option is turned off.")
          error_exit(8, "restart.in")
-    try:
-        with open('movie.xyz', 'a') as mov_file, \
-             open('energies.dat', 'a') as eners_file, \
-             open('PES.dat', 'a') as pes_file, \
-             open('velocities.dat', 'a') as vel_file, \
-             open('state.dat', 'a') as state_file:
-    except IOError as ioe:
-         print("{Failed to open output file})".format(ioe.strerror))
          # TODO MPI exit
-    return(mov_file, eners_file, pes_file, vel_file, state_file)   
+    return()
 def output_files_close(mov_file, eners_file, pes_file, vel_file, state_file):
     mov_file.closed
     eners_file.closed

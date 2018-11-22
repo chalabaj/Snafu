@@ -5,21 +5,7 @@ try:
     from constants import *
     from errors import error_exit
 except ImportError as ime:
-    # module could have been removed or module file renamed
-    if ime.name is None:  
-        print("Import in some of the modules ({})".format(ime.name),
-              "in snafu dir failed. Exiting...")
-        exit(1)
-    else:
-        print("Module {} not found.".format(ime.name),
-              "Make sure that {} contains snafu folder".format(SNAFU_EXE),
-              "with: {}".format('\n'.join(modules_files)))
-        exit(1)
-except KeyError as ke:
-    print("SNAFU_DIR is not set.",
-          "See '.bashrc' file in your home directory",
-          "or use 'env' command and make sure $SNAFU_DIR is exported.",
-          "\nHint: export SNAFU_DIR=/path/to/SNAFU")
+    print("Module {} in prints not found.".format(ime.name))
     exit(1)
 
 def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):

@@ -15,7 +15,7 @@ try:
     from prints import print_energies, print_pes
     from constants import *
 except ImportError as ime:
-    print("Module {} not found.".format(ime.name))
+    print("Module {} in propagates not found.".format(ime.name))
     exit(1)
 
 def update_positions(
