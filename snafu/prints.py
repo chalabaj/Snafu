@@ -5,7 +5,7 @@ try:
     from constants import *
     from errors import error_exit
 except ImportError as ime:
-    print("Module {} in prints not found.".format(ime.name))
+    print("Module {} in prints not found.".format(ime))
     exit(1)
 
 def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
@@ -36,7 +36,7 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
     
     return()
 
-def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file:
+def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file):
     ef = eners_file
     if step == 1:
         headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"

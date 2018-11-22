@@ -19,7 +19,7 @@ try:
     )
     from constants import *
 except ImportError as ime:
-    print("Module {} in inits not found.".format(ime.name))
+    print("Module {} in inits not found.".format(ime))
     exit(1)
 
 def file_check(cwd):
@@ -73,7 +73,7 @@ def read_input(cwd, input_file_path):
 
 def check_output_file(cwd, natoms, restart, init_step):
     if (restart == 1):
-        back_output_files()
+        backup_output_files()
     elif (restart > 1):
         backup_output_files()
         truncate_output_files(init_step, natoms)
@@ -93,13 +93,7 @@ def check_output_file(cwd, natoms, restart, init_step):
          error_exit(8, "restart.in")
          # TODO MPI exit
     return()
-def output_files_close(mov_file, eners_file, pes_file, vel_file, state_file):
-    mov_file.closed
-    eners_file.closed
-    pes_file.closed
-    vel_file.closed
-    state_file.closed
-    return
+
 def read_geoms(natoms, geom_file_path):
     #if restart == 1 : read  last two geoms
     x = np.zeros(natoms, dtype=np.float64)  
@@ -115,9 +109,9 @@ def read_geoms(natoms, geom_file_path):
      for iat in range(0, natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))
-        x[iat] = np.float64(line[1]) * ang_bohr  # atomic units : Bohr
-        y[iat] = np.float64(line[2]) * ang_bohr
-        z[iat] = np.float64(line[3]) * ang_bohr
+        x[iat] = np.float64(line[1])*ANG_BOHR  # atomic units : Bohr
+        y[iat] = np.float64(line[2])*ANG_BOHR
+        z[iat] = np.float64(line[3])*ANG_BOHR
      
      igf.close()
      return(at_names, x, y, z)

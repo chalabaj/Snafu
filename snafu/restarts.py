@@ -8,15 +8,16 @@ try:
     from errors import error_exit
     from constants import *
 except ImportError as ime:
-    print("Module {} in restarts not found.".format(ime.name))
+    print("Module {} in restarts not found.".format(ime))
     exit(1)
 
 def check_restart_files(restart, cwd):
+    rst_file = "restart.in"  
+    rst_file_path = os.path.join(cwd, rst_file)
     if restart < 0:
             error_exit(11, "(restart < 0)")
     #  elif restart == 0 dealt in check_output_files
     elif restart == 1:
-        rst_file = "restart.in"  
         rst_file_path = os.path.join(cwd, rst_file)
         if (os.path.isfile(rst_file_path)):
             print("Restart={}, start from the last completed".format(restart),
@@ -113,8 +114,11 @@ def print_restart(
         step, time, natoms, at_names, state, timestep,
         x, y, z, vx, vy, vz, fx, fy, fz,
         Ekin, Epot, Etot, Etot_init, pot_eners_array,
-        restart_freq):
+        restart_freq, rsf_file):
 
+    rsf = rsf_file
+    rsf.truncate(0)  #  empty file
+    rsf.seek(0)
     inits_line = ("Step: {:d}".format(step),
                 "State: {:d}".format(state),
                 "Natoms: {:d}".format(natoms),
@@ -124,9 +128,6 @@ def print_restart(
                 "Etot_init: {:14.10f}".format(Etot_init),
                 "Pot_eners_array:\n"
                 )
-
-    rst_file = "restart.in"
-    rsf.truncate(0)  #  empty file
     
     rsf.write('\n'.join(inits_line))
 
@@ -141,7 +142,7 @@ def print_restart(
                                                              xx[iat],
                                                              yy[iat],
                                                              zz[iat])
-    rsf.write(p_line)
+        rsf.write(p_line)
             
     rsf.write("Velocities: AT VX VY VZ (a.u.):\n")
     vvx = vx.tolist()
@@ -164,12 +165,12 @@ def print_restart(
                                                                ffy[iat],
                                                                ffz[iat])
             rsf.write(f_line)
-    rsf.closed
-
+    rsf.flush()  # need to flush, cause it is still open and buffer probably not full yet, otherwise we copy empty file
+    
     if not (step%restart_freq):
-        rst_file = "restart_{}.in".format(step)
-        print("Writing restart information to {} file.".format(rst_file))
-        shutil.copy("restart.in", rst_file, follow_symlinks=True) 
+        rst_file_step = "restart_{}.in".format(step)
+        print("Writing restart information to {} file.".format(rst_file_step))
+        shutil.copy("restart.in", rst_file_step, follow_symlinks=True) 
       
     return()
     

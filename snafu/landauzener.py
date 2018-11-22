@@ -6,10 +6,8 @@ try:
     from constants import *
     from errors import  error_exit
 except ImportError as ime:
-    if ime.name is None: 
-        print("Import in some of the modules ({})",
-              " in snafu dir failed. Exiting...".format(ime.name))
-        exit(1)
+    print("Module {} in landauzener not found.".format(ime))
+    exit(1)
  
 def calc_hopp(method, state, pot_eners,
               pot_eners_array, Ekin, dt, hop_thresh):

@@ -35,7 +35,7 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
     from inits import (
-        file_check, read_input, check_output_files, read_geoms, read_velocs,
+        file_check, read_input, check_output_file, read_geoms, read_velocs,
         com_removal, init_fep_arrays
     )
     from masses import assign_masses
@@ -62,9 +62,9 @@ try:
     #    finish_tera, exit_tera, tera_connect, tera_init
     #)
 except ImportError as ime:
-    # module could have been removed or module file renamed
+    # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
-        print("Import in some of the modules ({})".format(ime.name),
+        print("Import in some modules {}".format(ime),
               "in snafu dir failed. Exiting...")
         exit(1)
     else:
@@ -121,6 +121,7 @@ if __name__ == "__main__":
         restart = int(restart)
         restart_freq = int(restart_freq)
         tera_mpi = int(tera_mpi)
+        write_freq = int(write_freq)
     except ValueError as VE:
         print(VE)
         error_exit(9, " ")
@@ -149,8 +150,7 @@ if __name__ == "__main__":
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
-                                                      Etot_prev, ener_thresh,
-                                                      restart)
+                                                      Etot_prev, ener_thresh)
         Etot_init = Etot
         init_step = 1
     else:
@@ -195,7 +195,8 @@ if __name__ == "__main__":
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
          open('velocities.dat', 'a') as vel_file, \
-         open('state.dat', 'a') as state_file:
+         open('state.dat', 'a') as state_file, \
+         open('restart.in', 'w') as rsf_file:
 
         #-------------------MAIN LOOP-----------------------------------------
         
@@ -290,8 +291,7 @@ if __name__ == "__main__":
             Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                           state, pot_eners,
                                                           vx, vy, vz, Etot_init,
-                                                          Etot_prev, ener_thresh,
-                                                          restart)
+                                                          Etot_prev, ener_thresh)
     
             # print("Ekin {}, Epot {}, Etot{}".format(Ekin, Epot, Etot))
             print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, sim_time, dE * AU_EV),
@@ -309,11 +309,11 @@ if __name__ == "__main__":
             
             print_restart(step, sim_time, natoms, at_names, state, timestep,
                           x, y, z, vx, vy, vz, fx, fy, fz,
-                          Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq)
+                          Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq, rsf_file)
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")
-    output_files_close(mov_file, eners_file, pes_file, vel_file, state_file)
+
     print("See output files:",
           "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
     print(liner)
