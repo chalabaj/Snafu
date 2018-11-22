@@ -193,7 +193,6 @@ if __name__ == "__main__":
                                          byte_coords) 
     print(liner)
 
-    with open(rst_file, "w") as rsf: 
     #-------------------MAIN LOOP-----------------------------------------
     
     for step in range(init_step, maxsteps + 1):
@@ -310,6 +309,7 @@ if __name__ == "__main__":
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")
+    output_files_close(mov_file, eners_file, pes_file, vel_file, state_file)
     print("See output files:",
           "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
     print(liner)

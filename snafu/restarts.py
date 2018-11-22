@@ -12,8 +12,6 @@ except ImportError as ime:
     exit(1)
 
 def check_restart_files(restart, cwd):
-    rst_file = "restart.in"
-    rst_file_path = os.path.join(cwd, rst_file)
     if restart < 0:
             error_exit(11, "(restart < 0)")
     #  elif restart == 0 dealt in check_output_files
@@ -95,6 +93,7 @@ def read_restart(rst_file_path, natoms):
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
+    print("Load restart data:")
     print(x)
     print(y)
     print(z)
@@ -129,37 +128,37 @@ def print_restart(
     rst_file = "restart.in"
     rsf.truncate(0)  #  empty file
     
-        rsf.write('\n'.join(inits_line))
+    rsf.write('\n'.join(inits_line))
 
-        np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
+    np.savetxt(rsf, pot_eners_array, fmt="%20.10f", delimiter=' ', newline='\n')
 
-        rsf.write("Positions AT X Y Z (Bohrs):\n")
-        xx = x.tolist()
-        yy = y.tolist()
-        zz = z.tolist()
-        for iat in range(0, natoms):     
-            p_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
-                                                                 xx[iat],
-                                                                 yy[iat],
-                                                                 zz[iat])
-            rsf.write(p_line)
+    rsf.write("Positions AT X Y Z (Bohrs):\n")
+    xx = x.tolist()
+    yy = y.tolist()
+    zz = z.tolist()
+    for iat in range(0, natoms):     
+        p_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
+                                                             xx[iat],
+                                                             yy[iat],
+                                                             zz[iat])
+    rsf.write(p_line)
             
-        rsf.write("Velocities: AT VX VY VZ (a.u.):\n")
-        vvx = vx.tolist()
-        vvy = vy.tolist()
-        vvz = vz.tolist()
-        for iat in range(0, natoms):     
-            v_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
-                                                                 vvx[iat],
-                                                                 vvy[iat],
-                                                                 vvz[iat])
-            rsf.write(v_line)
+    rsf.write("Velocities: AT VX VY VZ (a.u.):\n")
+    vvx = vx.tolist()
+    vvy = vy.tolist()
+    vvz = vz.tolist()
+    for iat in range(0, natoms):     
+        v_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
+                                                             vvx[iat],
+                                                             vvy[iat],
+                                                             vvz[iat])
+        rsf.write(v_line)
 
-        rsf.write("Forces: AT FX FY FZ (a.u.):\n")
-        ffx = fx.tolist()
-        ffy = fy.tolist()
-        ffz = fz.tolist()
-        for iat in range(0, natoms):
+    rsf.write("Forces: AT FX FY FZ (a.u.):\n")
+    ffx = fx.tolist()
+    ffy = fy.tolist()
+    ffz = fz.tolist()
+    for iat in range(0, natoms):
             f_line = "{} {:20.10f} {:20.10f} {:20.10f}\n".format(at_names[iat],
                                                                ffx[iat],
                                                                ffy[iat],

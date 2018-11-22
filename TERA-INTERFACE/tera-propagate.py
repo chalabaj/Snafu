@@ -254,7 +254,7 @@ if __name__ == "__main__":
     # These will be in INIT ROUTINE
     en_array = np.zeros(nstates, dtype=np.float64) 
 
-    
+    # np.stack((a, b), axis=-1)
     byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)*ANG_BOHR
     print(byte_coords)
 

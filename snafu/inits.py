@@ -88,7 +88,7 @@ def check_output_file(cwd, natoms, restart, init_step):
          error_exit(8, "PES.dat")     
         if (os.path.isfile("state.dat")):
          error_exit(8, "state.dat")
-        if (os.path.isfile("restart.in")
+        if (os.path.isfile("restart.in")):
          print("File restart.in exists, but restart option is turned off.")
          error_exit(8, "restart.in")
     try:
@@ -99,9 +99,15 @@ def check_output_file(cwd, natoms, restart, init_step):
              open('state.dat', 'a') as state_file:
     except IOError as ioe:
          print("{Failed to open output file})".format(ioe.strerror))
-
+         # TODO MPI exit
     return(mov_file, eners_file, pes_file, vel_file, state_file)   
-
+def output_files_close(mov_file, eners_file, pes_file, vel_file, state_file):
+    mov_file.closed
+    eners_file.closed
+    pes_file.closed
+    vel_file.closed
+    state_file.closed
+    return
 def read_geoms(natoms, geom_file_path):
     #if restart == 1 : read  last two geoms
     x = np.zeros(natoms, dtype=np.float64)  
