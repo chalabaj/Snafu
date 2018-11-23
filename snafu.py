@@ -42,7 +42,7 @@ try:
     from errors import error_exit
     from prints import (
         print_positions, print_velocities, print_snafu,
-        print_state
+        print_state, print_energies, print_pes
     )
     from propagates import (
         calc_forces, calc_energies,
@@ -297,15 +297,13 @@ if __name__ == "__main__":
             print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, sim_time, dE * AU_EV),
                   " {:<13.4f}".format(dE_step * AU_EV),
                   "{}     {}".format(str(hop)[0], state))
-            #print("-----------------------------------------------------")
-    
             # SAVE POSITION, VELOCITIES, ENERGIES AND RESTART
             if (step%write_freq == 0):
-                print_energies(step, time, Ekin, Epot, Etot, dE, dE_step, eners_file)
-                print_pes(time, step, pot_eners, pes_file)
+                print_energies(step,write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file)
+                print_pes(step, write_freq, sim_time, pot_eners, pes_file)
                 print_positions(step, sim_time, natoms, at_names, x, y, z, mov_file)
                 print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, vel_file)
-                print_state(step, sim_time, state, state_file)
+                print_state(step, write_freq, sim_time, state, state_file)
             
             print_restart(step, sim_time, natoms, at_names, state, timestep,
                           x, y, z, vx, vy, vz, fx, fy, fz,

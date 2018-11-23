@@ -18,10 +18,9 @@ def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
     for iat in range(0, natoms):
-        line = ("{} {:12.8f}".format(at_names[iat], xx[iat]),
-                "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]))
-    mov.write(line)
-    mov.closed
+        line = "{} {:12.8f} {:12.8f} {:12.8f}\n".format(at_names[iat], xx[iat],
+                                                        yy[iat], zz[iat])
+        mov.write(line)
     return()
 
 def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
@@ -36,17 +35,17 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
     
     return()
 
-def print_energies(step, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file):
+def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file):
     ef = eners_file
-    if step == 1:
+    if step == 1 or step == write_freq:
         headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
         ef.write(str(headline))
     line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
     ef.write(str(line))
     return()  
 
-def print_pes(sim_time, step, pot_eners, pes_file):
-    if step == 1:
+def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
+    if step == 1 or  step == write_freq:
         headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
         pes_file.write(str(headline))
     line = ("{:10.10f}".format(sim_time)
@@ -56,10 +55,10 @@ def print_pes(sim_time, step, pot_eners, pes_file):
     pes_file.write(str(line))
     return()
 
-def print_state(step, sim_time, state, state_file):
-    if step == 1:
+def print_state(step, write_freq, sim_time, state, state_file):
+    if step == 1 or  step == write_freq:
         headline = "# Time,  Electronic state(0 = gs)\n"
-        state_files.write(str(headline)) 
+        state_file.write(str(headline)) 
     line = ("{:7.4f} {:4d}\n".format(sim_time, state)) 
     state_file.write(str(line))   
     return()

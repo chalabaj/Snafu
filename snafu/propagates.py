@@ -12,7 +12,6 @@ import numpy as np
 
 try:
     from errors import error_exit
-    from prints import print_energies, print_pes
     from constants import *
 except ImportError as ime:
     print("Module {} in propagates not found.".format(ime))
