@@ -123,8 +123,7 @@ if __name__ == "__main__":
         tera_mpi = int(tera_mpi)
         write_freq = int(write_freq)
     except ValueError as VE:
-        print(VE)
-        error_exit(9, " ")
+        error_exit(9, str(VE))
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)

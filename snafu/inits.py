@@ -59,16 +59,20 @@ def read_input(cwd, input_file_path):
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
         
-    # Now that we know everything - check for ab initio interface
-    if not par['tera_mpi']:
-        abinit_file = "ABINITIO/{}".format(par['abinitio'])
-        ab_initio_file_path  = os.path.join(cwd, abinit_file)
-    else:
-        abinit_file = "ABINITIO/{}".format(par['abinitio'])
-        ab_initio_file_path  = os.path.join(cwd, abinit_file)
+    # Now that we know everything - check for ab initio interfac
+    abinit_file = "ABINITIO/{}".format(par['abinitio'])
+    ab_initio_file_path  = os.path.join(cwd, abinit_file)
     if (not os.path.isfile(ab_initio_file_path)):
          error_exit(5, " ")
-         
+    try:
+        par['natoms']
+        par['nstates']
+        par['maxsteps']
+        par['init_state']
+        par['abinitio']
+    except KeyError as ke:
+        error_exit(12, str(ke))
+
     return(par, ab_initio_file_path)
 
 def check_output_file(cwd, natoms, restart, init_step):

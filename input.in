@@ -1,6 +1,6 @@
 [Settings]
 natoms  = 3                 # number of atoms in system
-nstates = 3                 # number of electronic states
+nstates = 3                # number of electronic states
 init_state = 2              # initial electronic state
 timestep = 6                # in atomic unit au = 0.024 fs 
 maxsteps = 20               # total number of steps

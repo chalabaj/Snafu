@@ -102,7 +102,7 @@ nstates = 3                # number of electronic states
 init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state  
 timestep = 6               # in atomic unit au = 0.024 fs   
 maxsteps = 600             # total number of steps  
-method  = lz-adiabatic     # lz-adibatic (Belyaev) or BOMD on selected state(no hops allowed)
+method  = lz               # lz (Landau Zener, Belyaev) or BOMD on selected state(no hops allowed)
 abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file (e.g. tera.inp)
 vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift (in eV)     
@@ -110,9 +110,9 @@ hop_thresh = 0.5           # energy threshold for hopping between the states wit
 restart = 0                # N - restart from N-th step, restart_N.in must exist
                            # 1 - restart from the last completed step (i.e. restart.in)
                            # 0 - unset but writes restart information
-restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
-write_freq = 100           # how often print output, default 1 (each step)
-tera_mpi = 0               # use Terachem abinitio interface via MPI   
+restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)
+write_freq = 100           # how often print output, (default 10)
+tera_mpi = 0               # use Terachem abinitio interface via MPI (default OFF) 
 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  

@@ -4,10 +4,11 @@ ener_thresh = 1.000
 hop_thresh = 0.5
 dt = 4.00
 tera_mpi = 0
-write_freq = 1
+write_freq = 10
 restart_freq = 100
 vel_adj = 0
-
+timestep = 4
+method = "lz"
 hop = False
 step = 0
 dE = 0.0  # energy change since initial energies

@@ -40,7 +40,7 @@ def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, en
     if step == 1 or step == write_freq:
         headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
         ef.write(str(headline))
-    line = "{:>10.2f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
+    line = "{:>10.4f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
     ef.write(str(line))
     return()  
 
@@ -48,7 +48,7 @@ def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
     if step == 1 or  step == write_freq:
         headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
         pes_file.write(str(headline))
-    line = ("{:10.10f}".format(sim_time)
+    line = ("{:10.4f}".format(sim_time)
                 + ' '.join('{:20.10f}'.format(pot_eners[st]) 
                 for st in range(0, len(pot_eners)))
                 + "\n")
@@ -59,7 +59,7 @@ def print_state(step, write_freq, sim_time, state, state_file):
     if step == 1 or  step == write_freq:
         headline = "# Time,  Electronic state(0 = gs)\n"
         state_file.write(str(headline)) 
-    line = ("{:7.4f} {:4d}\n".format(sim_time, state)) 
+    line = ("{:10.4f} {:4d}\n".format(sim_time, state)) 
     state_file.write(str(line))   
     return()
 
