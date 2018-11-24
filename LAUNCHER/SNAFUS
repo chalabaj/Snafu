@@ -49,7 +49,7 @@ trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to basedir
 
 
 
-python $SNAFU_DIR/snafu.py > $OUTFILE 2>&1   # errors also to output
+python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output
 
 cp -r $SCRDIR/* $basedir
 

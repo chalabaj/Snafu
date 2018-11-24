@@ -40,7 +40,7 @@ def read_restart(rst_file_path, natoms):
     rst_file = rst_file_path
     with open(rst_file_path, 'r') as rstf:
         for num, line in enumerate(rstf):
-            print(num, line)        
+            #print(num, line)        
             if re.search(r'Step', line):
                 step = int(line.split()[1])
             if re.search(r'State', line):
@@ -95,17 +95,11 @@ def read_restart(rst_file_path, natoms):
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
     print("Load restart data:")
-    print(x)
-    print(y)
-    print(z)
-    print(vx)
-    print(vy)
-    print(vz)
-    print(fx)
-    print(fy)
-    print(fz)
     print(at_names)
-    print(pot_eners_array)
+    print("XYZ:\n{}".format(np.dstack((x,y,z))))
+    print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
+    print("FX FY FZ:\n{}".format(np.dstack((fx,fy,fz))))
+    print("Pot ener step-1/step \n{}".format(pot_eners_array))
     return(step, at_names, state, 
            x, y, z, vx, vy, vz, 
            fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array)
@@ -177,12 +171,12 @@ def print_restart(
 def truncate_output_files(init_step, natoms):
 # movie.xyz energies.dat input.in state.dat snafu.out velocities.xyz PES.dat 
 # init_step is read from restart file
-    print("Restart from {} step. Output file will be truncated".format(init_step))
+    print("Restart from {} step. \nOutput file will be truncated".format(init_step))
     natoms_lines = (natoms+2)*init_step   #  header
     step_lines = init_step                
     input_files = []
     input_files.append(["movie.xyz", natoms_lines])
-    input_files.append(["velocities.xyz", natoms_lines])
+    input_files.append(["velocities.dat", natoms_lines])
     input_files.append(["PES.dat", step_lines])
     input_files.append(["energies.dat", step_lines])
     input_files.append(["state.dat", step_lines])
@@ -213,15 +207,19 @@ def backup_output_files(cwd):
         print("Creating backup folder {}".format("PREV_RUN"+str(N)))
     output_files= []
     output_files.append("movie.xyz")
-    output_files.append("velocities.xyz")
+    output_files.append("velocities.dat")
     output_files.append("PES.dat")
     output_files.append("energies.dat")
     output_files.append("state.dat")
     output_files.append("snafu.out")
     output_files.append("restart.in")
+    rest_files = os.listdir(os.getcwd())
     restart_files = [ rf for rf in rest_files if re.search(r'restart', rf)]
     backup_files = output_files + restart_files
     for bf in backup_files:
-        shutil.copy(bf,backup_folder)
+        try:
+            shutil.copy(bf,backup_folder)
+        except FileNotFoundError as FNT:
+            print("File {} was not found and will not be backeup".format(FNT.filename))
     print("Output data were backed-up.\n{}".format(os.listdir(backup_folder)))
     return()

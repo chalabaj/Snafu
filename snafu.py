@@ -18,18 +18,19 @@ startTime = datetime.now()
 cwd = os.getcwd()
 sys.path.append(cwd)
 
-modules_files = [
-    'inits.py',
-    'masses.py',
-    'errors.py',
-    'prints.py',
-    'propagates.py',
-    'landauzener.py',
-    'constants.py',
-    'restart.py'
+modules_files = ['masses.py',
+'constants.py',
+'landauzener.py',
+'restarts.py',
+'propagates.py',
+'prints.py',
+'errors.py',
+'defaults.py',
+'inits.py',
+'tera-propagate.py'
 ]
 
-# if some of the imports fail in modules ImportError rais None name
+# if some of the imports fail during in-modules import ImportError rais None name
 try:
     SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
@@ -93,6 +94,7 @@ if __name__ == "__main__":
           "\nSystem platform: {}".format(sys.platform),
           "\nRunning executable: {}".format(sys.path[-1])
           )
+    
     # local runs dont create HOST env var, qsub SGE system does
     try:
         print("Working directory: {}".format(cwd),
@@ -121,7 +123,22 @@ if __name__ == "__main__":
         restart = int(restart)
         restart_freq = int(restart_freq)
         tera_mpi = int(tera_mpi)
-        write_freq = int(write_freq)
+        write_freq = int(write_freq)            
+        print("Simulation will statr with the following parameters:\n",
+              "{} = {}\n".format("natoms", natoms),
+              "{} = {}\n".format("maxsteps",maxsteps),
+              "{} = {}\n".format("initial state", state),
+              "{} = {}\n".format("timeste", dt),
+              "{} = {}\n".format("nstates",nstates),
+              "{} = {}\n".format("ener_thresh", ener_thresh),
+              "{} = {}\n".format("hop_thresh", hop_thresh),
+              "{} = {}\n".format("vel_adj", vel_adj),
+              "{} = {}\n".format("restart", restart),
+              "{} = {}\n".format("restart_freq", restart_freq),
+              "{} = {}\n".format("tera_mpi", tera_mpi),
+              "{} = {}\n".format("write_freq",write_freq),
+              "{} = {}\n".format("abinitio file",ab_initio_file_path),
+              "{} = {}\n".format("method", method))
     except ValueError as VE:
         error_exit(9, str(VE))
 

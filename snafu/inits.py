@@ -1,5 +1,5 @@
 """
-Check input file: input.in, geom.in (input geometry), veloc.in pab initio program file,
+Check input file: input.in, geom.in (input geometry), veloc.in  and  ab initio program file,
 Read input.in
 
 each array (x,y,z) or (vx,vy,vz) or (fx,fy,fz)
@@ -54,8 +54,8 @@ def read_input(cwd, input_file_path):
     par=dict(cfg.items("Settings",raw=False))
     
     # To get rid of inline comments [0] and strip spaces
-    print("Simulation will start with parameters: ")
-    print("\n".join("{}: {}".format(k.strip(), v.split("#")[0].strip()) for k, v in par.items()))
+    #print("Reading following input parameters:")
+    #print("\n".join("{}: {}".format(k.strip(), v.split("#")[0].strip()) for k, v in par.items()))
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
         
@@ -77,9 +77,9 @@ def read_input(cwd, input_file_path):
 
 def check_output_file(cwd, natoms, restart, init_step):
     if (restart == 1):
-        backup_output_files()
+        backup_output_files(cwd)
     elif (restart > 1):
-        backup_output_files()
+        backup_output_files(cwd)
         truncate_output_files(init_step, natoms)
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):

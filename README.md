@@ -75,8 +75,9 @@ If the launcher is not used, just export the **SNAFU_DIR** variable:
   </code>
 and then run the code:
  <code>
- python snafu.py
- </code>
+ python snafu.py >> snafu.out
+ </code>  
+File snafu.out file is copied during restart for backup. If you used other output filename, it will not becopied during restart backup process.  
  
 Environment variables for particular ab-initio code are exported in the interfaces scripts and have to be adjusted to your machine environment (see interface scripts in INTERFACE folder).
 
@@ -93,7 +94,7 @@ If you restart from some step, existing restart files with the same name will be
 If you use launchSNAFU from LAUNCHER folder, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data).
 
 
-The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out) after XX step.
+The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out output file which start from empty file) after XX step.
 ## Input.in options:
 
 [Settings]  
