@@ -1,0 +1,898 @@
+Using MPI to get atom types and coordinates instead of reading user input file. 
+
+Terachem server available at port_name:   tag#0$description#a32$port#53848$ifname#192.168.3.32$  
+Will publish this port_name to 'teraport1875'. 
+Waiting to accept MPI communication from MPI client. 
+MPI communication accepted.  
+Reading non xyz job parameters from tera2.inp.  
+Receiving initial QM atoms via MPI. We need these to determine whether there are d-functions.  
+
+O O H H H H 
+
+
+       ***********************************************************
+       *                    TeraChem v1.93                       *
+       *                 Hg Version: 95e7944ca4e4+               *
+       *                   Development Version                   *
+       *                Compiled without textures                *
+       *           Chemistry at the Speed of Graphics!           *
+       ***********************************************************
+       * This program may only be used in connection with        *
+       * a valid license from PetaChem, LLC. Use of this program *
+       * or results thereof indicates acceptance of all terms    *
+       * and conditions stated in the license and that a valid   *
+       * license agreement between the user and PetaChem, LLC    *
+       * exists. PetaChem, LLC does not warrant the correctness  *
+       * of results or their suitability for any purpose.        *
+       * Please email bugs, suggestions, and comments to         *
+       *                  help@petachem.com                      *
+       *                                                         *
+       ***********************************************************
+
+
+       ***********************************************************
+       *  Compiled by hollas       Tue Oct 24 13:00:29 CEST 2017  *
+       *  Supported architectures: sm_20 sm_30 sm_35 sm_50       *
+       *  Cuda compilation tools, release 7.5, V7.5.17           *
+       ***********************************************************
+
+
+ Job started   Wed Nov 14 17:08:04 2018
+ On a32 (available memory: 15626 MB)
+
+######################################### RUNTIME INFO ##########################################
+/usr/local/programs/custom/terachem/terachem-1.9dev/build/terachem --inputfile=tera2.inp --UseMPI=2 --MPIPort=teraport1875 
+
+NVRM version: NVIDIA UNIX x86_64 Kernel Module  352.79  Wed Jan 13 16:17:53 PST 2016
+GCC version:  gcc version 4.4.5 (Debian 4.4.5-8) 
+
+	linux-vdso.so.1 =>  (0x00007fff90cf8000)
+	libcurl.so.4 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcurl.so.4 (0x00002b0359864000)
+	libOpenMM.so => /usr/local/programs/custom/anaconda/anaconda-4.3.0/arch/x86_64/anaconda3/pkgs/openmm-7.1.1-py36_0/lib/libOpenMM.so (0x00002b0359ac2000)
+	libintbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libintbox.so.1 (0x00002b0359fe4000)
+	libthcbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libthcbox.so.1 (0x00002b0378771000)
+	libgridbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libgridbox.so.1 (0x00002b037a33d000)
+	libdftbox.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libdftbox.so.1 (0x00002b037a81a000)
+	libcuda.so.1 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcuda.so.1 (0x00002b037aafc000)
+	libcudart.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcudart.so.7.5 (0x00002b037bab1000)
+	libcublas.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcublas.so.7.5 (0x00002b037bd0f000)
+	libcufft.so.7.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcufft.so.7.5 (0x00002b037d5ee000)
+	libcrypto.so.1.0.0 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcrypto.so.1.0.0 (0x00002b0384229000)
+	libssl.so.1.0.0 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libssl.so.1.0.0 (0x00002b0384603000)
+	libm.so.6 => /lib/libm.so.6 (0x00002b038486d000)
+	libcilkrts.so.5 => /usr/local/programs/custom/terachem/terachem-1.9dev/build/lib/libcilkrts.so.5 (0x00002b0384aef000)
+	libstdc++.so.6 => /usr/lib/libstdc++.so.6 (0x00002b0384d30000)
+	libgcc_s.so.1 => /lib/libgcc_s.so.1 (0x00002b0385044000)
+	libpthread.so.0 => /lib/libpthread.so.0 (0x00002b038525a000)
+	libc.so.6 => /lib/libc.so.6 (0x00002b0385476000)
+	/lib64/ld-linux-x86-64.so.2 (0x00002b0359644000)
+	libdl.so.2 => /lib/libdl.so.2 (0x00002b03857d8000)
+	libz.so.1 => /usr/lib/libz.so.1 (0x00002b03859dc000)
+	librt.so.1 => /lib/librt.so.1 (0x00002b0385bf3000)
+#################################################################################################
+
+Cannot find license.dat file in the TeraChem installation directory /usr/local/programs/custom/terachem/terachem-1.9dev/build
+
+
+TRYING THE NETWORK LICENSE...
+Connecting to license server '403-a324-01' port '8080'...
+Connected!
+Checking your license...
+
+**************************************************************
+  Greetings, Petr Slavicek! You have 14 licenses in total
+  IN USE: 3
+  AVAILABLE: 11
+**************************************************************
+
+Scratch directory: ./scratch001
+Random number seed: 1315109815
+Molden File Output: ./scratch001/mpi_job.molden
+Using basis set: 6-31gss
+Spin multiplicity: 1
+DIIS will use up to 10 vectors.
+WF convergence threshold: 1.00e-07
+Using DIIS (in Converger class) to converge WF with ADIIS+DIIS as backup
+ADIIS will switch to DIIS when the DIIS error drops below 1.00e-03
+Maximum number of SCF iterations: 100
+Incremental fock with rebuild every 8 iterations
+Will switch to conventional Fock if diffuse functions are detected
+X-matrix tolerance: 1.00e-04
+PRECISION: MIXED
+Single/Double precision threshold: 1.00e-03
+Using fractional orbital occupations
+Fractional occupations determined by gaussian broadening
+6 occupied orbitals will have integer occupation
+5 occupied orbitals will have fractional occupation
+kT is set to  0.350 a.u.
+DFT Functional requested: hf
+Method: Hartree-Fock 
+Wavefunction: RESTRICTED
+Initial guess generated by maximum overlap
+
+********************************************
+**** SINGLE POINT GRADIENT CALCULATIONS ****
+********************************************
+SCF:   Initial guess is taken from previous step
+
+using 1 out of 1 CUDA devices
+   Device 0:      GeForce GTX 970,  4095MB, CC 5.2 -- CPU THREAD 0
+-------------------------------------------------------------------
+Compiled with MAGMA support.  MAGMA parameters:
+    Matrices larger than 5000 square will be treated with MAGMA
+       (Change by setting the MagmaMinN environment variable)
+    Magma will use 1 out of 1 GPUs
+       (Change by setting the MagmaNGPUs environment variable)
+-------------------------------------------------------------------
+ CPU Memory Available: 1999.00 MegaWords 
+ GPU Memory Available: 255.91 MegaWords 
+ Maximum recommended basis set size: 6100 basis functions
+ (limited by GPU memory)
+-------------------------------------------------------------------
+Using d-functions. Configuring GPUs accordingly.
+0: CUBLAS initialized, available GPU memory: 2129MB
+Receiving first set of data from FMS
+Got a 2 tag from client --> FMS mode.  
+Receiving atom types from FMS
+Receiving coordinates from FMS
+O         0.00000000        0.00000000        0.00000000
+O         0.00000000        0.00000000        2.93658223
+H         0.86814907        0.00000000       -0.41671103
+H        -0.47746304       -0.73863806       -0.39225003
+H        -0.01832700        0.04723200        1.97084515
+H        -0.40835003        0.81532606        3.24159925
+
+
+
+Basis set:       6-31gss
+Total atoms:     6
+Total charge:    0
+Total electrons: 20 (10-alpha, 10-beta)
+Number electrons modeled by ECPs: 0
+Total orbitals:  50
+Total AO shells: 24 (14 S-shells; 8 P-shells; 2 D-shells; 0 F-shells; 0 G-shells)
+Spin multiplicity: 1
+Allocating space for FMS data
+Nuclear repulsion energy (QM atoms): 36.335245181191 a.u.
+
+Made it to ES calculation!
+Entering CASCI/FMS function
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change         Energy        Time(s)
+------------------------------------------------------------------------
+Skip purify step
+   1     0.6232570215    -151.1148893874    -151.1148893874     0.03  
+   2     0.1990289756      -0.5227645333    -151.6376539206     0.03  
+   3     0.1028838293      +0.0316256768    -151.6060282438     0.03  
+   4     0.0304534193      -0.0122970966    -151.6183253403     0.03  
+   5     0.0153129453      -0.0106907771    -151.6290161175     0.03  
+   6     0.0023359280      +0.0083451434    -151.6206709741     0.03  
+   7     0.0005853372      -0.0003888028    -151.6210597770     0.02  
+   8     0.0001468647      +0.0004015839    -151.6206581930     0.02  
+   9     0.0000289482      -0.0000621153    -151.6207203084     0.03  
+  10     0.0000081919      -0.0000138560    -151.6207341644     0.02  
+  11     0.0000013212      -0.0000018892    -151.6207360536     0.02  
+  12     0.0000005424      -0.0000001983    -151.6207362519     0.02  
+  13     0.0000001152      -0.0000000214    -151.6207362733     0.02  
+  14     0.0000000308      +0.0000000369    -151.6207362363     0.02  
+------------------------------------------------------------------------
+FINAL ENERGY: -151.6207362363 a.u.
+WARNING: Final energy is higher than the lowest energy by    0.0082799.
+Fractional Occupation Entropy: 1.8891484698
+Mermin Free Energy:            -152.2819382008
+CENTER OF MASS: {-0.001007, 0.003467, 1.427171} ANGS
+DIPOLE MOMENT: {-0.456124, 0.957158, 0.385960} (|D| = 1.128346) DEBYE
+
+  Active Space Parameters
+--------------------------------------------
+Number of closed orbitals:               6
+Number of active orbitals:               5
+Number of virtual orbitals:             39
+Number of molecular orbitals:           50
+Number of basis functions:              50
+Number of active electrons:              7
+Number of alpha electrons:               4
+Number of beta electrons:                3
+
+  Orbital      Energy        Occupation
+-----------------------------------------
+      5       -0.761980        1.000000
+      6       -0.748842        1.000000
+      7       -0.612389        0.946286
+      8       -0.581332        0.935885
+      9       -0.500048        0.901281
+     10       -0.492269        0.897361
+     11        0.115550        0.319188
+     12        0.211889        0.000000
+     13        0.288586        0.000000
+
+  CAS Parameters
+--------------------------------------------
+Number of determinants:                 50
+Number of singlet CSFs:                  0
+Number of doublet CSFs:                 50
+Number of triplet CSFs:                  0
+Number of quartet CSFs:                  0
+Number of quintet CSFs:                  0
+Number of sextet CSFs:                   0
+Number of septet CSFs:                   0
+Number of singlet states:                0
+Number of doublet states:                4
+Number of triplet states:                0
+Number of quartet states:                0
+Number of quintet states:                0
+Number of sextet states:                 0
+Number of septet states:                 0
+
+Doublet state  1 energy:       -151.63376215173844
+
+       -0.99830429086280  X7 X8 A9 X10
+        0.03069743808071  X7 X8 A9 B10 A11
+        0.02889889812388  X7 X8 A9 A10 B11
+        0.02030303920169  X7 B8 A9 X10 A11
+
+Doublet state  2 energy:       -151.56797165943993
+
+       -0.62443814923120  X7 X8 X9 A10
+       -0.62341726530341  X7 A8 X9 X10
+       -0.46663499701815  A7 X8 X9 X10
+        0.03901212277834  A7 X8 X9 A10 B11
+
+Doublet state  3 energy:       -151.54361917548044
+
+        0.77776014463429  X7 X8 X9 A10
+       -0.49318797552016  X7 A8 X9 X10
+       -0.38490882409558  A7 X8 X9 X10
+        0.03896317190999  B7 X8 X9 A10 A11
+        0.02755190914725  X7 X8 X9 A11
+       -0.02548576505429  A7 X8 X9 A10 B11
+
+Doublet state  4 energy:       -151.47240865136752
+
+       -0.79386968632415  A7 X8 X9 X10
+        0.60402320701725  X7 A8 X9 X10
+       -0.03476821392088  A7 A8 X9 X10 B11
+        0.03317810138260  B7 A8 X9 X10 A11
+       -0.02790799251326  X8 X9 X10 A11
+        0.02579141306918  X7 A8 X9 A10 B11
+        0.02514802835643  X7 A8 X9 B10 A11
+
+  Root   Mult.   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-------------------------------------------------------------------------------------------------
+     1  doublet       -151.63376215
+     2  doublet       -151.56797166          0.06579049          1.79025009        692.55251904
+     3  doublet       -151.54361918          0.09014298          2.45291478        505.45669847
+     4  doublet       -151.47240865          0.16135350          4.39065141        282.38229146
+
+Doublet state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1    -0.0491     0.2053     3.2317     3.2385
+     2     0.1344    -0.1579    -0.9084     0.9318
+     3     0.0771    -0.0461    -6.6122     6.6128
+     4    -0.0309     0.1645    -9.5985     9.5999
+
+Doublet state electronic transitions:
+
+ Transition      Tx        Ty        Tz       |T|    Osc. (a.u.) 
+-----------------------------------------------------------------
+   1 ->  2     0.1144    0.0571    0.0024    0.1279    0.0007
+   1 ->  3     0.0720    0.0358   -0.0036    0.0805    0.0004
+   1 ->  4     0.0234    0.0117    0.0044    0.0265    0.0001
+   2 ->  3    -0.0062    0.0094    2.4371    2.4371    0.0964
+   2 ->  4    -0.0314    0.0552    0.7239    0.7267    0.0336
+   3 ->  4     0.0411   -0.0718    0.6746    0.6796    0.0219
+
+
+Total CASCI Time
+----------------------------
+ Total Time:       0.26 sec
+----------------------------
+
+Passed ES calculation!
+Total processing time: 1.23 sec 
+
+
+Receiving new FMS data...  
+FMSInit   :  0
+NAtoms    :  6
+DoCoup    :  1
+TrajID    :  0
+Cent1     :  0
+Cent2     :  0
+StateID   :  0
+OldWfn    :  0
+iState    :  -1852268308
+jState    :  0
+FirstCall :  0
+FMSRestart:  0
+1 0 0 0 
+0 0 0 
+0 0 
+0 
+Running Trajectory 0 on State -1852268308
+Got a 2 tag from client --> FMS mode.  
+Simulation time:            0.000
+Receiving coordinates from FMS
+O         0.00000000        0.00000000        0.00000000
+O         0.00000000        0.00000000        2.90721640
+H         0.85946758        0.00000000       -0.41254392
+H        -0.47268841       -0.73125168       -0.38832753
+H        -0.01814373        0.04675968        1.95113670
+H        -0.40426653        0.80717280        3.20918326
+
+Receiving previous ES and current momenta
+Made it to the end of fms_receive!
+Made it to ES calculation!
+Entering CASCI/FMS function
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change         Energy        Time(s)
+------------------------------------------------------------------------
+Skip purify step
+   1     0.6225219854    -151.1071782808    -151.1071782808     0.03  
+   2     0.2041903944      -0.5340299295    -151.6412082102     0.03  
+   3     0.1017287278      +0.0319237976    -151.6092844126     0.03  
+   4     0.0286295105      -0.0125125560    -151.6217969686     0.03  
+   5     0.0145910775      -0.0099353453    -151.6317323139     0.03  
+   6     0.0023346952      +0.0082157773    -151.6235165366     0.03  
+   7     0.0005848977      -0.0004326984    -151.6239492350     0.02  
+   8     0.0001421094      +0.0003908867    -151.6235583484     0.02  
+   9     0.0000289585      -0.0000580098    -151.6236163582     0.03  
+  10     0.0000076774      -0.0000128256    -151.6236291838     0.02  
+  11     0.0000011878      -0.0000016695    -151.6236308533     0.02  
+  12     0.0000004879      -0.0000001960    -151.6236310493     0.02  
+  13     0.0000001065      -0.0000000246    -151.6236310739     0.02  
+  14     0.0000000299      +0.0000000330    -151.6236310409     0.02  
+------------------------------------------------------------------------
+FINAL ENERGY: -151.6236310409 a.u.
+WARNING: Final energy is higher than the lowest energy by    0.0081013.
+Fractional Occupation Entropy: 1.8771506984
+Mermin Free Energy:            -152.2806337854
+CENTER OF MASS: {-0.000997, 0.003432, 1.412900} ANGS
+DIPOLE MOMENT: {-0.453819, 0.952002, 0.375488} (|D| = 1.119487) DEBYE
+
+  Active Space Parameters
+--------------------------------------------
+Number of closed orbitals:               6
+Number of active orbitals:               5
+Number of virtual orbitals:             39
+Number of molecular orbitals:           50
+Number of basis functions:              50
+Number of active electrons:              7
+Number of alpha electrons:               4
+Number of beta electrons:                3
+
+  Orbital      Energy        Occupation
+-----------------------------------------
+      5       -0.767390        1.000000
+      6       -0.754842        1.000000
+      7       -0.615358        0.947207
+      8       -0.583363        0.936612
+      9       -0.500939        0.901725
+     10       -0.494336        0.898416
+     11        0.118645        0.316041
+     12        0.214927        0.000000
+     13        0.291186        0.000000
+
+  CAS Parameters
+--------------------------------------------
+Number of determinants:                 50
+Number of singlet CSFs:                  0
+Number of doublet CSFs:                 50
+Number of triplet CSFs:                  0
+Number of quartet CSFs:                  0
+Number of quintet CSFs:                  0
+Number of sextet CSFs:                   0
+Number of septet CSFs:                   0
+Number of singlet states:                0
+Number of doublet states:                4
+Number of triplet states:                0
+Number of quartet states:                0
+Number of quintet states:                0
+Number of sextet states:                 0
+Number of septet states:                 0
+
+Doublet state  1 energy:       -151.63407967539658
+
+        0.99836407340051  X7 X8 A9 X10
+       -0.02996436379308  X7 X8 A9 B10 A11
+       -0.02820603266672  X7 X8 A9 A10 B11
+       -0.02046855366585  X7 B8 A9 X10 A11
+
+Doublet state  2 energy:       -151.56776211308744
+
+       -0.63557284682516  X7 A8 X9 X10
+       -0.62225997749323  X7 X8 X9 A10
+       -0.45319814885226  A7 X8 X9 X10
+        0.03726996621947  A7 X8 X9 A10 B11
+
+Doublet state  3 energy:       -151.54307522401913
+
+       -0.77972477753318  X7 X8 X9 A10
+        0.49909512959983  X7 A8 X9 X10
+        0.37348575918483  A7 X8 X9 X10
+       -0.03682412314095  B7 X8 X9 A10 A11
+       -0.02692813214739  X7 X8 X9 A11
+        0.02410870701570  A7 X8 X9 A10 B11
+
+Doublet state  4 energy:       -151.47112112084986
+
+       -0.80715508102106  A7 X8 X9 X10
+        0.58645827203493  X7 A8 X9 X10
+       -0.03291364350147  A7 A8 X9 X10 B11
+        0.03087201938414  B7 A8 X9 X10 A11
+       -0.02708258250931  X8 X9 X10 A11
+        0.02512556095911  X7 A8 X9 A10 B11
+        0.02437115353041  X7 A8 X9 B10 A11
+
+  Root   Mult.   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-------------------------------------------------------------------------------------------------
+     1  doublet       -151.63407968
+     2  doublet       -151.56776211          0.06631756          1.80459239        687.04834110
+     3  doublet       -151.54307522          0.09100445          2.47635671        500.67189550
+     4  doublet       -151.47112112          0.16295855          4.43432715        279.60097766
+
+Doublet state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1    -0.0491     0.2046     3.1851     3.1921
+     2     0.1388    -0.1675    -0.8557     0.8829
+     3     0.0755    -0.0442    -6.6167     6.6173
+     4    -0.0411     0.1834    -9.4740     9.4759
+
+Doublet state electronic transitions:
+
+ Transition      Tx        Ty        Tz       |T|    Osc. (a.u.) 
+-----------------------------------------------------------------
+   1 ->  2     0.1170    0.0584    0.0025    0.1308    0.0008
+   1 ->  3    -0.0730   -0.0363    0.0039    0.0816    0.0004
+   1 ->  4     0.0244    0.0121    0.0046    0.0276    0.0001
+   2 ->  3     0.0042   -0.0053   -2.4018    2.4018    0.0949
+   2 ->  4    -0.0299    0.0522    0.7294    0.7318    0.0345
+   3 ->  4    -0.0431    0.0755   -0.6779    0.6835    0.0224
+
+Building Xtilde...
+
+Building Z-vector RHS...
+
+Solving CPSCF equations
+Using DIIS solver
+
+ Iter         Residual      
+------  --------------------
+    1      0.423405407601
+    2      0.201986177409
+    3      0.020387540074
+    4      0.006181891574
+    5      0.001504440459
+    6      0.000261888386
+    7      0.000081734279
+
+CPSCF converged
+
+Building X...
+
+
+Total CASCI Time
+----------------------------
+ Total Time:       2.05 sec
+----------------------------
+
+Passed ES calculation!
+Sending Energies via MPI
+Sending Transition Dipoles via MPI
+Sending Dipole Moment via MPI
+Sending Partial Charges via MPI
+Sending MOs via MPI.
+Sending CI vectors via MPI.
+Sending wavefunction overlap via MPI.
+Sending blob via MPI.
+Sending derivative matrix via MPI
+Total processing time: 3.00 sec 
+
+
+Receiving new FMS data...  
+FMSInit   :  0
+NAtoms    :  6
+DoCoup    :  1
+TrajID    :  0
+Cent1     :  0
+Cent2     :  0
+StateID   :  0
+OldWfn    :  0
+iState    :  -1852268308
+jState    :  0
+FirstCall :  0
+FMSRestart:  0
+1 0 0 0 
+0 0 0 
+0 0 
+0 
+Running Trajectory 0 on State -1852268308
+Got a 2 tag from client --> FMS mode.  
+Simulation time:            0.000
+Receiving coordinates from FMS
+O         0.00000000        0.00000000        0.00000000
+O         0.00000000        0.00000000        2.87814424
+H         0.85087290        0.00000000       -0.40841848
+H        -0.46796152       -0.72393916       -0.38444425
+H        -0.01796229        0.04629209        1.93162533
+H        -0.40022387        0.79910107        3.17709142
+
+Receiving previous ES and current momenta
+Made it to the end of fms_receive!
+Made it to ES calculation!
+Entering CASCI/FMS function
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change         Energy        Time(s)
+------------------------------------------------------------------------
+Skip purify step
+   1     0.6214118950    -151.0983993769    -151.0983993769     0.03  
+   2     0.2088790570      -0.5454939519    -151.6438933287     0.03  
+   3     0.1027120192      +0.0322739962    -151.6116193326     0.03  
+   4     0.0267942709      -0.0127567810    -151.6243761135     0.03  
+   5     0.0148253612      -0.0092607845    -151.6336368980     0.03  
+   6     0.0023747801      +0.0080890766    -151.6255478214     0.03  
+   7     0.0005927879      -0.0004707795    -151.6260186009     0.02  
+   8     0.0001345959      +0.0003798761    -151.6256387248     0.02  
+   9     0.0000296436      -0.0000543510    -151.6256930757     0.03  
+  10     0.0000070641      -0.0000118169    -151.6257048927     0.02  
+  11     0.0000010650      -0.0000015066    -151.6257063993     0.02  
+  12     0.0000004405      -0.0000001850    -151.6257065843     0.02  
+  13     0.0000001008      -0.0000000272    -151.6257066115     0.02  
+  14     0.0000000294      +0.0000000293    -151.6257065822     0.02  
+------------------------------------------------------------------------
+FINAL ENERGY: -151.6257065822 a.u.
+WARNING: Final energy is higher than the lowest energy by    0.0079303.
+Fractional Occupation Entropy: 1.8653644275
+Mermin Free Energy:            -152.2785841318
+CENTER OF MASS: {-0.000987, 0.003398, 1.398771} ANGS
+DIPOLE MOMENT: {-0.451404, 0.946607, 0.364631} (|D| = 1.110309) DEBYE
+
+  Active Space Parameters
+--------------------------------------------
+Number of closed orbitals:               6
+Number of active orbitals:               5
+Number of virtual orbitals:             39
+Number of molecular orbitals:           50
+Number of basis functions:              50
+Number of active electrons:              7
+Number of alpha electrons:               4
+Number of beta electrons:                3
+
+  Orbital      Energy        Occupation
+-----------------------------------------
+      5       -0.772823        1.000000
+      6       -0.760861        1.000000
+      7       -0.618324        0.948110
+      8       -0.585329        0.937304
+      9       -0.501825        0.902158
+     10       -0.496403        0.899455
+     11        0.121660        0.312973
+     12        0.217889        0.000000
+     13        0.293701        0.000000
+
+  CAS Parameters
+--------------------------------------------
+Number of determinants:                 50
+Number of singlet CSFs:                  0
+Number of doublet CSFs:                 50
+Number of triplet CSFs:                  0
+Number of quartet CSFs:                  0
+Number of quintet CSFs:                  0
+Number of sextet CSFs:                   0
+Number of septet CSFs:                   0
+Number of singlet states:                0
+Number of doublet states:                4
+Number of triplet states:                0
+Number of quartet states:                0
+Number of quintet states:                0
+Number of sextet states:                 0
+Number of septet states:                 0
+
+Doublet state  1 energy:       -151.63358084826785
+
+       -0.99839385420325  X7 X8 A9 X10
+        0.02924449279820  X7 X8 A9 B10 A11
+        0.02752680726516  X7 X8 A9 A10 B11
+        0.02053697496097  X7 B8 A9 X10 A11
+
+Doublet state  2 energy:       -151.56675864960283
+
+        0.64696567336352  X7 A8 X9 X10
+        0.62012360650899  X7 X8 X9 A10
+        0.44002595725680  A7 X8 X9 X10
+       -0.03559652393488  A7 X8 X9 A10 B11
+
+Doublet state  3 energy:       -151.54174284774086
+
+       -0.78159111216509  X7 X8 X9 A10
+        0.50444782933451  X7 A8 X9 X10
+        0.36251029230372  A7 X8 X9 X10
+       -0.03475500117525  B7 X8 X9 A10 A11
+       -0.02628151563868  X7 X8 X9 A11
+        0.02276429291930  A7 X8 X9 A10 B11
+
+Doublet state  4 energy:       -151.46905769026125
+
+        0.81949981648975  A7 X8 X9 X10
+       -0.56936907632205  X7 A8 X9 X10
+        0.03112749064341  A7 A8 X9 X10 B11
+       -0.02868806780544  B7 A8 X9 X10 A11
+        0.02620867484229  X8 X9 X10 A11
+       -0.02446256905026  X7 A8 X9 A10 B11
+       -0.02359903117033  X7 A8 X9 B10 A11
+
+  Root   Mult.   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-------------------------------------------------------------------------------------------------
+     1  doublet       -151.63358085
+     2  doublet       -151.56675865          0.06682220          1.81832424        681.85980229
+     3  doublet       -151.54174285          0.09183800          2.49903873        496.12764769
+     4  doublet       -151.46905769          0.16452316          4.47690217        276.94199237
+
+Doublet state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1    -0.0492     0.2041     3.1396     3.1466
+     2     0.1432    -0.1769    -0.8050     0.8365
+     3     0.0739    -0.0423    -6.6188     6.6193
+     4    -0.0511     0.2019    -9.3498     9.3521
+
+Doublet state electronic transitions:
+
+ Transition      Tx        Ty        Tz       |T|    Osc. (a.u.) 
+-----------------------------------------------------------------
+   1 ->  2     0.1196    0.0596    0.0026    0.1337    0.0008
+   1 ->  3     0.0740    0.0368   -0.0042    0.0827    0.0004
+   1 ->  4     0.0254    0.0126    0.0048    0.0287    0.0001
+   2 ->  3    -0.0022    0.0013    2.3669    2.3669    0.0934
+   2 ->  4    -0.0283    0.0491    0.7347    0.7369    0.0354
+   3 ->  4     0.0451   -0.0792    0.6813    0.6874    0.0229
+
+Building Xtilde...
+
+Building Z-vector RHS...
+
+Solving CPSCF equations
+Using DIIS solver
+
+ Iter         Residual      
+------  --------------------
+    1      0.419918797655
+    2      0.199781300095
+    3      0.020061372560
+    4      0.006243990838
+    5      0.001449733396
+    6      0.000244680283
+    7      0.000076444801
+
+CPSCF converged
+
+Building X...
+
+
+Total CASCI Time
+----------------------------
+ Total Time:       2.07 sec
+----------------------------
+
+Passed ES calculation!
+Sending Energies via MPI
+Sending Transition Dipoles via MPI
+Sending Dipole Moment via MPI
+Sending Partial Charges via MPI
+Sending MOs via MPI.
+Sending CI vectors via MPI.
+Sending wavefunction overlap via MPI.
+Sending blob via MPI.
+Sending derivative matrix via MPI
+Total processing time: 3.00 sec 
+
+
+Receiving new FMS data...  
+FMSInit   :  0
+NAtoms    :  6
+DoCoup    :  1
+TrajID    :  0
+Cent1     :  0
+Cent2     :  0
+StateID   :  0
+OldWfn    :  0
+iState    :  -1852268308
+jState    :  0
+FirstCall :  0
+FMSRestart:  0
+1 0 0 0 
+0 0 0 
+0 0 
+0 
+Running Trajectory 0 on State -1852268308
+Got a 2 tag from client --> FMS mode.  
+Simulation time:            0.000
+Receiving coordinates from FMS
+O         0.00000000        0.00000000        0.00000000
+O         0.00000000        0.00000000        2.84936280
+H         0.84236417        0.00000000       -0.40433430
+H        -0.46328191       -0.71669977       -0.38059981
+H        -0.01778267        0.04582917        1.91230908
+H        -0.39622163        0.79111006        3.14532051
+
+Receiving previous ES and current momenta
+Made it to the end of fms_receive!
+Made it to ES calculation!
+Entering CASCI/FMS function
+
+                      *** Start SCF Iterations ***
+
+ Iter     DIIS Error       Energy change         Energy        Time(s)
+------------------------------------------------------------------------
+Skip purify step
+   1     0.6198361842    -151.0885222743    -151.0885222743     0.03  
+   2     0.2131116483      -0.5571620884    -151.6456843627     0.03  
+   3     0.1244210533      +0.0326653543    -151.6130190083     0.03  
+   4     0.0280067157      -0.0130215222    -151.6260405305     0.03  
+   5     0.0151484908      -0.0086541797    -151.6346947102     0.03  
+   6     0.0026140875      +0.0079649772    -151.6267297330     0.03  
+   7     0.0006499791      -0.0005041388    -151.6272338719     0.02  
+   8     0.0001221822      +0.0003687997    -151.6268650722     0.02  
+   9     0.0000346047      -0.0000510344    -151.6269161066     0.03  
+  10     0.0000063766      -0.0000108701    -151.6269269767     0.02  
+  11     0.0000009570      -0.0000013577    -151.6269283344     0.02  
+  12     0.0000003977      -0.0000001748    -151.6269285092     0.02  
+  13     0.0000001054      -0.0000000295    -151.6269285387     0.02  
+  14     0.0000000320      +0.0000000262    -151.6269285125     0.02  
+------------------------------------------------------------------------
+FINAL ENERGY: -151.6269285125 a.u.
+WARNING: Final energy is higher than the lowest energy by    0.0077662.
+Fractional Occupation Entropy: 1.8537967088
+Mermin Free Energy:            -152.2757573606
+CENTER OF MASS: {-0.000977, 0.003364, 1.384783} ANGS
+DIPOLE MOMENT: {-0.448882, 0.940982, 0.353414} (|D| = 1.100838) DEBYE
+
+  Active Space Parameters
+--------------------------------------------
+Number of closed orbitals:               6
+Number of active orbitals:               5
+Number of virtual orbitals:             39
+Number of molecular orbitals:           50
+Number of basis functions:              50
+Number of active electrons:              7
+Number of alpha electrons:               4
+Number of beta electrons:                3
+
+  Orbital      Energy        Occupation
+-----------------------------------------
+      5       -0.778281        1.000000
+      6       -0.766897        1.000000
+      7       -0.621286        0.948996
+      8       -0.587230        0.937962
+      9       -0.502708        0.902581
+     10       -0.498467        0.900478
+     11        0.124596        0.309983
+     12        0.220775        0.000000
+     13        0.296132        0.000000
+
+  CAS Parameters
+--------------------------------------------
+Number of determinants:                 50
+Number of singlet CSFs:                  0
+Number of doublet CSFs:                 50
+Number of triplet CSFs:                  0
+Number of quartet CSFs:                  0
+Number of quintet CSFs:                  0
+Number of sextet CSFs:                   0
+Number of septet CSFs:                   0
+Number of singlet states:                0
+Number of doublet states:                4
+Number of triplet states:                0
+Number of quartet states:                0
+Number of quintet states:                0
+Number of sextet states:                 0
+Number of septet states:                 0
+
+Doublet state  1 energy:       -151.63223447043757
+
+        0.99836012879561  X7 X8 A9 X10
+       -0.02853628411923  X7 X8 A9 B10 A11
+       -0.02686179341546  X7 X8 A9 A10 B11
+        0.02168797853511  X7 X8 X9 A10
+       -0.02051753453998  X7 B8 A9 X10 A11
+
+Doublet state  2 energy:       -151.56493040065445
+
+        0.65761761737133  X7 A8 X9 X10
+        0.61800728763674  X7 X8 X9 A10
+        0.42717375972783  A7 X8 X9 X10
+       -0.03399036051813  A7 X8 X9 A10 B11
+
+Doublet state  3 energy:       -151.53959134369413
+
+        0.78333539550526  X7 X8 X9 A10
+       -0.50927125594990  X7 A8 X9 X10
+       -0.35200984256566  A7 X8 X9 X10
+        0.03275602755019  B7 X8 X9 A10 A11
+        0.02561272638272  X7 X8 X9 A11
+       -0.02145338937396  A7 X8 X9 A10 B11
+
+Doublet state  4 energy:       -151.46618782780558
+
+        0.83093599599806  A7 X8 X9 X10
+       -0.55281589699094  X7 A8 X9 X10
+        0.02940825566294  A7 A8 X9 X10 B11
+       -0.02662414693763  B7 A8 X9 X10 A11
+        0.02529558284711  X8 X9 X10 A11
+       -0.02380429304525  X7 A8 X9 A10 B11
+       -0.02283401094340  X7 A8 X9 B10 A11
+
+  Root   Mult.   Total Energy (a.u.)   Ex. Energy (a.u.)     Ex. Energy (eV)     Ex. Energy (nm)
+-------------------------------------------------------------------------------------------------
+     1  doublet       -151.63223447
+     2  doublet       -151.56493040          0.06730407          1.83143662        676.97794973
+     3  doublet       -151.53959134          0.09264313          2.52094733        491.81599080
+     4  doublet       -151.46618783          0.16604664          4.51835829        274.40103845
+
+Doublet state dipole moments:
+
+  Root       Dx         Dy         Dz         |D|  (Debye)
+------------------------------------------------------------
+     1    -0.0494     0.2038     3.0949     3.1020
+     2     0.1475    -0.1863    -0.7564     0.7928
+     3     0.0722    -0.0402    -6.6185     6.6190
+     4    -0.0608     0.2198    -9.2258     9.2286
+
+Doublet state electronic transitions:
+
+ Transition      Tx        Ty        Tz       |T|    Osc. (a.u.) 
+-----------------------------------------------------------------
+   1 ->  2    -0.1221   -0.0609   -0.0028    0.1365    0.0008
+   1 ->  3     0.0749    0.0372   -0.0045    0.0838    0.0004
+   1 ->  4    -0.0264   -0.0131   -0.0049    0.0299    0.0001
+   2 ->  3     0.0003    0.0025   -2.3323    2.3323    0.0919
+   2 ->  4    -0.0267    0.0459    0.7399    0.7418    0.0362
+   3 ->  4    -0.0471    0.0828   -0.6847    0.6913    0.0234
+
+Building Xtilde...
+
+Building Z-vector RHS...
+
+Solving CPSCF equations
+Using DIIS solver
+
+ Iter         Residual      
+------  --------------------
+    1      0.416476393183
+    2      0.197572093676
+    3      0.019750122191
+    4      0.006286674660
+    5      0.001399655043
+    6      0.000229642436
+    7      0.000071553640
+
+CPSCF converged
+
+Building X...
+
+
+Total CASCI Time
+----------------------------
+ Total Time:       2.09 sec
+----------------------------
+
+Passed ES calculation!
+Sending Energies via MPI
+Sending Transition Dipoles via MPI
+Sending Dipole Moment via MPI
+Sending Partial Charges via MPI
+Sending MOs via MPI.
+Sending CI vectors via MPI.
+Sending wavefunction overlap via MPI.
+Sending blob via MPI.
