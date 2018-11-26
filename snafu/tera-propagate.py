@@ -171,7 +171,7 @@ def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
     qmcharges = np.zeros((natoms),dtype=np.float64)
     TDip =  np.zeros(((nstates-1)*3), dtype=np.float64)
     Dip = np.zeros((nstates*3), dtype=np.float64)
-    print("Terachem arrays allocated.")    
+    print("TC arrays allocated.")    
     return(MO, MO_old, CiVecs, CiVecs_old, 
            NAC, blob, blob_old, SMatrix, qmcharges, TDip, Dip)
 
@@ -182,11 +182,10 @@ def move_old2new_terash(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old):
     return(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old)
 
 def tera_init(comm, at_names, natoms, nstates, byte_coords):
-    """ Initial data transfer to Terachem through MPI
+    """ Initial data transfer to Terachem through MPI  init_terash
     Terachem is very sensitive to the type, lenght and order of transferred data        
-    We take advantage of NUMPY which can set C-like ordering and data types
-    .tobytes for numpy arraay is not needed with some exceptions 
-     ABIN  init_terash
+    We take advantage of NUMPY which can set C-like ordering and data types that are exploited by MPI.Send  
+    .tobytes for numpy array not necessary with the exception of int8 data type
     """   
     print("Sending initial data to Terachem.")     
     
@@ -203,6 +202,7 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     #  call MPI_Send(names, 2*natqm, MPI_CHARACTER, 0, 2, newcomms(itera), ierr )
     #  Send atoms names:  call MPI_Send( names, 2*natqm, MPI_CHARACTER, 0, 2, newcomm, ierr )
     #  Send coordinates: Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
+    #  status = MPI.Status()  print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))   
     try:
         print("Sending number of QM atoms.")
         comm.Send( [byte_natoms, 1, MPI.SHORT], dest=0, tag=2 )
@@ -214,39 +214,39 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
         comm.Send([byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
         print("Sent initial coordinates to TeraChem.")
         comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
-        #status = MPI.Status()  print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
+
+        #  Lets wait until Tera finished first ES calc.
+        cc = 0
+        while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
+            print("Waiting for Terachem to finish calculations",
+                  "\n Probe status {}: {}".format(cc, status.Get_error()))
+            time.sleep(1) 
+            cc += 1 
+            if cc >= max_terachem_time:
+                exit_tera(comm)   
+                error_exit(15, "Didn't receive data from TC in time during initial comminucation") 
+        buffer = np.empty(3,dtype=np.intc) 
+        #   civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
+        #  .tobytes() or buffer = bytearray(32*3)
+        #   Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
+        comm.Recv([buffer, 3, MPI.INT],source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG,status=status)
+        civec_size = buffer[0]
+        nbf_size = buffer[1]
+        blob_size = buffer[2]      
+        print(civec_size, nbf_size, blob_size)         
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
         print(traceback.format_exc())
         exit_tera(comm)
         error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
     else:
-        print("Initial data send.")
-    #  Lets wait until Tera finished first ES calc.
-    cc = 0
-    while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
-        print("Waiting for Terachem to finish calculations",
-              "\n Probe status {}: {}".format(cc, status.Get_error()))
-        time.sleep(1) 
-        cc += 1 
-        if cc >= max_terachem_time:
-            exit_tera(comm)   
-            error_exit(15, "Didn't receive data from TC in time during initial comminucation")          
-    #buffer = bytearray(32*3)
-    buffer = np.empty(3,dtype=np.intc) #.tobytes()
-    #  Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
-    comm.Recv([buffer, 3, MPI.INT],source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG,status=status)
-    #civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
-    civec_size = buffer[0]
-    nbf_size = buffer[1]
-    blob_size = buffer[2]      
-    print(civec_size, nbf_size, blob_size)
-
+        print("TC init done.")
+    
     MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
     blob_old, SMatrix, qmcharges, \
     TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, 
                                   natoms, nstates)
-    print("TC init done.")
+
     return(MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix, 
            civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
