@@ -3,7 +3,7 @@ import os
 import shutil
 import re
 import subprocess
-
+from defaults import liner
 try:
     from errors import error_exit
     from constants import *
@@ -28,8 +28,8 @@ def check_restart_files(restart, cwd):
         rst_file = "restart_{}.in".format(restart)
         rst_file_path = os.path.join(cwd, rst_file)
         if (os.path.isfile(rst_file_path)):
-            print("Restart={}, start from {} step".format(restart, restart),
-                  "Restart file {} found".format(rst_file))
+            print("Restart={}".format(restart),
+                  "\nRestart file {} found".format(rst_file))
         else:
             error_exit(10, "({})".format(rst_file))
     return(rst_file_path)
@@ -94,7 +94,7 @@ def read_restart(rst_file_path, natoms):
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
-    print("Load restart data:")
+    print("Reading restart data:")
     print(at_names)
     print("XYZ:\n{}".format(np.dstack((x,y,z))))
     print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
@@ -168,12 +168,13 @@ def print_restart(
       
     return()
     
-def truncate_output_files(init_step, natoms):
+def truncate_output_files(init_step, write_freq, natoms):
 # movie.xyz energies.dat input.in state.dat snafu.out velocities.xyz PES.dat 
 # init_step is read from restart file
-    print("Restart from {} step. \nOutput file will be truncated".format(init_step))
-    natoms_lines = (natoms+2)*init_step   #  header
-    step_lines = init_step                
+    print("\nOutput files will be truncated".format(init_step))
+    natoms_lines = (natoms+2)*init_step/write_freq  #  header
+    step_lines = (init_step/write_freq)+1     
+           
     input_files = []
     input_files.append(["movie.xyz", natoms_lines])
     input_files.append(["velocities.dat", natoms_lines])
@@ -182,21 +183,21 @@ def truncate_output_files(init_step, natoms):
     input_files.append(["state.dat", step_lines])
     
     for xx in range(len(input_files)):
-        nlines = input_files[xx][1]
+        nlines = int(input_files[xx][1])
         input_file = input_files[xx][0]
-        cmd_trunc = "head -n{} {} > temp_file; mv temp_file {} ".format(nlines, input_file, input_file)    
+        cmd_trunc = "head -n{} {} > temp_file && mv temp_file {} ".format(nlines, input_file, input_file)  #  && = and if True
         try:
             trim_file = subprocess.run(cmd_trunc, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
-            print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
-            exit(1)
+            print("Warning: error during output {} file truncations process: \n{}".format(input_file,cpe.stderr),
+                  "\nFile was probably moved somewhere else.")
         else:
             print("File {} was truncated after {} steps.".format(input_file,init_step))
     return()
 
 def backup_output_files(cwd):
     # RESTART PART - CREATING BACKUP OF OUTPUT FILES
-        
+    print(".................................................")    
     N=0
     while os.path.isdir(os.path.join(cwd,"PREV_RUN"+str(N))):
         print("{} backup folder already exists".format("PREV_RUN"+str(N)))
@@ -204,7 +205,7 @@ def backup_output_files(cwd):
     else:
         backup_folder = os.path.join(cwd,"PREV_RUN"+str(N))
         os.mkdir(backup_folder)
-        print("Creating backup folder {}".format("PREV_RUN"+str(N)))
+        print("Creating backup folder {}\n".format("PREV_RUN"+str(N)))
     output_files= []
     output_files.append("movie.xyz")
     output_files.append("velocities.dat")
@@ -220,6 +221,6 @@ def backup_output_files(cwd):
         try:
             shutil.copy(bf,backup_folder)
         except FileNotFoundError as FNT:
-            print("File {} was not found and will not be backeup".format(FNT.filename))
-    print("Output data were backed-up.\n{}".format(os.listdir(backup_folder)))
+            print("Warning: file {} was not found and will not be backed-up!!!".format(FNT.filename))
+    print("Old output data were backed-up:\n{}".format(os.listdir(backup_folder)))
     return()

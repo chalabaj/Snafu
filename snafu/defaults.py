@@ -16,3 +16,5 @@ Etot_init = 0.0  # setting variable , total energy at the beginning
 Etot_prev = 0.0
 sim_time = 0.0
 prob = 0.0
+
+liner = ("_") * 100

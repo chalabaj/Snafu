@@ -83,7 +83,6 @@ else:
     print("All modules loaded succesfully.\n \n")
     print_snafu()
 
-liner = ("_") * 100
 # ---------------INIT--------------------------------------------------------
 
 if __name__ == "__main__":
@@ -169,7 +168,9 @@ if __name__ == "__main__":
                                                       Etot_prev, ener_thresh)
         Etot_init = Etot
         init_step = 1
+        print("Restart option turned OFF.")
     else:
+        
         init_step, at_names, state, \
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
@@ -177,10 +178,10 @@ if __name__ == "__main__":
         
         masses = assign_masses(at_names)
         am = [mm * AMU for mm in masses]  # atomic mass units conversion
-        init_step = init_step + 1
+        init_step = init_step + 1 # main loop counter for following step
 
-    check_output_file(cwd, natoms, restart, init_step)
-    
+    check_output_file(cwd, natoms, restart, init_step, write_freq)
+    print(liner)
     print("Initial geometry:\n",
           "At    X         Y         Z         MASS:")
     xx = (x*BOHR_ANG).tolist()

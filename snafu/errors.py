@@ -3,11 +3,9 @@ import sys
 import os
 
 def error_exit(error_number, error_desc=" "):
-    
     """
-    TO DO organize error according to time from start
-    0 should be init error
-    1 should be propagation error...
+    Exiting SNAFU simulation.
+    MPI terachem interface will be closed in tera-propagate module.
     """
     err = ("0 - File input.in not found in folder.\n",
            "1 - File geom.in not found in folder.\n",
@@ -17,11 +15,11 @@ def error_exit(error_number, error_desc=" "):
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
            "6 - Hopping probability larger than 1, something went wrong.\n",
            "7 - Too large energy drift.\n",
-           "8 - Output file {} already exists and restart = 0)\n".format(error_desc),
+           "8 - File {} exists, but restart option is turned off (restart = 0). Either remove restart.in or change the restart option.\n".format(error_desc),
            "9 - Input varible(s) is not properly set. See input.in\n{}.".format(error_desc),
            "10 - Restart file {} was not found.".format(error_desc),
            "11 - Wrong input parameter {}.".format(error_desc),
-           "12 - Input variable not found {}.".format(error_desc)
+           "12 - Input variable not found {}.".format(error_desc),
           )
     print("---------------------------------")
     print(err[error_number])

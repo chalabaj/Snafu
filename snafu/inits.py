@@ -75,26 +75,25 @@ def read_input(cwd, input_file_path):
 
     return(par, ab_initio_file_path)
 
-def check_output_file(cwd, natoms, restart, init_step):
+def check_output_file(cwd, natoms, restart, init_step, write_freq):
     if (restart == 1):
         backup_output_files(cwd)
     elif (restart > 1):
         backup_output_files(cwd)
-        truncate_output_files(init_step, natoms)
+        truncate_output_files(init_step-1, write_freq, natoms) #  -1 because init_step is set for restart  step +1
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):
-         error_exit(8, "movie.xyz")
+          error_exit(8, "movie.xyz")
         if (os.path.isfile("velocities.xyz")):
-         error_exit(8, "velocities.xyz")     
+          error_exit(8, "velocities.xyz")     
         if (os.path.isfile("energies.dat")):
-         error_exit(8, "energies.dat")  
+          error_exit(8, "energies.dat")  
         if (os.path.isfile("PES.dat")):
-         error_exit(8, "PES.dat")     
+          error_exit(8, "PES.dat")     
         if (os.path.isfile("state.dat")):
-         error_exit(8, "state.dat")
+          error_exit(8, "state.dat")
         if (os.path.isfile("restart.in")):
-         print("File restart.in exists, but restart option is turned off.")
-         error_exit(8, "restart.in")
+          error_exit(8, "restart.in")
          # TODO MPI exit
     return()
 
