@@ -11,6 +11,16 @@ from datetime import datetime
 sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
 from mpi4py import MPI
 
+try:
+    from errors import error_exit
+    from default import  (
+        max_terachem_time
+    )
+    from constants import *
+except ImportError as ime:
+    print("Module {} in inits not found.".format(ime))
+    exit(1)
+
 def finish_tera(comm):
     print("Disconnecting Terachem communication.")
     comm.Send(str.encode("0"), dest=0, tag=0 )  # MPI_TAG_EXIT = 0
@@ -19,7 +29,6 @@ def finish_tera(comm):
     return
     
 def exit_tera(comm):
-    print("Err. Disconnecting MPI Terachem communication.")
     # comm.Disconnect()
     comm.Abort()
     return
@@ -29,7 +38,6 @@ def tera_connect():
         
     # this should be moved to init routine
     print("-------TERCHAME INTERFACE------")
-    print("Trying to connect to Terachem server:")
     try:
         mpi_port = os.environ['MPI_TERA_PORT']
         print("MPI_TERA_PORT {} found ".format(mpi_port)) 
@@ -42,7 +50,7 @@ def tera_connect():
               "\n{}".format(ANYE))
         exit(1)
     else:
-        print("Terachem connection established.")          
+        print("Terachem connection established through port: {}.".format(mpi_port))          
     return(comm)
 
 def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
@@ -80,7 +88,7 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
                 print(st1, st2, NAC)                    
     except Exception as excpt:
         print(traceback.format_exc())
-        raise RuntimeError("Problem during receiving dat from Terachem: {}".format(excpt))
+        raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
     else:
         print("DATA RECEIVED",
               "\n Probe status: {}".format(status.Get_error()),
@@ -178,11 +186,11 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     Terachem is very sensitive to the type, lenght and order of transferred data        
     We take advantage of NUMPY which can set C-like ordering and data types
     .tobytes for numpy arraay is not needed with some exceptions 
+     ABIN  init_terash
     """   
     print("Sending initial data to Terachem.")     
     
     FMSinit = 1
-    natoms = 6
     natmm_tera = 0 
     at_names = [(at + " ") if len(at) == 1 else at for at in at_names ]   
    
@@ -191,40 +199,39 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     byte_names = np.array(at_names, order='C', dtype=np.character) #.tobytes()
 
     #### ABIN initialize_terache(comm) #####################################
-    print("Sending number of QM atoms.")
     #  call MPI_Send( natqm, 1, MPI_INTEGER, 0, 2, newcomms(itera), ierr )
-    comm.Send( [byte_natoms, 1, MPI.SHORT], dest=0, tag=2 )
-    
-    print("Sending QM atom names.") 
     #  call MPI_Send(names, 2*natqm, MPI_CHARACTER, 0, 2, newcomms(itera), ierr )
-    comm.Send( [byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
-
-    # ABIN  init_terash ####################################################
-    comm.Send( [byte_ints, 3, MPI.INT], dest=0, tag=2 ) 
-    status = MPI.Status()
-    if status.Get_error():
-        finish_tera(comm)
-        exit(1)
-    #print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
-   
-    #  Send atoms names
-    #  call MPI_Send( names, 2*natqm, MPI_CHARACTER, 0, 2, newcomm, ierr )
-    comm.Send([byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
-
-    #  Send coordinates
-    #  Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
-    comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
-    print("Sent initial coordinates to TeraChem.")
-    status = MPI.Status()
-    #print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
-    
+    #  Send atoms names:  call MPI_Send( names, 2*natqm, MPI_CHARACTER, 0, 2, newcomm, ierr )
+    #  Send coordinates: Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
+    try:
+        print("Sending number of QM atoms.")
+        comm.Send( [byte_natoms, 1, MPI.SHORT], dest=0, tag=2 )
+        print("Sending QM atom names.") 
+        comm.Send( [byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
+        print("Sending FMS init.")
+        comm.Send( [byte_ints, 3, MPI.INT], dest=0, tag=2 ) 
+        print("Sending atom names")
+        comm.Send([byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
+        print("Sent initial coordinates to TeraChem.")
+        comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
+        #status = MPI.Status()  print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))
+    except Exception as excpt:
+        # any error => RAISE => MPI.ABORT => KILL TERA
+        print(traceback.format_exc())
+        exit_tera(comm)
+        error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
+    else:
+        print("Initial data send.")
     #  Lets wait until Tera finished first ES calc.
     cc = 0
     while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
         print("Waiting for Terachem to finish calculations",
               "\n Probe status {}: {}".format(cc, status.Get_error()))
-        time.sleep(2) 
-        cc += 1           
+        time.sleep(1) 
+        cc += 1 
+        if cc >= max_terachem_time:
+            exit_tera(comm)   
+            error_exit(15, "Didn't receive data from TC in time during initial comminucation")          
     #buffer = bytearray(32*3)
     buffer = np.empty(3,dtype=np.intc) #.tobytes()
     #  Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
@@ -239,55 +246,59 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
     blob_old, SMatrix, qmcharges, \
     TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, 
                                   natoms, nstates)
-    print("Terachem init done.")
+    print("TC init done.")
     return(MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix, 
            civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
-if __name__ == "__main__":
-    at_names = ["O","O","H","H ","H ","H "]  # taken from input
-    natoms = 6
-    nstates = 4
-    state = 0
-    sim_time = 0.0005
-    sim_time = np.array(sim_time, dtype=np.float64)
-    # These will be in INIT ROUTINE
-    en_array = np.zeros(nstates, dtype=np.float64) 
-
-    # np.stack((a, b), axis=-1)
-    byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)*ANG_BOHR
-    print(byte_coords)
-
-    comm = tera_connect()
-
-    MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-    blob_old, SMatrix, civec_size, nbf_size,  \
-    blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                     byte_coords)
-    for i in range(4):
-        print("#######{}######".format(i))
-        byte_coords = byte_coords *0.99
-        sim_time = sim_time * 0.95
-        try:
-            send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO,
-                      CiVecs, blob, civec_size, nbf_size, blob_size) 
-
-            en_array, MO, CiVecs, blob, \
-            SMatrix, NAC = recieve_tera(comm, natoms, nstates, en_array, MO,
-                                        CiVecs, blob, SMatrix, NAC, TDip, Dip,
-                                        qmcharges, civec_size, nbf_size, 
-                                        blob_size, state)
-                                      
-            print(en_array) 
-            print(MO)
-            print(CiVecs)
-            print(SMatrix)
-            print(NAC)
-            print("\n \n \n ----------------------------------------------")
-        except Exception as excpt:
-            print("Something went wrong during MPI SEND/RECEIVE.",
-                  "\n{}".format(excpt))
-            exit_tera(comm)
-            exit(1)
-    print("ALL DONE OK")
-    finish_tera(comm)
-    exit(0)
+    """ 
+        if __name__ == "__main__":
+        #at_names = ["O","O","H","H ","H ","H "]  # taken from input
+        natoms = 6
+        nstates = 4
+        state = 0
+        sim_time = 0.0005
+        sim_time = np.array(sim_time, dtype=np.float64)
+        # These will be in INIT ROUTINE
+        en_array = np.zeros(nstates, dtype=np.float64) 
+    
+        # np.stack((a, b), axis=-1)
+        byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)*ANG_BOHR
+        print(byte_coords)
+    
+        comm = tera_connect()
+    
+        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+        blob_old, SMatrix, civec_size, nbf_size,  \
+        blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
+                                         byte_coords)
+        for i in range(4):
+            print("#######{}######".format(i))
+            byte_coords = byte_coords *0.99
+            sim_time = sim_time * 0.95
+            try:
+                send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO,
+                          CiVecs, blob, civec_size, nbf_size, blob_size) 
+    
+                en_array, MO, CiVecs, blob, \
+                SMatrix, NAC = recieve_tera(comm, natoms, nstates, en_array, MO,
+                                            CiVecs, blob, SMatrix, NAC, TDip, Dip,
+                                            qmcharges, civec_size, nbf_size, 
+                                            blob_size, state)
+                                          
+                print(en_array) 
+                print(MO)
+                print(CiVecs)
+                print(SMatrix)
+                print(NAC)
+                print("\n \n \n ----------------------------------------------")
+            except Exception as excpt:
+                print("Something went wrong during MPI SEND/RECEIVE.",
+                      "\n{}".format(excpt))
+                exit_tera(comm)
+                exit(1)
+        print("ALL DONE OK")
+        finish_tera(comm)
+        exit(0)
+    
+    """
+    

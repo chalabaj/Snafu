@@ -20,6 +20,7 @@ def error_exit(error_number, error_desc=" "):
            "10 - Restart file {} was not found.".format(error_desc),
            "11 - Wrong input parameter {}.".format(error_desc),
            "12 - Input variable not found {}.".format(error_desc),
+           "13 - Error in TeraChem interface."
           )
     print("---------------------------------")
     print(err[error_number])

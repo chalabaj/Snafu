@@ -36,31 +36,36 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
     from inits import (
-        file_check, read_input, check_output_file, read_geoms, read_velocs,
-        com_removal, init_fep_arrays
+        file_check, read_input, 
+        check_output_file, read_geoms, 
+        read_velocs, com_removal, 
+        init_fep_arrays
     )
     from masses import assign_masses
     from errors import error_exit
     from prints import (
-        print_positions, print_velocities, print_snafu,
-        print_state, print_energies, print_pes
+        print_positions, print_velocities, 
+        print_snafu, print_state, 
+        print_energies, print_pes
     )
     from propagates import (
         calc_forces, calc_energies,
-        update_velocities, update_positions, rescale_velocities,
-        adjust_velocities
+        update_velocities, update_positions, 
+        rescale_velocities, adjust_velocities
     )
     from landauzener import (
         calc_hopp
     )
     from restarts import (
-        print_restart, check_restart_files, read_restart
+        print_restart, check_restart_files, 
+        read_restart
     )
     from constants import *   #  import conversion factors and default values
     
     from defaults import *    # import all defualt values, only here otherwise could overwritte in some modules
-    #from tera_propagates import (
-    #    finish_tera, exit_tera, tera_connect, tera_init
+    from tera_propagates import (
+        finish_tera, exit_tera, 
+        tera_connect, tera_init
     #)
 except ImportError as ime:
     # module could have been removed or different module name, e.g. renamed in module file
@@ -200,13 +205,19 @@ if __name__ == "__main__":
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
-    #if tera_mpi:
-    #    byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
-    #    comm = tera_connect()
-    #    MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-    #    blob_old, SMatrix, civec_size, nbf_size,  \
-    #    blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-    #                                     byte_coords) 
+    if (not restart) and (tera_mpi):
+        comm = tera_connect()
+        byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
+        
+        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+        blob_old, SMatrix, civec_size, nbf_size,  \
+        blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
+                                         byte_coords) 
+    else:
+        print("TERACHE RESTART OPTION NOT IMPLEMENTED.",
+              "You can manually start the simulation the last step using geometry and velocities",
+              "Exiting....")
+        exit(1)
     print(liner)
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
