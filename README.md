@@ -75,7 +75,7 @@ If the launcher is not used, just export the **SNAFU_DIR** variable:
   </code>
 and then run the code:
  <code>
- python snafu.py >> snafu.out
+ python snafu.py > snafu.out
  </code>  
 File snafu.out file is copied during restart for backup. If you used other output filename, it will not becopied during restart backup process.  
  
@@ -84,17 +84,16 @@ Environment variables for particular ab-initio code are exported in the interfac
 ## How to restart dynamics
 
 You can restart dynamics from the last completed step or from the chosen step XX depending on how often you wrote restart file during the original simulation.  
-The **restart.in** file contains all needed information from the last completed simulation step. Similarly, **restart_freq = XX** option sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). Before restart, do NOT change the **input.in** file with an exception to extend the simulation time by increasing the **maxsteps** option.
+The **restart.in** file contains all needed information from the last completed simulation step. Similarly, **restart_freq = XX** option sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). Before restart, do NOT change the **input.in** file with an exception to extend the simulation time by increasing the **maxsteps** option.   
 
 * To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
-* No restart when **restart = 0**, but restart files are created.
 
-If you restart from some step, existing restart files with the same name will be overwritten.
-If you use launchSNAFU from LAUNCHER folder, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, input.in, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data).
+If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten)..
 
+During the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data). If you redirect simulation output (python snafu.py > snafu.out) to a file other than the snafu.out, it will not be backed-up. 
 
-The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure trims the output files (except of the snafu.out output file which start from empty file) after XX step.
+The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure truncate all the output files (except of the snafu.out output file which start from empty file) after XX step.
 ## Input.in options:
 
 [Settings]  
