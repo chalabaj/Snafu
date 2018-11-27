@@ -146,12 +146,8 @@ if __name__ == "__main__":
     except ValueError as VE:
         error_exit(9, str(VE))
     
-    if restart and tera_mpi:
-        print("TERACHE RESTART OPTION NOT IMPLEMENTED.",
-              "You can manually start the simulation the last step using geometry and velocities",
-              "Exiting....")
-        exit(1)
-    elif (not restart) and tera_mpi:
+
+    if tera_mpi:
         comm = tera_connect()       
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
@@ -169,13 +165,17 @@ if __name__ == "__main__":
         x, y, z = com_removal(x, y, z, am)
         # CALC INITIAL ENERGIES AND GRADIENTS
         if tera_mpi:
-             MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-             blob_old, SMatrix, civec_size, nbf_size,  \
-             blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                              x,y,z) 
-             calc_forces_tera(comm, natoms, nstates, state, sim_time, MO,
-                     CiVecs, blob, civec_size, nbf_size, blob_size,  x, y, z,
-                     fx_new, fy_new, fz_new, pot_eners)
+            MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+            blob_old, SMatrix, civec_size, nbf_size,  \
+            blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+             
+            pot_eners, MO, CiVecs, 
+            blob, fx, fy, fz = calc_forces_tera(comm, natoms, nstates, state, 
+                                                sim_time, x, y, z,
+                                                fx, fy, fz, pot_eners
+                                                MO, CiVecs, blob, NAC,
+                                                civec_size, nbf_size, blob_size)
+                             
         else: 
             fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
                                                 x, y, z, fx, fy, fz, pot_eners,

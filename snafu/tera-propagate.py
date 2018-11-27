@@ -56,8 +56,9 @@ def tera_connect():
         print("Terachem connection established through port: {}.".format(mpi_port))          
     return(comm)
 
-def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
-        NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size, state):
+def recieve_tera(comm, natoms, nstates, state, pot_eners, 
+                 MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
+                 qmcharges, civec_size, nbf_size, blob_size):
     
     status = MPI.Status()
     
@@ -67,7 +68,7 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
         time.sleep(1) 
     
     try:
-        comm.Recv([en_array, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE,
+        comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE,
                   tag=MPI.ANY_TAG, status=status)  
         comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE,
                   tag=MPI.ANY_TAG, status=status)  
@@ -90,9 +91,9 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
                 if (st1 == st2) and (st1 == state):   
                     xyz = 0
                     for iat in range(0,natoms):
-                        fx_new[iat] = -NAC[xyz]
-                        fy_new[iat] = -NAC[xyz+1]
-                        fz_new[iat] = -NAC[xyz+2]
+                        fx[iat] = -NAC[xyz]
+                        fy[iat] = -NAC[xyz+1]
+                        fz[iat] = -NAC[xyz+2]
                         xyz = xyz + 3
                   
     except Exception as excpt:
@@ -102,10 +103,10 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
         print("DATA RECEIVED",
               "\n Probe status: {}".format(status.Get_error()),
               "Energies: {}, Nstates: {}".format(en_array.tolist(), nstates))
-        return(en_array, MO, CiVecs, blob, fx_new, fy_new, fz_new)
+        return(fx, fy, fz, pot_eners, MO, CiVecs, blob)
     
-def send_tera(comm, sim_time, natoms, nstates, state, x ,y, z
-        MO, CiVecs, blob, civec_size, nbf_size, blob_size):
+def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z
+              MO, CiVecs, blob, civec_size, nbf_size, blob_size):
     
     FMSinit = 0
     vels = np.zeros((natoms,3), dtype=np.float64)
@@ -168,21 +169,16 @@ def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
           allocate(blob_old(blobsize))
           allocate(SMatrix(nstate*nstate))
     """
-    
     MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
-    MO_old = np.zeros((nbf_size, nbf_size),dtype=np.float64)
     CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)
-    CiVecs_old = np.zeros((civec_size, nstates),dtype=np.float64)
     NAC = np.zeros((natoms*3),dtype=np.float64)
     blob = np.zeros((blob_size),dtype=np.float64)
-    blob_old = np.zeros((blob_size),dtype=np.float64)
     SMatrix = np.zeros((nstates*nstates),dtype=np.float64)
     qmcharges = np.zeros((natoms),dtype=np.float64)
     TDip =  np.zeros(((nstates-1)*3), dtype=np.float64)
     Dip = np.zeros((nstates*3), dtype=np.float64)
     print("TC arrays allocated.")    
-    return(MO, MO_old, CiVecs, CiVecs_old, 
-           NAC, blob, blob_old, SMatrix, qmcharges, TDip, Dip)
+    return(MO, CiVecs, NAC, blob, SMatrix, qmcharges, TDip, Dip)
 
 def move_old2new_terash(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old):
     MO = np.copy(MO_old)
@@ -247,10 +243,9 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     else:
         print("TC init done.")
     
-    MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-    blob_old, SMatrix, qmcharges, \
-    TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, 
-                                  natoms, nstates)
+    MO, CiVecs, NAC, blob, SMatrix, \
+    qmcharges, TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size,
+                                             natoms, nstates)
 
     return(MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix, 
            civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
@@ -307,19 +302,17 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     
     """
   
-def calc_forces_tera(comm, sim_time, natoms, nstates, state,
-                     x, y, z, fx, fy, fz, pot_eners,
-                     MO, CiVecs, blob, civec_size, nbf_size, blob_size,
-                     )
+def calc_forces_tera(comm, natoms, nstates, state, sim_time, x, y, z,
+                     fx, fy, fz, pot_eners
+                     MO, CiVecs, blob, NAC, civec_size, nbf_size, blob_size)
     try:
-        send_tera(comm, sim_time, natoms, nstates, state, 
-                  x ,y, z
+        send_tera(comm, natoms, nstates, state, sim_time, x ,y, z
                   MO, CiVecs, blob, civec_size, nbf_size, blob_size)                 
                          
         pot_eners, MO, CiVecs, blob, \
-        fx_new, fy_new, fz_new = recieve_tera(comm, natoms, nstates, state, pot_eners, 
-                                              MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
-                                              qmcharges, civec_size, nbf_size, blob_size )                 
+        fx, fy, fz, pot_eners, MO, CiVecs, blob = recieve_tera(comm, natoms, nstates, state, pot_eners, 
+                                             MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
+                                             qmcharges, civec_size, nbf_size, blob_size)                 
     except Exception as excpt:
                 print("Something went wrong during MPI SEND/RECEIVE.",
                       "\n{}".format(excpt))
