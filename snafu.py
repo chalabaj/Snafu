@@ -240,11 +240,15 @@ if __name__ == "__main__":
                                                    fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, 
-                                                                state, nstates, 
-                                                                x_new, y_new, z_new,
-                                                                fx_new, fy_new, fz_new,
-                                                                pot_eners,
-                                                                ab_initio_file_path)
+                                                            state, nstates, 
+                                                            x_new, y_new, z_new,
+                                                            fx_new, fy_new, fz_new,
+                                                            pot_eners,
+                                                            ab_initio_file_path                                           
+                                                            tera_mpi,comm, sim_time, 
+                                                            MO, CiVecs, NAC, blob, SMatrix,
+                                                            civec_size, nbf_size, blob_size,
+                                                            qmcharges, TDip, Dip)
         
             if not method == "bomd":
                 if step >= 2:
@@ -260,9 +264,13 @@ if __name__ == "__main__":
                         
                         fx_new, fy_new, fz_new, pot_eners = calc_forces(
                                                  step, at_names, state, nstates, 
-                                    
-                                        x, y, z, fx_new, fy_new, fz_new, 
-                                                 pot_eners, ab_initio_file_path)
+                                                 x, y, z, fx_new, fy_new, fz_new, 
+                                                 pot_eners, ab_initio_file_path
+                                                 tera_mpi,comm, sim_time, 
+                                                 MO, CiVecs, NAC, blob, SMatrix,
+                                                 civec_size, nbf_size, blob_size,
+                                                 qmcharges, TDip, Dip)
+        )
     
                         #simple scaling or updatre velocities with new state forces
                         if not vel_adj:
