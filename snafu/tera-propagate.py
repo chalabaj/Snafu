@@ -91,9 +91,9 @@ def recieve_tera(comm, natoms, nstates, state, pot_eners,
                 if (st1 == st2) and (st1 == state):   
                     xyz = 0
                     for iat in range(0,natoms):
-                        fx[iat] = -NAC[xyz]
-                        fy[iat] = -NAC[xyz+1]
-                        fz[iat] = -NAC[xyz+2]
+                        fx[iat] = -np.float64(NAC[xyz])
+                        fy[iat] = -np.float64(NAC[xyz+1])
+                        fz[iat] = -np.float64(NAC[xyz+2])
                         xyz = xyz + 3
                   
     except Exception as excpt:
@@ -247,69 +247,21 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     qmcharges, TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size,
                                              natoms, nstates)
 
-    return(MO, MO_old, CiVecs, CiVecs_old, NAC, blob, blob_old, SMatrix, 
+    return(MO, CiVecs, NAC, blob, SMatrix, 
            civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
-    
-    """ 
-        if __name__ == "__main__":
-        #at_names = ["O","O","H","H ","H ","H "]  # taken from input
-        natoms = 6
-        nstates = 4
-        state = 0
-        sim_time = 0.0005
-        sim_time = np.array(sim_time, dtype=np.float64)
-        # These will be in INIT ROUTINE
-        en_array = np.zeros(nstates, dtype=np.float64) 
-    
-        # np.stack((a, b), axis=-1)
-        byte_coords = np.loadtxt("movie.xyz", usecols=(1,2,3),dtype=np.float64)*ANG_BOHR
-        print(byte_coords)
-    
-        comm = tera_connect()
-    
-        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-        blob_old, SMatrix, civec_size, nbf_size,  \
-        blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                         byte_coords)
-        for i in range(4):
-            print("#######{}######".format(i))
-            byte_coords = byte_coords *0.99
-            sim_time = sim_time * 0.95
-            try:
-                send_tera(comm, natoms, nstates, state, sim_time, byte_coords, MO,
-                          CiVecs, blob, civec_size, nbf_size, blob_size) 
-    
-                en_array, MO, CiVecs, blob, \
-                SMatrix, NAC = recieve_tera(comm, natoms, nstates, en_array, MO,
-                                            CiVecs, blob, SMatrix, NAC, TDip, Dip,
-                                            qmcharges, civec_size, nbf_size, 
-                                            blob_size, state)
-                                          
-                print(en_array) 
-                print(MO)
-                print(CiVecs)
-                print(SMatrix)
-                print(NAC)
-                print("\n \n \n ----------------------------------------------")
-            except Exception as excpt:
-                print("Something went wrong during MPI SEND/RECEIVE.",
-                      "\n{}".format(excpt))
-                exit_tera(comm)
-                exit(1)
-        print("ALL DONE OK")
-        finish_tera(comm)
-        exit(0)
-    
-    """
+
   
-def calc_forces_tera(comm, natoms, nstates, state, sim_time, x, y, z,
+def calc_forces_tera(comm, natoms, nstates, state, 
+                     sim_time, x, y, z,
                      fx, fy, fz, pot_eners
-                     MO, CiVecs, blob, NAC, civec_size, nbf_size, blob_size)
+                     MO, CiVecs, NAC, blob, SMatrix,
+                     civec_size, nbf_size, blob_size,
+                     qmcharges, TDip, Dip)
     try:
         send_tera(comm, natoms, nstates, state, sim_time, x ,y, z
                   MO, CiVecs, blob, civec_size, nbf_size, blob_size)                 
                          
-        pot_eners, MO, CiVecs, blob, \
+        
         fx, fy, fz, pot_eners, MO, CiVecs, blob = recieve_tera(comm, natoms, nstates, state, pot_eners, 
                                              MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
                                              qmcharges, civec_size, nbf_size, blob_size)                 
@@ -318,4 +270,4 @@ def calc_forces_tera(comm, natoms, nstates, state, sim_time, x, y, z,
                       "\n{}".format(excpt))
                 exit_tera(comm)
                 error_exit(error_exit(15, str("Error during sending/receive TC data {}".format(excpt))))                             
-    return(pot_eners, MO, CiVecs, blob, fx_new, fy_new, fz_new)
+    return(pot_eners, fx, fy, fz, pot_eners, MO, CiVecs, blob)

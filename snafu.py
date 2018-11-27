@@ -165,21 +165,19 @@ if __name__ == "__main__":
         x, y, z = com_removal(x, y, z, am)
         # CALC INITIAL ENERGIES AND GRADIENTS
         if tera_mpi:
-            MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-            blob_old, SMatrix, civec_size, nbf_size,  \
-            blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+            MO, CiVecs, NAC, blob, SMatrix, \
+            civec_size, nbf_size, blob_size, \
+            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
              
-            pot_eners, MO, CiVecs, 
-            blob, fx, fy, fz = calc_forces_tera(comm, natoms, nstates, state, 
-                                                sim_time, x, y, z,
-                                                fx, fy, fz, pot_eners
-                                                MO, CiVecs, blob, NAC,
-                                                civec_size, nbf_size, blob_size)
-                             
-        else: 
-            fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
-                                                x, y, z, fx, fy, fz, pot_eners,
-                                                ab_initio_file_path)
+        fx, fy, fz, pot_eners, \
+        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates,
+                                           x, y, z, fx, fy, fz, pot_eners,
+                                           ab_initio_file_path,
+                                           tera_mpi,comm, sim_time, 
+                                           MO, CiVecs, NAC, blob, SMatrix,
+                                           civec_size, nbf_size, blob_size,
+                                           qmcharges, TDip, Dip)
+
         pot_eners_array = np.copy(pot_eners)      
         
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
@@ -196,10 +194,15 @@ if __name__ == "__main__":
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
         pot_eners_array = read_restart(rst_file_path, natoms)
+
         masses = assign_masses(at_names)
         am = [mm * AMU for mm in masses]  #  atomic mass units conversion
         init_step = init_step + 1         #  main loop counter will start with following step
-
+        if tera_mpi:
+            MO, CiVecs, NAC, blob, SMatrix, \
+            civec_size, nbf_size, blob_size, \
+            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+                           
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
     xx = (x*BOHR_ANG).tolist()
@@ -237,12 +240,12 @@ if __name__ == "__main__":
                                                    fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, 
-                                                            state, nstates, 
-                                                            x_new, y_new, z_new,
-                                                            fx_new, fy_new, fz_new,
-                                                            pot_eners,
-                                                            ab_initio_file_path)
-    
+                                                                state, nstates, 
+                                                                x_new, y_new, z_new,
+                                                                fx_new, fy_new, fz_new,
+                                                                pot_eners,
+                                                                ab_initio_file_path)
+        
             if not method == "bomd":
                 if step >= 2:
                     hop, outstate, v_scal_fac, prob = calc_hopp(method, state,
@@ -256,10 +259,10 @@ if __name__ == "__main__":
                         # use XYZ from prev. step to cacl F for a new state
                         
                         fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                            step, at_names, state, nstates, 
-                            x, y, z,
-                            fx_new, fy_new, fz_new, 
-                            pot_eners, ab_initio_file_path)
+                                                 step, at_names, state, nstates, 
+                                    
+                                        x, y, z, fx_new, fy_new, fz_new, 
+                                                 pot_eners, ab_initio_file_path)
     
                         #simple scaling or updatre velocities with new state forces
                         if not vel_adj:

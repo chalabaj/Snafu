@@ -18,3 +18,19 @@ tera_mpi = 0
 sim_time = 0.0
 max_terachem_time = 500 # wait for 1max_terachem_time s until terachem send data, otherwise too long step
 liner = ("_") * 100
+
+
+# tera parameters for calc_forces, will be changed only if tera_mpi <>0
+tera_mpi = 0,
+comm = 0, 
+sim_time = 0,    # all var beyond this point are used only for tera_mpi = 1
+MO = 0, 
+CiVecs = 0, 
+NAC = 0, 
+blob = 0, 
+SMatrix = 0,
+civec_size = 0, 
+nbf_size = 0, 
+blob_size = 0,
+qmcharges = 0, 
+TDip = 0, Dip = 0
