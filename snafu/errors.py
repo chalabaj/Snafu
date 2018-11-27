@@ -19,7 +19,7 @@ def error_exit(error_number, error_desc=" "):
            "9 - Input varible(s) is not properly set. See input.in\n{}.".format(error_desc),
            "10 - Restart file {} was not found.".format(error_desc),
            "11 - Wrong input parameter {}.".format(error_desc),
-           "12 - Input variable not found {}.".format(error_desc),
+           "12 - Input variable {} not set.".format(error_desc),
            "13 - Error in TeraChem interface. {}".format(error_desc)
           )
     print("---------------------------------")

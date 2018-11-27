@@ -1,6 +1,9 @@
 """" 
 Terachem MPI interface adapted from the ABIN code
 Modules: forces_tera.F90 forces_terash.F90
+Terachem is very sensitive to the type, lenght and order of transferred data        
+We take advantage of NUMPY which can set C-like ordering and data types that are exploited by MPI.Send  
+.tobytes for numpy array not necessary with the exception of int8 data type
 """
 import traceback
 import numpy as np
@@ -95,12 +98,12 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
               "Energies: {}, Nstates: {}".format(en_array.tolist(), nstates))
         return(en_array, MO, CiVecs, blob, SMatrix, NAC)
     
-def send_tera(comm, natoms, nstates, state, sim_time, byte_coords, 
-        MO, CiVecs, blob, civec_size, nbf_size, blob_size):
+def send_tera(comm, natoms, nstates, state, sim_time, 
+        MO, CiVecs, blob, civec_size, nbf_size, blob_size,x ,y, z):
     
     FMSinit = 0
     vels = np.zeros((natoms,3), dtype=np.float64)
-    
+    byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
     bufints = np.empty(12,order='C',dtype=np.intc)
     bufints[0]=FMSinit
     bufints[1]=natoms
@@ -181,18 +184,14 @@ def move_old2new_terash(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old):
     blob = np.copy(blob_old)
     return(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old)
 
-def tera_init(comm, at_names, natoms, nstates, byte_coords):
-    """ Initial data transfer to Terachem through MPI  init_terash
-    Terachem is very sensitive to the type, lenght and order of transferred data        
-    We take advantage of NUMPY which can set C-like ordering and data types that are exploited by MPI.Send  
-    .tobytes for numpy array not necessary with the exception of int8 data type
-    """   
+def tera_init(comm, at_names, natoms, nstates, x,y,z):
+    # Initial data transfer to Terachem through MPI  init_terash
     print("Sending initial data to Terachem.")     
-    
     FMSinit = 1
+    buffer = np.empty(3,dtype=np.intc) 
     natmm_tera = 0 
     at_names = [(at + " ") if len(at) == 1 else at for at in at_names ]   
-   
+    byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
     byte_ints = np.array([FMSinit, natoms, natmm_tera],order='C',dtype=np.intc) #.tobytes() #cant be 8 byte     
     byte_natoms = np.array([natoms], dtype=np.int8).tobytes() #must 8 byte number, not int standard -> tobytes           
     byte_names = np.array(at_names, order='C', dtype=np.character) #.tobytes()
@@ -225,7 +224,7 @@ def tera_init(comm, at_names, natoms, nstates, byte_coords):
             if cc >= max_terachem_time:
                 exit_tera(comm)   
                 error_exit(15, "Didn't receive data from TC in time during initial comminucation") 
-        buffer = np.empty(3,dtype=np.intc) 
+        
         #   civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
         #  .tobytes() or buffer = bytearray(32*3)
         #   Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)

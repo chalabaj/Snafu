@@ -132,7 +132,7 @@ if __name__ == "__main__":
               "{} = {}\n".format("natoms", natoms),
               "{} = {}\n".format("maxsteps",maxsteps),
               "{} = {}\n".format("initial state", state),
-              "{} = {}\n".format("timeste", dt),
+              "{} = {}\n".format("timestep", dt),
               "{} = {}\n".format("nstates",nstates),
               "{} = {}\n".format("ener_thresh", ener_thresh),
               "{} = {}\n".format("hop_thresh", hop_thresh),
@@ -150,8 +150,6 @@ if __name__ == "__main__":
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
 
     # READ INITIAL OR RESTART DATA
-    rst_file_path = check_restart_files(restart, cwd)
-    print(liner)
     if restart == 0:
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
@@ -175,30 +173,28 @@ if __name__ == "__main__":
         init_step = 1
         print("Restart option turned OFF.")
     else:
-        
+        rst_file_path = check_restart_files(restart, cwd)
+        print(liner)
         init_step, at_names, state, \
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
         pot_eners_array = read_restart(rst_file_path, natoms)
-        
         masses = assign_masses(at_names)
-        am = [mm * AMU for mm in masses]  # atomic mass units conversion
-        init_step = init_step + 1 # main loop counter for following step
+        am = [mm * AMU for mm in masses]  #  atomic mass units conversion
+        init_step = init_step + 1         #  main loop counter will start with following step
 
     check_output_file(cwd, natoms, restart, init_step, write_freq)
-    print(liner)
-    print("Initial geometry:\n",
-          "At    X         Y         Z         MASS:")
+
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
+    print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
               "{:12.8f}".format(masses[iat]))
 
-    print("Initial velocities:\n",
-          "At    VX       VY       VZ         ")
+    print("Initial velocities:\n   At    VX       VY       VZ")
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], vx[iat])),
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
@@ -206,13 +202,11 @@ if __name__ == "__main__":
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
     if (not restart) and (tera_mpi):
-        comm = tera_connect()
-        byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
-        
+        comm = tera_connect()       
         MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
         blob_old, SMatrix, civec_size, nbf_size,  \
         blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                         byte_coords) 
+                                         x,y,z) 
     else:
         print("TERACHE RESTART OPTION NOT IMPLEMENTED.",
               "You can manually start the simulation the last step using geometry and velocities",
@@ -262,7 +256,6 @@ if __name__ == "__main__":
                             pot_eners, ab_initio_file_path)
     
                         #simple scaling or updatre velocities with new state forces
-    
                         if not vel_adj:
                             vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
                         else:
