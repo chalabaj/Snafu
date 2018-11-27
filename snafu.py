@@ -145,6 +145,14 @@ if __name__ == "__main__":
               "{} = {}\n".format("method", method))
     except ValueError as VE:
         error_exit(9, str(VE))
+    
+    if restart and tera_mpi:
+        print("TERACHE RESTART OPTION NOT IMPLEMENTED.",
+              "You can manually start the simulation the last step using geometry and velocities",
+              "Exiting....")
+        exit(1)
+    elif (not restart) and tera_mpi:
+        comm = tera_connect()       
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
@@ -160,9 +168,18 @@ if __name__ == "__main__":
         # CENTER OF MASS REMOVAL 
         x, y, z = com_removal(x, y, z, am)
         # CALC INITIAL ENERGIES AND GRADIENTS
-        fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
-                                            x, y, z, fx, fy, fz, pot_eners,
-                                            ab_initio_file_path)
+        if tera_mpi:
+             MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
+             blob_old, SMatrix, civec_size, nbf_size,  \
+             blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
+                                              x,y,z) 
+             calc_forces_tera(comm, natoms, nstates, state, sim_time, MO,
+                     CiVecs, blob, civec_size, nbf_size, blob_size,  x, y, z,
+                     fx_new, fy_new, fz_new, pot_eners)
+        else: 
+            fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
+                                                x, y, z, fx, fy, fz, pot_eners,
+                                                ab_initio_file_path)
         pot_eners_array = np.copy(pot_eners)      
         
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
@@ -201,17 +218,6 @@ if __name__ == "__main__":
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
-    if (not restart) and (tera_mpi):
-        comm = tera_connect()       
-        MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-        blob_old, SMatrix, civec_size, nbf_size,  \
-        blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-                                         x,y,z) 
-    else:
-        print("TERACHE RESTART OPTION NOT IMPLEMENTED.",
-              "You can manually start the simulation the last step using geometry and velocities",
-              "Exiting....")
-        exit(1)
     print(liner)
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \

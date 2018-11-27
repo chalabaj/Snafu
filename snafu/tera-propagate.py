@@ -87,8 +87,14 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
             for st2 in range(st1,nstates):
                 comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE,
                           tag=MPI.ANY_TAG, status=status)
-                #if (st1 == st2) and (st1 == state):   
-                print(st1, st2, NAC)                    
+                if (st1 == st2) and (st1 == state):   
+                    xyz = 0
+                    for iat in range(0,natoms):
+                        fx_new[iat] = -NAC[xyz]
+                        fy_new[iat] = -NAC[xyz+1]
+                        fz_new[iat] = -NAC[xyz+2]
+                        xyz = xyz + 3
+                  
     except Exception as excpt:
         print(traceback.format_exc())
         raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
@@ -96,10 +102,10 @@ def recieve_tera(comm, natoms, nstates, en_array, MO, CiVecs, blob, SMatrix,
         print("DATA RECEIVED",
               "\n Probe status: {}".format(status.Get_error()),
               "Energies: {}, Nstates: {}".format(en_array.tolist(), nstates))
-        return(en_array, MO, CiVecs, blob, SMatrix, NAC)
+        return(en_array, MO, CiVecs, blob, fx_new, fy_new, fz_new)
     
-def send_tera(comm, natoms, nstates, state, sim_time, 
-        MO, CiVecs, blob, civec_size, nbf_size, blob_size,x ,y, z):
+def send_tera(comm, sim_time, natoms, nstates, state, x ,y, z
+        MO, CiVecs, blob, civec_size, nbf_size, blob_size):
     
     FMSinit = 0
     vels = np.zeros((natoms,3), dtype=np.float64)
@@ -300,4 +306,23 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         exit(0)
     
     """
-    
+  
+def calc_forces_tera(comm, sim_time, natoms, nstates, state,
+                     x, y, z, fx, fy, fz, pot_eners,
+                     MO, CiVecs, blob, civec_size, nbf_size, blob_size,
+                     )
+    try:
+        send_tera(comm, sim_time, natoms, nstates, state, 
+                  x ,y, z
+                  MO, CiVecs, blob, civec_size, nbf_size, blob_size)                 
+                         
+        pot_eners, MO, CiVecs, blob, \
+        fx_new, fy_new, fz_new = recieve_tera(comm, natoms, nstates, state, pot_eners, 
+                                              MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
+                                              qmcharges, civec_size, nbf_size, blob_size )                 
+    except Exception as excpt:
+                print("Something went wrong during MPI SEND/RECEIVE.",
+                      "\n{}".format(excpt))
+                exit_tera(comm)
+                error_exit(error_exit(15, str("Error during sending/receive TC data {}".format(excpt))))                             
+    return(pot_eners, MO, CiVecs, blob, fx_new, fy_new, fz_new)
