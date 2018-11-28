@@ -33,7 +33,7 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
     for iat in range(0, natoms):
        line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
        vel.write(line)
-    
+    vel.flush()
     return()
 
 def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file):
@@ -43,6 +43,7 @@ def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, en
         ef.write(str(headline))
     line = "{:>10.4f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
     ef.write(str(line))
+    ef.flush()
     return()  
 
 def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
@@ -54,6 +55,7 @@ def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
                 for st in range(0, len(pot_eners)))
                 + "\n")
     pes_file.write(str(line))
+    pes_file.flush()
     return()
 
 def print_state(step, write_freq, sim_time, state, state_file):
@@ -62,6 +64,7 @@ def print_state(step, write_freq, sim_time, state, state_file):
         state_file.write(str(headline)) 
     line = ("{:10.4f} {:4d}\n".format(sim_time, state)) 
     state_file.write(str(line))   
+    state_file.flush()
     return()
 
 def print_snafu():
