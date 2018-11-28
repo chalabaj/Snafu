@@ -21,6 +21,7 @@ def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
         line = "{} {:12.8f} {:12.8f} {:12.8f}\n".format(at_names[iat], xx[iat],
                                                         yy[iat], zz[iat])
         mov.write(line)
+    mov.flush()
     return()
 
 def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
