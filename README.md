@@ -22,7 +22,6 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 
 * Hops are only allowed for pot. energy differences with less than 0.5 eV by default. Higher energy transitions generally lead to poor energy conservation.
 
-
 ## How to run
 1) System requirements:
 The code was tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package. MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
@@ -59,7 +58,7 @@ water molecule in angstorm units
 
 4) Launching:
 The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (e.g. SGE, PBS). 
-The launchSNAFU is not needed when running directly without queuing, however, SNAFUS scripts must be adjusted as it takes SGE queuing parameters like JOB_ID env variable. 
+The launchSNAFU is not needed when running SNAFU directly without queuing; SNAFUS script must be adjusted as it takes SGE queuing parameters like JOB_ID env variable. 
 The launcher:  
 - submit the job to que
 - export environment variables   
@@ -67,7 +66,7 @@ The launcher:
 - start the simulation on scratch
 - copy data back to folder
 
-The code requires to find **SNAFU_DIR** variable in your environment (in python this is os.environ['SNAFU_DIR']). This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here.
+During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable (in python this is os.environ['SNAFU_DIR']). This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here.
 
 If the launcher is not used, just export the **SNAFU_DIR** variable:
   <code>
@@ -91,7 +90,7 @@ The **restart.in** file contains all needed information from the last completed 
 
 If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten)..
 
-During the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends on number of previous restarts (PREV_RUN0 folder contains original simulation data). If you redirect simulation output (python snafu.py > snafu.out) to a file other than the snafu.out, it will not be backed-up. 
+During the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends a on number of previous restarts (PREV_RUN0 folder contains original simulation data). If you redirect simulation output (python snafu.py > snafu.out) to a file other than the snafu.out, it will not be backed-up. 
 
 The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure truncate all the output files (except of the snafu.out output file which start from empty file) after XX step.
 ## Input.in options:
