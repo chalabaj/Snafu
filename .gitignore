@@ -5,3 +5,4 @@ ABINITIO/input.*
 restart*.in
 snafu/__pycache__/**
 *.in
+PREV_RUN*/
