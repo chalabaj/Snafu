@@ -171,12 +171,12 @@ if __name__ == "__main__":
              
         fx, fy, fz, pot_eners, \
         MO, CiVecs, blob = calc_forces(step, at_names, state, nstates,
-                                           x, y, z, fx, fy, fz, pot_eners,
-                                           ab_initio_file_path,
-                                           tera_mpi,comm, sim_time, 
-                                           MO, CiVecs, NAC, blob, SMatrix,
-                                           civec_size, nbf_size, blob_size,
-                                           qmcharges, TDip, Dip)
+                                       x, y, z, fx, fy, fz, pot_eners,
+                                       ab_initio_file_path,
+                                       tera_mpi, comm, sim_time, 
+                                       MO, CiVecs, NAC, blob, SMatrix,
+                                       civec_size, nbf_size, blob_size,
+                                       qmcharges, TDip, Dip)
 
         pot_eners_array = np.copy(pot_eners)      
         
