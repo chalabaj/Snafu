@@ -1,0 +1,7 @@
+*.xyz
+*.dat
+restart*
+ABINITIO/input.*
+restart*.in
+snafu/__pycache__/**
+*.in
