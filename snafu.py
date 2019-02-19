@@ -61,11 +61,9 @@ try:
         read_restart
     )
     from constants import *   #  import conversion factors and default values
-    
-    from defaults import *    # import all defualt values, only here otherwise could overwritte in some modules
+    from defaults import *    #  import all defualt values, only here otherwise could overwritte in some modules
     from tera_propagate import (
-        finish_tera, exit_tera, 
-        tera_connect, tera_init
+        finish_tera, exit_tera, tera_connect, tera_init
     )
 except ImportError as ime:
     # module could have been removed or different module name, e.g. renamed in module file
@@ -147,7 +145,6 @@ if __name__ == "__main__":
     except ValueError as VE:
         error_exit(9, str(VE))
     
-
     if tera_mpi:
         comm = tera_connect()       
 

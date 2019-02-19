@@ -5,7 +5,6 @@ Terachem is very sensitive to the type, lenght and order of transferred data
 We take advantage of NUMPY which can set C-like ordering and data types that are exploited by MPI.Send  
 .tobytes for numpy array not necessary with the exception of int8 data type
 """
-import traceback
 import numpy as np
 import os
 import sys
@@ -103,7 +102,7 @@ def recieve_tera(comm, natoms, nstates, state, pot_eners,
               "Energies: {}, Nstates: {}".format(en_array.tolist(), nstates))
         return(fx, fy, fz, pot_eners, MO, CiVecs, blob)
     
-def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z
+def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
               MO, CiVecs, blob, civec_size, nbf_size, blob_size):
     
     FMSinit = 0
@@ -251,12 +250,12 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
   
 def calc_forces_tera(comm, natoms, nstates, state, 
                      sim_time, x, y, z,
-                     fx, fy, fz, pot_eners
+                     fx, fy, fz, pot_eners,
                      MO, CiVecs, NAC, blob, SMatrix,
                      civec_size, nbf_size, blob_size,
-                     qmcharges, TDip, Dip)
+                     qmcharges, TDip, Dip):
     try:
-        send_tera(comm, natoms, nstates, state, sim_time, x ,y, z
+        send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
                   MO, CiVecs, blob, civec_size, nbf_size, blob_size)                 
                          
         
