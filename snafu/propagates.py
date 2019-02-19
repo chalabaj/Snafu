@@ -51,7 +51,7 @@ def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
 def calc_forces(
         step, at_names, state, nstates, x, y, z,
         fx_new , fy_new, fz_new,
-        pot_eners, ab_initio_file_path
+        pot_eners, ab_initio_file_path,
         tera_mpi = 0,comm = 0, sim_time = 0,    # all var beyond this point are used only for tera_mpi = 1
         MO = 0, CiVecs = 0, NAC = 0, blob = 0, SMatrix = 0,
         civec_size = 0, nbf_size = 0, blob_size = 0,
@@ -102,7 +102,7 @@ def calc_forces(
                 fz_new[iat] = grad*np.float64(line[2])    
         gef.closed
     else:
-        
+        print("lalal")    
     return(fx_new , fy_new, fz_new, pot_eners)
 
 def calc_energies(

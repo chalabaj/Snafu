@@ -63,10 +63,10 @@ try:
     from constants import *   #  import conversion factors and default values
     
     from defaults import *    # import all defualt values, only here otherwise could overwritte in some modules
-    from tera_propagates import (
+    from tera_propagate import (
         finish_tera, exit_tera, 
         tera_connect, tera_init
-    #)
+    )
 except ImportError as ime:
     # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
@@ -76,7 +76,8 @@ except ImportError as ime:
     else:
         print("Module {} not found.".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
-              "with: {}".format('\n'.join(modules_files)))
+              "with: {}.".format('\n'.join(modules_files)),
+              "Or check import in the wrong module")
         exit(1)
 except KeyError as ke:
     print("SNAFU_DIR is not set.",
@@ -244,8 +245,8 @@ if __name__ == "__main__":
                                                             x_new, y_new, z_new,
                                                             fx_new, fy_new, fz_new,
                                                             pot_eners,
-                                                            ab_initio_file_path                                           
-                                                            tera_mpi,comm, sim_time, 
+                                                            ab_initio_file_path,                                           
+                                                            tera_mpi, comm, sim_time, 
                                                             MO, CiVecs, NAC, blob, SMatrix,
                                                             civec_size, nbf_size, blob_size,
                                                             qmcharges, TDip, Dip)
@@ -265,12 +266,11 @@ if __name__ == "__main__":
                         fx_new, fy_new, fz_new, pot_eners = calc_forces(
                                                  step, at_names, state, nstates, 
                                                  x, y, z, fx_new, fy_new, fz_new, 
-                                                 pot_eners, ab_initio_file_path
+                                                 pot_eners, ab_initio_file_path,
                                                  tera_mpi,comm, sim_time, 
                                                  MO, CiVecs, NAC, blob, SMatrix,
                                                  civec_size, nbf_size, blob_size,
                                                  qmcharges, TDip, Dip)
-        )
     
                         #simple scaling or updatre velocities with new state forces
                         if not vel_adj:
@@ -304,7 +304,11 @@ if __name__ == "__main__":
                         fx_new, fy_new, fz_new, pot_eners = calc_forces(
                             step, at_names, state, nstates, 
                             x_new, y_new, z_new, fx_new, fy_new, fz_new,
-                            pot_eners, ab_initio_file_path)
+                            pot_eners, ab_initio_file_path,
+                             tera_mpi,comm, sim_time, 
+                             MO, CiVecs, NAC, blob, SMatrix,
+                             civec_size, nbf_size, blob_size,
+                             qmcharges, TDip, Dip)
     
                     pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
                     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  #  keep last two steps

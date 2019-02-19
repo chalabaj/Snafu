@@ -16,9 +16,7 @@ from mpi4py import MPI
 
 try:
     from errors import error_exit
-    from default import  (
-        max_terachem_time
-    )
+    from defaults import max_terachem_time
     from constants import *
 except ImportError as ime:
     print("Module {} in inits not found.".format(ime))
