@@ -27,7 +27,7 @@ modules_files = ['masses.py',
 'errors.py',
 'defaults.py',
 'inits.py',
-'tera-propagate.py'
+'tera_propagates.py'
 ]
 
 # if some of the imports fail during in-modules import ImportError rais None name
@@ -75,7 +75,7 @@ except ImportError as ime:
         print("Module {} not found.".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
               "with: {}.".format('\n'.join(modules_files)),
-              "Or check import in the wrong module")
+              "\nOr check import in the wrong module")
         exit(1)
 except KeyError as ke:
     print("SNAFU_DIR is not set.",
