@@ -62,7 +62,7 @@ try:
     )
     from constants import *   #  import conversion factors and default values
     from defaults import *    #  import all defualt values, only here otherwise could overwritte in some modules
-    from tera_propagate import (
+    from tera_propagates import (
         finish_tera, exit_tera, tera_connect, tera_init
     )
 except ImportError as ime:
@@ -95,7 +95,7 @@ if __name__ == "__main__":
           "\nPython base: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
           "\nSystem platform: {}".format(sys.platform),
-          "\nRunning executable: {}".format(sys.path[-1])
+          "\nRunning executable: {}".format(sys.path[:])
           )
     
     # local runs dont create HOST env var, qsub SGE system does
@@ -237,37 +237,21 @@ if __name__ == "__main__":
                                                    vx, vy, vz, 
                                                    fx, fy, fz)
     
-            fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, 
-                                                            state, nstates, 
-                                                            x_new, y_new, z_new,
-                                                            fx_new, fy_new, fz_new,
-                                                            pot_eners,
-                                                            ab_initio_file_path,                                           
-                                                            tera_mpi, comm, sim_time, 
-                                                            MO, CiVecs, NAC, blob, SMatrix,
-                                                            civec_size, nbf_size, blob_size,
-                                                            qmcharges, TDip, Dip)
+            fx_new, fy_new, fz_new, pot_eners, \
+            MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path, 
+                                           tera_mpi, comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
         
             if not method == "bomd":
                 if step >= 2:
-                    hop, outstate, v_scal_fac, prob = calc_hopp(method, state,
-                                                                pot_eners, 
-                                                                pot_eners_array,
-                                                                Ekin, dt,
-                                                                hop_thresh)
+                    hop, outstate, v_scal_fac, prob = calc_hopp(method, state, pot_eners, pot_eners_array, Ekin, dt, hop_thresh)
     
                     if hop:
                         state = outstate
                         # use XYZ from prev. step to cacl F for a new state
                         
-                        fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                                                 step, at_names, state, nstates, 
-                                                 x, y, z, fx_new, fy_new, fz_new, 
-                                                 pot_eners, ab_initio_file_path,
-                                                 tera_mpi,comm, sim_time, 
-                                                 MO, CiVecs, NAC, blob, SMatrix,
-                                                 civec_size, nbf_size, blob_size,
-                                                 qmcharges, TDip, Dip)
+                        fx_new, fy_new, fz_new, pot_eners, \
+                        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path,
+                                                 tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
                         #simple scaling or updatre velocities with new state forces
                         if not vel_adj:
@@ -290,22 +274,12 @@ if __name__ == "__main__":
     
                         # now finish the propagation step on new PES
     
-                        x_new, y_new, z_new = update_positions(dt, am, 
-                                                               x, y, z, 
-                                                               x_new, y_new, z_new, 
-                                                               vx, vy, vz, 
-                                                               fx_new, fy_new,
-                                                               fz_new)
+                        x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
+                                                               vx, vy, vz, fx_new, fy_new, fz_new)
     
-    
-                        fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                            step, at_names, state, nstates, 
-                            x_new, y_new, z_new, fx_new, fy_new, fz_new,
-                            pot_eners, ab_initio_file_path,
-                             tera_mpi,comm, sim_time, 
-                             MO, CiVecs, NAC, blob, SMatrix,
-                             civec_size, nbf_size, blob_size,
-                             qmcharges, TDip, Dip)
+                        fx_new, fy_new, fz_new, pot_eners, \
+                        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path,
+                                                       tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
                     pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
                     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  #  keep last two steps
