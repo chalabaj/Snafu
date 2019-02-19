@@ -48,55 +48,57 @@ def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
         vzz[iat] = vz[iat] + ( dt*(-fz[iat] + fz_new[iat])/(2*am[iat]) )
     return(vxx, vyy, vzz)   
     
-def calc_forces(
-        step, at_names, state, nstates, x, y, z,
-        fx_new , fy_new, fz_new,
-        pot_eners, ab_initio_file_path):
+def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new, 
+                pot_eners, ab_initio_file_path, 
+                tera_mpi, comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip):
     """
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forcess calc 
     """
-    natoms = len(x)
-    grad = 1
-
-    if re.search(r'g09', ab_initio_file_path):
-            grad = 1   # gaus exports forces -1
-    elif re.search(r'molpro', ab_initio_file_path):
-            grad = -1  # molpro exports gradients
-            state = state + 1 #molpro index starts from 1
-    elif re.search(r'orca', ab_initio_file_path):
-            grad = -1  #orca exports gradients
-    elif re.search(r'tera', ab_initio_file_path):
-            grad = -1  #tera exports gradients                    
-    # Create geom file for which the forces will be calculated
-    abinit_geom_file = "abinit_geom.xyz"
-    with open (abinit_geom_file, "w") as agf:
-         for iat in range(0,len(x)):
-             line = ("".join("%2s %2.16e %2.16e %2.16e\n" % (at_names[iat],x[iat]/ANG_BOHR,y[iat]/ANG_BOHR,z[iat]/ANG_BOHR)))
-             agf.write(line)
-    agf.closed
-
-    # CALL EXTERNAL AB-INITIO CALCULATIONS       
-
-    abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
-
-    try:
-        abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
-    except subprocess.CalledProcessError as cpe: 
-        print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
-        error_exit(4)
-
-    with open ("gradients.dat", "r") as gef:
-        for st in range(0, nstates):
-            pot_eners[st] = float(gef.readline()) 
-        for iat in range(0, natoms):
-            line = gef.readline().split(" ")
-            # FX FY FZ, gradient to forces 
-            fx_new[iat] = grad*np.float64(line[0])
-            fy_new[iat] = grad*np.float64(line[1])
-            fz_new[iat] = grad*np.float64(line[2])    
-    gef.closed
-    return(fx_new , fy_new, fz_new, pot_eners)
+    if not tera_mpi:
+        natoms = len(x)
+        grad = 1
+    
+        if re.search(r'g09', ab_initio_file_path):
+                grad = 1   # gaus exports forces -1
+        elif re.search(r'molpro', ab_initio_file_path):
+                grad = -1  # molpro exports gradients
+                state = state + 1 #molpro index starts from 1
+        elif re.search(r'orca', ab_initio_file_path):
+                grad = -1  #orca exports gradients
+        elif re.search(r'tera', ab_initio_file_path):
+                grad = -1  #tera exports gradients                    
+        # Create geom file for which the forces will be calculated
+        abinit_geom_file = "abinit_geom.xyz"
+        with open (abinit_geom_file, "w") as agf:
+             for iat in range(0,len(x)):
+                 line = ("".join("%2s %2.16e %2.16e %2.16e\n" % (at_names[iat],x[iat]/ANG_BOHR,y[iat]/ANG_BOHR,z[iat]/ANG_BOHR)))
+                 agf.write(line)
+        agf.closed
+    
+        # CALL EXTERNAL AB-INITIO CALCULATIONS       
+    
+        abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
+    
+        try:
+            abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
+        except subprocess.CalledProcessError as cpe: 
+            print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
+            error_exit(4)
+    
+        with open ("gradients.dat", "r") as gef:
+            for st in range(0, nstates):
+                pot_eners[st] = float(gef.readline()) 
+            for iat in range(0, natoms):
+                line = gef.readline().split(" ")
+                # FX FY FZ, gradient to forces 
+                fx_new[iat] = grad*np.float64(line[0])
+                fy_new[iat] = grad*np.float64(line[1])
+                fz_new[iat] = grad*np.float64(line[2])    
+        gef.closed
+    else:
+        print("lalal")    
+    return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)
 
 def calc_energies(
     step, time, natoms, am, state, pot_eners, 

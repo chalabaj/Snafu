@@ -94,7 +94,6 @@ def check_output_file(cwd, natoms, restart, init_step, write_freq):
           error_exit(8, "state.dat")
         if (os.path.isfile("restart.in")):
           error_exit(8, "restart.in")
-         # TODO MPI exit
     return()
 
 def read_geoms(natoms, geom_file_path):

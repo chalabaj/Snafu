@@ -36,32 +36,35 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
     from inits import (
-        file_check, read_input, check_output_file, read_geoms, read_velocs,
-        com_removal, init_fep_arrays
+        file_check, read_input, 
+        check_output_file, read_geoms, 
+        read_velocs, com_removal, 
+        init_fep_arrays
     )
     from masses import assign_masses
     from errors import error_exit
     from prints import (
-        print_positions, print_velocities, print_snafu,
-        print_state, print_energies, print_pes
+        print_positions, print_velocities, 
+        print_snafu, print_state, 
+        print_energies, print_pes
     )
     from propagates import (
         calc_forces, calc_energies,
-        update_velocities, update_positions, rescale_velocities,
-        adjust_velocities
+        update_velocities, update_positions, 
+        rescale_velocities, adjust_velocities
     )
     from landauzener import (
         calc_hopp
     )
     from restarts import (
-        print_restart, check_restart_files, read_restart
+        print_restart, check_restart_files, 
+        read_restart
     )
     from constants import *   #  import conversion factors and default values
-    
-    from defaults import *    # import all defualt values, only here otherwise could overwritte in some modules
-    #from tera_propagates import (
-    #    finish_tera, exit_tera, tera_connect, tera_init
-    #)
+    from defaults import *    #  import all defualt values, only here otherwise could overwritte in some modules
+    from tera_propagates import (
+        finish_tera, exit_tera, tera_connect, tera_init
+    )
 except ImportError as ime:
     # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
@@ -71,7 +74,8 @@ except ImportError as ime:
     else:
         print("Module {} not found.".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
-              "with: {}".format('\n'.join(modules_files)))
+              "with: {}.".format('\n'.join(modules_files)),
+              "Or check import in the wrong module")
         exit(1)
 except KeyError as ke:
     print("SNAFU_DIR is not set.",
@@ -91,7 +95,7 @@ if __name__ == "__main__":
           "\nPython base: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
           "\nSystem platform: {}".format(sys.platform),
-          "\nRunning executable: {}".format(sys.path[-1])
+          "\nRunning executable: {}".format(sys.path[:])
           )
     
     # local runs dont create HOST env var, qsub SGE system does
@@ -127,7 +131,7 @@ if __name__ == "__main__":
               "{} = {}\n".format("natoms", natoms),
               "{} = {}\n".format("maxsteps",maxsteps),
               "{} = {}\n".format("initial state", state),
-              "{} = {}\n".format("timeste", dt),
+              "{} = {}\n".format("timestep", dt),
               "{} = {}\n".format("nstates",nstates),
               "{} = {}\n".format("ener_thresh", ener_thresh),
               "{} = {}\n".format("hop_thresh", hop_thresh),
@@ -140,13 +144,14 @@ if __name__ == "__main__":
               "{} = {}\n".format("method", method))
     except ValueError as VE:
         error_exit(9, str(VE))
+    
+    if tera_mpi:
+        comm = tera_connect()       
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
 
     # READ INITIAL OR RESTART DATA
-    rst_file_path = check_restart_files(restart, cwd)
-    print(liner)
     if restart == 0:
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
@@ -157,9 +162,20 @@ if __name__ == "__main__":
         # CENTER OF MASS REMOVAL 
         x, y, z = com_removal(x, y, z, am)
         # CALC INITIAL ENERGIES AND GRADIENTS
-        fx, fy, fz, pot_eners = calc_forces(step, at_names, state, nstates,
-                                            x, y, z, fx, fy, fz, pot_eners,
-                                            ab_initio_file_path)
+        if tera_mpi:
+            MO, CiVecs, NAC, blob, SMatrix, \
+            civec_size, nbf_size, blob_size, \
+            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+             
+        fx, fy, fz, pot_eners, \
+        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates,
+                                       x, y, z, fx, fy, fz, pot_eners,
+                                       ab_initio_file_path,
+                                       tera_mpi, comm, sim_time, 
+                                       MO, CiVecs, NAC, blob, SMatrix,
+                                       civec_size, nbf_size, blob_size,
+                                       qmcharges, TDip, Dip)
+
         pot_eners_array = np.copy(pot_eners)      
         
         Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
@@ -170,43 +186,39 @@ if __name__ == "__main__":
         init_step = 1
         print("Restart option turned OFF.")
     else:
-        
+        rst_file_path = check_restart_files(restart, cwd)
+        print(liner)
         init_step, at_names, state, \
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
         pot_eners_array = read_restart(rst_file_path, natoms)
-        
-        masses = assign_masses(at_names)
-        am = [mm * AMU for mm in masses]  # atomic mass units conversion
-        init_step = init_step + 1 # main loop counter for following step
 
+        masses = assign_masses(at_names)
+        am = [mm * AMU for mm in masses]  #  atomic mass units conversion
+        init_step = init_step + 1         #  main loop counter will start with following step
+        if tera_mpi:
+            MO, CiVecs, NAC, blob, SMatrix, \
+            civec_size, nbf_size, blob_size, \
+            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+                           
     check_output_file(cwd, natoms, restart, init_step, write_freq)
-    print(liner)
-    print("Initial geometry:\n",
-          "At    X         Y         Z         MASS:")
+
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
+    print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
               "{:12.8f}".format(masses[iat]))
 
-    print("Initial velocities:\n",
-          "At    VX       VY       VZ         ")
+    print("Initial velocities:\n   At    VX       VY       VZ")
     for iat in range(0, natoms):
         print("".join("%2s" " " "%3.3f" % (at_names[iat], vx[iat])),
               " %3.6f %2.6f " % (vy[iat], vz[iat]))
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
-    #if tera_mpi:
-    #    byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
-    #    comm = tera_connect()
-    #    MO, MO_old, CiVecs, CiVecs_old, NAC, blob, \
-    #    blob_old, SMatrix, civec_size, nbf_size,  \
-    #    blob_size, TDip, Dip = tera_init(comm, at_names, natoms, nstates,
-    #                                     byte_coords) 
     print(liner)
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
@@ -225,33 +237,23 @@ if __name__ == "__main__":
                                                    vx, vy, vz, 
                                                    fx, fy, fz)
     
-            fx_new, fy_new, fz_new, pot_eners = calc_forces(step, at_names, 
-                                                            state, nstates, 
-                                                            x_new, y_new, z_new,
-                                                            fx_new, fy_new, fz_new,
-                                                            pot_eners,
-                                                            ab_initio_file_path)
-    
+            fx_new, fy_new, fz_new, pot_eners, \
+            MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path, 
+                                           tera_mpi, comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
+        
             if not method == "bomd":
                 if step >= 2:
-                    hop, outstate, v_scal_fac, prob = calc_hopp(method, state,
-                                                                pot_eners, 
-                                                                pot_eners_array,
-                                                                Ekin, dt,
-                                                                hop_thresh)
+                    hop, outstate, v_scal_fac, prob = calc_hopp(method, state, pot_eners, pot_eners_array, Ekin, dt, hop_thresh)
     
                     if hop:
                         state = outstate
                         # use XYZ from prev. step to cacl F for a new state
                         
-                        fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                            step, at_names, state, nstates, 
-                            x, y, z,
-                            fx_new, fy_new, fz_new, 
-                            pot_eners, ab_initio_file_path)
+                        fx_new, fy_new, fz_new, pot_eners, \
+                        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path,
+                                                 tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
                         #simple scaling or updatre velocities with new state forces
-    
                         if not vel_adj:
                             vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
                         else:
@@ -272,18 +274,12 @@ if __name__ == "__main__":
     
                         # now finish the propagation step on new PES
     
-                        x_new, y_new, z_new = update_positions(dt, am, 
-                                                               x, y, z, 
-                                                               x_new, y_new, z_new, 
-                                                               vx, vy, vz, 
-                                                               fx_new, fy_new,
-                                                               fz_new)
+                        x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
+                                                               vx, vy, vz, fx_new, fy_new, fz_new)
     
-    
-                        fx_new, fy_new, fz_new, pot_eners = calc_forces(
-                            step, at_names, state, nstates, 
-                            x_new, y_new, z_new, fx_new, fy_new, fz_new,
-                            pot_eners, ab_initio_file_path)
+                        fx_new, fy_new, fz_new, pot_eners, \
+                        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path,
+                                                       tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
                     pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
                     pot_eners_array = np.vstack((pot_eners_array, pot_eners))  #  keep last two steps
