@@ -1,4 +1,4 @@
-basis    6-31g**
+basis    6-31g
 
 charge   	0	
 spinmult	1
@@ -7,7 +7,7 @@ scrdir		./scratch001
 gpus		  1
 run 	  	gradient
 precision	mixed
-convthre	1e-7
+convthre	1e-5
 scf       diis+a
 
 fon             yes

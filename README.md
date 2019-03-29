@@ -36,19 +36,20 @@ BOMD: MP2 in gaussian or MOLPRO
 TERACHEM: works through FMS interface, testing
 
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
-** New abinitio interface **
-It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step. This file is created by an interface script after an ab-initio code completes ES calculations. It simply greps energies and gradients to gradients.dat file in a running directory with the following structure:  
+** Adding new ab initio interface **
+It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step (see examples in INTERFACE folder). This file is created by an interface script after an ab initio code completes energy and gradient calculations. Interface script greps energies and gradients to the gradients.dat file in a running directory with the following structure:  
 energy-gs  
 energy-1ex state  
 ....  
 energy-nstate  
-Fx(1at) Fy(1at) Fz(1at)  
+grad_x(1at) grad_y(1at) grad_z(1at)  
 ....  
-Fx(n_at) Fy(n_at) Fz(n_at)  
+grad_x(n_at) grad_y(n_at) grad_z(n_at)  
+
 
 3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
 The **veloc.in*** file with initial velocities is not mandatory. If there are no initial velocities, a simulation will start with zero velocities.
-The geom.in and veloc.in files have to be in the XYZ format. Positions are in **ANGSTROM** units (so you can modify it with e.g. molden), but velocities have to be in **ATOMIC** units:  
+The geom.in and veloc.in files have to be in the XYZ format. Positions are in **ANGSTROM** units (so you can modify it with e.g. molden), but velocities have to be in the **ATOMIC** units:  
 Examples of water molecule in geom.in:
 3  
 water molecule in angstorm units
@@ -102,7 +103,7 @@ init_state = 2             # initial electronic state, 0 => ground state, 1 => f
 timestep = 6               # in atomic unit au = 0.024 fs   
 maxsteps = 600             # total number of steps  
 method  = lz               # lz (Landau Zener, Belyaev) or BOMD on selected state(no hops allowed)
-abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file (e.g. tera.inp)
+abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file - tera.inp
 vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift (in eV)     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    

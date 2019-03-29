@@ -46,20 +46,17 @@ def file_check(cwd):
     return(input_file_path, geom_file_path, vel_file_path, init_vel)
     
 def read_input(cwd, input_file_path):
-    
     # Read parameter from input.in file
     cfg = configparser.ConfigParser(delimiters=('=', ':'),
         comment_prefixes=('#', ';'))
     cfg.read(input_file_path)       # Read file
     par=dict(cfg.items("Settings",raw=False))
     
-    # To get rid of inline comments [0] and strip spaces
-    #print("Reading following input parameters:")
-    #print("\n".join("{}: {}".format(k.strip(), v.split("#")[0].strip()) for k, v in par.items()))
+    # Get rid of inline comments [0] and strip spaces
     for p in par:
        par[p]=par[p].split("#",1)[0].strip(" ")  
         
-    # Now that we know everything - check for ab initio interfac
+    # Check for ab initio interface file xxx.sh
     abinit_file = "ABINITIO/{}".format(par['abinitio'])
     ab_initio_file_path  = os.path.join(cwd, abinit_file)
     if (not os.path.isfile(ab_initio_file_path)):
@@ -80,7 +77,7 @@ def check_output_file(cwd, natoms, restart, init_step, write_freq):
         backup_output_files(cwd)
     elif (restart > 1):
         backup_output_files(cwd)
-        truncate_output_files(init_step-1, write_freq, natoms) #  -1 because init_step is set for restart  step +1
+        truncate_output_files(init_step-1, write_freq, natoms) #  -1 because init_step is set for restart (MD) loop with step +1
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):
           error_exit(8, "movie.xyz")

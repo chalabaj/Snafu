@@ -62,7 +62,7 @@ try:
     )
     from constants import *   #  import conversion factors and default values
     from defaults import *    #  import all defualt values, only here otherwise could overwritte in some modules
-    from tera_propagates import (
+    from tera-propagate import (
         finish_tera, exit_tera, tera_connect, tera_init
     )
 except ImportError as ime:
@@ -157,24 +157,19 @@ if __name__ == "__main__":
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 
         # OBTAIN ATOMIC MASSES:
-        masses = assign_masses(at_names)
-        am = [mm * AMU for mm in masses]  # atomic mass units conversion
+        am = assign_masses(at_names)
+        
         # CENTER OF MASS REMOVAL 
         x, y, z = com_removal(x, y, z, am)
+        
         # CALC INITIAL ENERGIES AND GRADIENTS
-        if tera_mpi:
-            MO, CiVecs, NAC, blob, SMatrix, \
-            civec_size, nbf_size, blob_size, \
-            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+        if tera_mpi: 
+            MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
              
         fx, fy, fz, pot_eners, \
-        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates,
-                                       x, y, z, fx, fy, fz, pot_eners,
-                                       ab_initio_file_path,
-                                       tera_mpi, comm, sim_time, 
-                                       MO, CiVecs, NAC, blob, SMatrix,
-                                       civec_size, nbf_size, blob_size,
-                                       qmcharges, TDip, Dip)
+        MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x, y, z, fx, fy, fz, pot_eners,
+                                       ab_initio_file_path, tera_mpi, comm, sim_time, 
+                                       MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
 
         pot_eners_array = np.copy(pot_eners)      
         
@@ -193,20 +188,17 @@ if __name__ == "__main__":
         Ekin, Epot, Etot, Etot_init, \
         pot_eners_array = read_restart(rst_file_path, natoms)
 
-        masses = assign_masses(at_names)
-        am = [mm * AMU for mm in masses]  #  atomic mass units conversion
-        init_step = init_step + 1         #  main loop counter will start with following step
+        am = assign_masses(at_names)
+        init_step = init_step + 1         #  main loop counter will start with a following step
         if tera_mpi:
-            MO, CiVecs, NAC, blob, SMatrix, \
-            civec_size, nbf_size, blob_size, \
-            qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x,y,z)
+            MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
                            
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
+    print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
-    print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
@@ -229,13 +221,10 @@ if __name__ == "__main__":
 
         #-------------------MAIN LOOP-----------------------------------------
         
-        for step in range(init_step, maxsteps + 1):
+         for step in range(init_step, maxsteps + 1):
     
-            x_new, y_new, z_new = update_positions(dt, am, 
-                                                   x, y, z,
-                                                   x_new, y_new, z_new, 
-                                                   vx, vy, vz, 
-                                                   fx, fy, fz)
+            x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
+                                                   vx, vy, vz, fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners, \
             MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path, 
@@ -273,7 +262,6 @@ if __name__ == "__main__":
                         print("Old Ekin: {} \nScaled/Adjusted Ekin {}\n.".format(Ekin, EE))
     
                         # now finish the propagation step on new PES
-    
                         x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
                                                                vx, vy, vz, fx_new, fy_new, fz_new)
     
@@ -321,6 +309,8 @@ if __name__ == "__main__":
             print_restart(step, sim_time, natoms, at_names, state, timestep,
                           x, y, z, vx, vy, vz, fx, fy, fz,
                           Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq, rsf_file)
+    if tera_mpi:
+        finish_tera(comm)   
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")

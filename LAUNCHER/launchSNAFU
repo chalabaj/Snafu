@@ -6,7 +6,8 @@
 
 function PrintHelp {
    echo " "
-   echo "USAGE: 'launchSNAFU nproc que' "
+   echo "USAGE: 'launchSNAFU nproc que ' "
+   echo "USAGE: 'launchSNAFU nproc que tera' for SNAFU+TERACHEM"
    exit 1
 }
                               
@@ -36,7 +37,25 @@ echo $queue
 fi
 
 # FILE SUBMITTED TO QUE (SGE-like)
+if [[ $# -eq 3 ]] || [[ $3 == "tera" ]];then
+if [[ -f ABINITIO/tera.inp ]];then
+cat > r.$name << EOF
+#!/bin/bash
 
+#$ -V
+#$ -cwd
+#$ -pe shm 1 
+#$ -notify
+#$ -l num_gpu=1
+
+export OMP_NUM_THREADS=1
+TERASNAFUS $input
+EOF
+else
+echo "tera.inp not found"
+exit 1
+fi
+else
 cat > r.$name << EOF
 #!/bin/bash
 
@@ -48,6 +67,7 @@ cat > r.$name << EOF
 export OMP_NUM_THREADS=1
 SNAFUS $input
 EOF
+fi
 
 echo "   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU";
 echo " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U";

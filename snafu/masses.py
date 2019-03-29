@@ -5,6 +5,7 @@ Created on Tue Jul 10 11:29:42 2018
 @author: chalabaj
 """
 import numpy as np
+from constants import AMU
     
 def assign_masses(at_names):
     """
@@ -70,8 +71,9 @@ def assign_masses(at_names):
                         'Cs'		:	132.90543	,
                         'Ba'		:	137.327	}
 
-    mass = np.zeros(len(at_names),dtype=np.float64)  
+    masses = np.zeros(len(at_names),dtype=np.float64)  
     
     for iat in range(0,len(at_names)):
-       mass[iat] = (atomic_masses[at_names[iat]]) 
-    return(mass)
+       masses[iat] = (atomic_masses[at_names[iat]]) 
+    am = mass*AMU   # atomic mass units conversion
+    return(am)

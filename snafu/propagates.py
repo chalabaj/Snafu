@@ -97,7 +97,16 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
                 fz_new[iat] = grad*np.float64(line[2])    
         gef.closed
     else:
-        print("lalal")    
+        send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
+                  MO, CiVecs, blob, civec_size, nbf_size, blob_size)
+        
+        fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob = recieve_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new.
+                                                                           MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size)
+                 
+        fx_new = grad*fx_new
+        fy_new = grad*fy_new
+        fz_new = grad*fz_new
+        
     return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)
 
 def calc_energies(

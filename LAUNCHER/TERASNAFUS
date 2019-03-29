@@ -1,0 +1,99 @@
+#!/bin/bash
+
+#$ -cwd -V
+
+OUTFILE=snafu.out
+if [[ -e $OUTFILE ]];then  # TO DO
+rm $OUTFILE
+fi
+
+jobfile=job.log
+delscratch="true"
+
+export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
+export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python
+export SNAFU_DIR="/home/chalabaj/SNAFU"  #folder with python files, needs to be set
+export basedir=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
+export OMP_NUM_THREADS=1
+export LD_LIBRARY_PATH=
+source SetEnvironment.sh TERACHEM 1.9-dev
+MPIRUN_TERA="$MPIRUN -np 1 "
+source SetEnvironment.sh ABIN mpi
+MPITYPE=2
+port=teraport$$
+
+uname -n     >  $jobfile  #if the scratch is on other node
+echo "${SCRDIR}"    >>  $jobfile
+
+if [[ -d $SCRDIR ]];then
+   echo "Job direcory $SCRDIR already exist!"
+   echo "Exiting..."
+   exit 1
+else
+   mkdir ${SCRDIR}
+fi
+
+# input file
+cp -r $basedir/* $SCRDIR/.
+
+cd $SCRDIR
+ 
+function clean_scratch {
+   cp -pr * $basedir/.
+   if [[ $? -ne "0" ]];then
+      echo "Error when copying the data from scratch back to the server."
+      echo "I will keep the directory $SCRATCH on node ${HOSTNAME}"
+      exit 1
+   else
+   if [[ $delscratch -eq "true" ]];then
+      cd ../
+      rm -r $SCRDIR
+   fi
+   exit 1
+}
+function ifkill {
+	if `ps|grep -q $1` ;then
+        	kill -9 $1
+	fi
+}
+
+
+trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to basedir
+
+$MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera.out 2>&1 &
+terapid=$!
+#sleep 15
+for i in {1..100}
+do
+	if grep -q port_name: tera.out; then
+		echo "not yet"
+    break
+	elif [ $i -eq 100 ]; then
+		ifkill $terapid
+    cp -r $SCRDIR/* $basedir
+		echo "The port for the terachem connection was not published in the time limit."
+		exit
+	fi
+	sleep 1
+done
+port_2=`grep port_name: tera.out | awk '{print $6}' | tail -1`
+export MPI_TERA_PORT=${port_2}
+$MPIRUN_TERA python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output python 
+
+if [[ $? -ne 0 ]]; then
+    echo "python failed"
+    ifkill $terapid
+    cp -r $SCRDIR/* $basedir
+    echo 'ERROR termination of:' ${JOB_ID} >> $jobfile
+else
+pythonpid=$!
+sleep 1
+ifkill $terapid
+ifkill $pythonpid
+cp -r $SCRDIR/* $basedir
+echo 'Normal termination of:' ${JOB_ID} >> $jobfile
+clean_scratch
+exit 0
+
+
+
