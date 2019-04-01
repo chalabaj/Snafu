@@ -18,17 +18,8 @@ startTime = datetime.now()
 cwd = os.getcwd()
 sys.path.append(cwd)
 
-modules_files = ['masses.py',
-'constants.py',
-'landauzener.py',
-'restarts.py',
-'propagates.py',
-'prints.py',
-'errors.py',
-'defaults.py',
-'inits.py',
-'tera_propagates.py'
-]
+modules_files = ['masses.py','constants.py','landauzener.py','restarts.py','propagates.py','prints.py',
+                 'errors.py','defaults.py','inits.py','tera-propagate.py']
 
 # if some of the imports fail during in-modules import ImportError rais None name
 try:
@@ -57,12 +48,11 @@ try:
         calc_hopp
     )
     from restarts import (
-        print_restart, check_restart_files, 
-        read_restart
+        print_restart, check_restart_files, read_restart
     )
     from constants import *   #  import conversion factors and default values
-    from defaults import *    #  import all defualt values, only here otherwise could overwritte in some modules
-    from tera-propagate import (
+    from defaults import *    #  import all defualt values, only here otherwise
+    from tera_propagates import (
         finish_tera, exit_tera, tera_connect, tera_init
     )
 except ImportError as ime:
@@ -72,7 +62,7 @@ except ImportError as ime:
               "in snafu dir failed. Exiting...")
         exit(1)
     else:
-        print("Module {} not found.".format(ime.name),
+        print("Module {} not found!!!".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
               "with: {}.".format('\n'.join(modules_files)),
               "\nOr check import in the wrong module")
@@ -98,7 +88,7 @@ if __name__ == "__main__":
           "\nRunning executable: {}".format(sys.path[:])
           )
     
-    # local runs dont create HOST env var, qsub SGE system does
+    # Local runs dont create HOSTNAME var, qsub SGE system does
     try:
         print("Working directory: {}".format(cwd),
               "on {}.".format(os.environ['HOSTNAME']))

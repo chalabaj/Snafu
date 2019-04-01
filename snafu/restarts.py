@@ -3,12 +3,14 @@ import os
 import shutil
 import re
 import subprocess
+import sys
+current_module = sys.modules[__name__]
 from defaults import liner
 try:
     from errors import error_exit
     from constants import *
 except ImportError as ime:
-    print("Module {} in restarts not found.".format(ime))
+    print("Module {} in {} not found.".format(ime,current_module))
     exit(1)
 
 def check_restart_files(restart, cwd):

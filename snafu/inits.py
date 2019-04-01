@@ -11,7 +11,7 @@ import sys
 import os
 import configparser
 import numpy as np
-
+current_module = sys.modules[__name__]
 try:
     from errors import error_exit
     from restarts import (
@@ -19,7 +19,7 @@ try:
     )
     from constants import *
 except ImportError as ime:
-    print("Module {} in inits not found.".format(ime))
+    print("Module {} in {} not found.".format(ime,current_module))
     exit(1)
 
 def file_check(cwd):

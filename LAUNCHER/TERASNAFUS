@@ -3,27 +3,55 @@
 #$ -cwd -V
 
 OUTFILE=snafu.out
-if [[ -e $OUTFILE ]];then  # TO DO
-rm $OUTFILE
+
+if [[ -e $OUTFILE ]] ;then
+rm $OUTFILE 
+fi
+
+if [[ -e tera.out ]];then
+rm tera.out
 fi
 
 jobfile=job.log
 delscratch="true"
 
+### ENVIRONMENT ######
 export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
-export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python
-export SNAFU_DIR="/home/chalabaj/SNAFU"  #folder with python files, needs to be set
-export basedir=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
+export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # python
+export SNAFU_DIR="/home/chalabaj/SNAFU-DEV"    # SNAFU modules
+export RUN_DIR=${PWD}                      # PBS uses PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
-export LD_LIBRARY_PATH=
 source SetEnvironment.sh TERACHEM 1.9-dev
-MPIRUN_TERA="$MPIRUN -np 1 "
 source SetEnvironment.sh ABIN mpi
+MPIRUN_TERA="$MPIRUN -np 1 "
 MPITYPE=2
-port=teraport$$
+job_id=$$
+port=teraport${job_id}
 
-uname -n     >  $jobfile  #if the scratch is on other node
-echo "${SCRDIR}"    >>  $jobfile
+
+uname -n           >  $jobfile
+echo "${SCRDIR}"  >>  $jobfile
+echo "$RUN_DIR"   >>  $jobfile
+
+function clean_exit () {
+   cp -pr $SCRDIR/* $RUN_DIR/.
+   if [[ $? -ne "0" ]];then
+      echo "Error when copying the data from scratch back to the server." >> $jobfile
+      echo "Keep the directory $SCRDIR on node ${HOSTNAME}" >> $jobfile
+   else
+     if [[ $delscratch -eq "true" ]];then
+        cd ../
+        rm -r $SCRDIR
+     fi
+   fi
+   pkill -P ${job_id}
+}
+function ifkill {
+	if `ps|grep -q $1` ;then
+        	kill -9 $1
+	fi
+  clean_scratch
+}
 
 if [[ -d $SCRDIR ]];then
    echo "Job direcory $SCRDIR already exist!"
@@ -34,35 +62,13 @@ else
 fi
 
 # input file
-cp -r $basedir/* $SCRDIR/.
-
+cp -r $RUN_DIR/* $SCRDIR/.
 cd $SCRDIR
- 
-function clean_scratch {
-   cp -pr * $basedir/.
-   if [[ $? -ne "0" ]];then
-      echo "Error when copying the data from scratch back to the server."
-      echo "I will keep the directory $SCRATCH on node ${HOSTNAME}"
-      exit 1
-   else
-   if [[ $delscratch -eq "true" ]];then
-      cd ../
-      rm -r $SCRDIR
-   fi
-   exit 1
-}
-function ifkill {
-	if `ps|grep -q $1` ;then
-        	kill -9 $1
-	fi
-}
-
-
-trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to basedir
+trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data back to RUN_DIR
 
 $MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera.out 2>&1 &
 terapid=$!
-#sleep 15
+
 for i in {1..100}
 do
 	if grep -q port_name: tera.out; then
@@ -70,30 +76,26 @@ do
     break
 	elif [ $i -eq 100 ]; then
 		ifkill $terapid
-    cp -r $SCRDIR/* $basedir
+    cp -r $SCRDIR/* $RUN_DIR
 		echo "The port for the terachem connection was not published in the time limit."
 		exit
 	fi
 	sleep 1
 done
+
 port_2=`grep port_name: tera.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
-$MPIRUN_TERA python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output python 
 
-if [[ $? -ne 0 ]]; then
-    echo "python failed"
-    ifkill $terapid
-    cp -r $SCRDIR/* $basedir
-    echo 'ERROR termination of:' ${JOB_ID} >> $jobfile
-else
+$MPIRUN_TERA python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output python 
 pythonpid=$!
-sleep 1
+
+sleep 10
+
+clean_exit  # kill processes whose parent process ID is listed.
+if [[ $? -ne "0" ]];then
 ifkill $terapid
 ifkill $pythonpid
-cp -r $SCRDIR/* $basedir
-echo 'Normal termination of:' ${JOB_ID} >> $jobfile
-clean_scratch
+fi
+echo "All done! Exit." >> $jobfile
+
 exit 0
-
-
-

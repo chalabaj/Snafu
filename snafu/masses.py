@@ -75,5 +75,5 @@ def assign_masses(at_names):
     
     for iat in range(0,len(at_names)):
        masses[iat] = (atomic_masses[at_names[iat]]) 
-    am = mass*AMU   # atomic mass units conversion
+    am = masses*AMU   # atomic mass units conversion
     return(am)
