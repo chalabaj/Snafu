@@ -16,7 +16,7 @@ try:
     from errors import error_exit
     from constants import *
     from tera_propagates import (
-        recieve_tera, send_tera, exit_tera
+        receive_tera, send_tera, exit_tera
     )
 except ImportError as ime:
     print("Module {} in {} not found.".format(ime,current_module))
@@ -56,15 +56,14 @@ def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
 def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new, 
                 pot_eners, ab_initio_file_path, 
                 tera_mpi, comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip):
-    """
+    """ 
     Call and collect an external script to calculate ab initio properties (force, energies)
     state = current state - PES for the forces to calc 
     """
     natoms = len(x)
+    grad = 1
     if not tera_mpi:
         
-        grad = 1
-    
         if re.search(r'g09', ab_initio_file_path):
                 grad = 1   # gaus exports forces -1
         elif re.search(r'molpro', ab_initio_file_path):
@@ -90,6 +89,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
             print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
+            
             error_exit(4)
     
         with open ("gradients.dat", "r") as gef:
@@ -107,16 +107,17 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
                       MO, CiVecs, blob, civec_size, nbf_size, blob_size)
             
-            fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob = recieve_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new.
+            fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob = receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new,
                                                                                MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size)
-                     
+
             fx_new = grad*fx_new
             fy_new = grad*fy_new
             fz_new = grad*fz_new
+            print(pot_eners, fx_new, fy_new, fz_new)
         except Exception as excpt:
             print("Something went wrong during MPI SEND/RECEIVE.",
                   "\n{}".format(excpt))
-            exit_tera(comm)
+            finish_tera(comm)
             error_exit(error_exit(15, str("Error during sending/receive TC data {}".format(excpt)))) 
         
     return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)

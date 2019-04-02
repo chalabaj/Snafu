@@ -31,7 +31,7 @@ port=teraport${job_id}
 
 uname -n           >  $jobfile
 echo "${SCRDIR}"  >>  $jobfile
-echo "$RUN_DIR"   >>  $jobfile
+#echo "$RUN_DIR"   >>  $jobfile  # fetchabin tail source fld
 
 function clean_exit () {
    cp -pr $SCRDIR/* $RUN_DIR/.
@@ -50,7 +50,7 @@ function ifkill {
 	if `ps|grep -q $1` ;then
         	kill -9 $1
 	fi
-  clean_scratch
+  clean_exit
 }
 
 if [[ -d $SCRDIR ]];then
@@ -64,7 +64,7 @@ fi
 # input file
 cp -r $RUN_DIR/* $SCRDIR/.
 cd $SCRDIR
-trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data back to RUN_DIR
+trap clean_exit SIGUSR2  #if qdel JOBID then copy current data back to RUN_DIR
 
 $MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera.out 2>&1 &
 terapid=$!

@@ -53,7 +53,7 @@ try:
     from constants import *   #  import conversion factors and default values
     from defaults import *    #  import all defualt values, only here otherwise
     from tera_propagates import (
-        finish_tera, exit_tera, tera_connect, tera_init
+        finish_tera, tera_connect, tera_init, global_except_hook
     )
 except ImportError as ime:
     # module could have been removed or different module name, e.g. renamed in module file
@@ -80,7 +80,7 @@ else:
 # ---------------INIT--------------------------------------------------------
 
 if __name__ == "__main__":
-
+  
     print("Simulation started at: {}".format(startTime),
           "\nPython base: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
@@ -136,11 +136,12 @@ if __name__ == "__main__":
         error_exit(9, str(VE))
     
     if tera_mpi:
+        sys.excepthook = global_except_hook   # Ancaught exception can cause MPI deadlock, this should prevent it and ABORT MPI comm
         comm = tera_connect()       
 
     fx, fy, fz, fx_new, fy_new, fz_new, \
     pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
-
+    sys.stdout.flush()
     # READ INITIAL OR RESTART DATA
     if restart == 0:
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
@@ -192,7 +193,7 @@ if __name__ == "__main__":
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
-              "{:12.8f}".format(masses[iat]))
+              "{:12.8f}".format(am[iat]))
 
     print("Initial velocities:\n   At    VX       VY       VZ")
     for iat in range(0, natoms):
@@ -202,6 +203,7 @@ if __name__ == "__main__":
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
     print(liner)
+    sys.stdout.flush()
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
@@ -213,8 +215,7 @@ if __name__ == "__main__":
         
          for step in range(init_step, maxsteps + 1):
     
-            x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
-                                                   vx, vy, vz, fx, fy, fz)
+            x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners, \
             MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path, 
@@ -299,12 +300,12 @@ if __name__ == "__main__":
             print_restart(step, sim_time, natoms, at_names, state, timestep,
                           x, y, z, vx, vy, vz, fx, fy, fz,
                           Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq, rsf_file)
-    if tera_mpi:
-        finish_tera(comm)   
+
     # FINAL PRINTS
     print(liner)
     print("#####JOB DONE.############")
-
+    if tera_mpi:
+        finish_tera(comm)   
     print("See output files:",
           "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
     print(liner)
@@ -312,4 +313,4 @@ if __name__ == "__main__":
     calc_time = (datetime.now() - startTime)
     print("Simulation ended at: {}".format(stopTime))
     print("Overall simulation sim_time (hh:mm:ss): {}".format(calc_time))
-exit(0)
+exit(0) 

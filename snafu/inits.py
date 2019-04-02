@@ -103,6 +103,10 @@ def read_geoms(natoms, geom_file_path):
  # READ INITIAL POSITIONS:   
     with open(geom_file_path, 'r') as igf:  # igf input geom file 
      atoms = igf.readline()  # first line in geom file is number of atoms
+     try:
+        int(atoms)    
+     except ValueError as VE:
+        error_exit(14, str(VE))
      if not (int(atoms) == natoms):  error_exit(2, " ")                         
      garbage = igf.readline()  # comment 
      for iat in range(0, natoms):
@@ -123,6 +127,10 @@ def read_velocs(init_vel, natoms, vel_file_path):
     if init_vel:
         with open(vel_file_path, 'r') as ivf:  
             atoms = ivf.readline()  # first line is number of atoms
+            try:
+                int(atoms)    
+            except ValueError as VE:
+                error_exit(14, str(VE))
             if not (int(atoms) == natoms):  
                 error_exit(2, " ")                         
             garbage = ivf.readline()  # second comment line

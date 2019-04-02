@@ -23,16 +23,26 @@ except ImportError as ime:
     exit(1)
 
 def finish_tera(comm):
-    print("Disconnecting Terachem communication.")
+    print("All MPI communication done.\nDisconnecting Terachem communication.")
     comm.Send(str.encode("0"), dest=0, tag=0 )  # MPI_TAG_EXIT = 0
     # also  MPI_TAG_ERROR = 13 if error occus
     comm.Disconnect()
-    return
+    return()
     
+def global_except_hook(exctype, value, traceback):
+    # Prevent deadlock state when some exception is not handled (caught) a MPI still runs without exit    
+    # https://github.com/chainer/chainermn/issues/236
+    # NOTE: mpi4py must be imported inside exception handler, not globally.
+    sys.stdout.write("Except_hook. Probably some syntax error. Calling MPI_Abort().\n")
+    sys.stdout.flush() 
+    MPI.COMM_WORLD.Abort(1)
+    sys.__excepthook__(exctype, value, traceback)
+    return() 
+ 
 def exit_tera(comm):
-    # comm.Disconnect()
-    comm.Abort()
-    return
+    comm.Disconnect()
+    # comm.Abort()   ABORT kills all execution and does not flush the buffer unless flush called, can cause headpain when looking for error source
+    return()
  
 def tera_connect():
     #call MPI_COMM_CONNECT(port_name, MPI_INFO_NULL, 0, MPI_COMM_SELF, newcomm, ierr)
@@ -54,38 +64,52 @@ def tera_connect():
         print("Terachem connection established through port: {}.".format(mpi_port))          
     return(comm)
 
-def recieve_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new,
-                 MO, CiVecs, blob, SMatrix, NAC, TDip, Dip,
-                 qmcharges, civec_size, nbf_size, blob_size):
+def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new,
+                 MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size):
     
     status = MPI.Status()
-    
+    print("MPI RECEIVE.")
+   # status = MPI.Status()
+
+    #  Lets wait until Tera finished ES calc.
+    cc = 0
     while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
-        print("Waiting for Terachem to finish calculations",
-              "\n Probe status: {}".format(status.Get_error()))
-        time.sleep(1) 
-    
+            #print("Waiting for Terachem to finish calculations",
+            #      "\n Probe status {}: {}".format(cc, status.Get_error()))
+            time.sleep(1) 
+            cc += 1 
+            if cc >= max_terachem_time:
+                exit_tera(comm)   
+                error_exit(15, "Didn't receive data from TC in time during initial comminucation") 
     try:
-        comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)  
-        comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)  
-        comm.Recv([Dip, nstates*3, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status) 
-        comm.Recv([qmcharges, natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE, 
-                  tag=MPI.ANY_TAG, status=status)  
-        comm.Recv([MO, nbf_size*nbf_size, MPI.DOUBLE], source=MPI.ANY_SOURCE, 
-                  tag=MPI.ANY_TAG, status=status)
-        comm.Recv([CiVecs, nstates*civec_size, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)
-        comm.Recv([SMatrix, nstates*nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)
-        comm.Recv([blob, blob_size, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                  tag=MPI.ANY_TAG, status=status)
+        comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        pot_eners  
+        #print("Energies received\n")
+        #sys.stdout.flush() 
+        comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status) 
+        #print("TDip received\n")
+        #sys.stdout.flush() 
+        comm.Recv([Dip, nstates*3, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status) 
+        #print("Dip received\n")
+        #sys.stdout.flush() 
+        comm.Recv([qmcharges, natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)  
+        #print("Qmcharges received\n")
+        #sys.stdout.flush() 
+        comm.Recv([MO, nbf_size*nbf_size, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        #print("MO received\n")
+        #sys.stdout.flush() 
+        comm.Recv([CiVecs, nstates*civec_size, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        #print("CiVecs received\n")
+        #sys.stdout.flush() 
+        comm.Recv([SMatrix, nstates*nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        #print("SMatrix received\n")
+        sys.stdout.flush() 
+        comm.Recv([blob, blob_size, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
+        print("Blob received\n")
+        sys.stdout.flush() 
         for st1 in range(nstates):
             for st2 in range(st1,nstates):
-                comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE,
-                          tag=MPI.ANY_TAG, status=status)
+                comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
                 if (st1 == st2) and (st1 == state):   
                     xyz = 0
                     for iat in range(0,natoms):
@@ -93,7 +117,8 @@ def recieve_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                         fy_new[iat] = np.float64(NAC[xyz+1])
                         fz_new[iat] = np.float64(NAC[xyz+2])
                         xyz = xyz + 3
-                  
+                print(st1, st2, NAC) 
+                sys.stdout.flush()  
     except Exception as excpt:
         print(traceback.format_exc())
         raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
@@ -118,17 +143,16 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     bufints[5]=0               # T_FMS%CentID(2)
     bufints[6]=state           # T_FMS%StateID ! currently not used in fms.cpp
     bufints[7]=0               #  YES if write_wfn write to wfn.bin was don, only for restart 
-    bufints[9]=state           # iCalcState-1 ! TC Target State
+    bufints[8]=state           # iCalcState-1 ! TC Target State
     bufints[9]=state           # jCalcState-1
     bufints[10]=0              # first_call, not used
     bufints[11]=0              # FMSRestart, not used
 
-    
     #  We need to send only upper-triangle matrix
     #  Diagonal elements are gradients, other NACs
     tocacl = np.zeros((nstates, nstates), dtype=np.intc, order='C')
     uti = np.triu_indices(nstates)   #  upper-triangle indices
-    tocacl[state][state] = 1 # gradients for current state only, no NACs
+    tocacl[state][state] = 1 # gradients for the current state only, no NACs
 
     # Send time
     # Send coordinates
@@ -145,16 +169,15 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
         comm.Send([CiVecs, civec_size*nstates, MPI.DOUBLE], dest=0, tag=2)
         comm.Send([blob, blob_size, MPI.DOUBLE], dest=0, tag=2)
         comm.Send([vels, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
-        comm.Send([vels , 3*natoms, MPI.DOUBLE], dest=0, tag=2)
+        comm.Send([vels, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
         #print(MPI.Status().Get_error())
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
         print(traceback.format_exc())
         raise RuntimeError("Problem during sending dat to Terachem: {}".format(excpt))
     else:
-        print("MPI data send to TC.")
+        print("MPI SEND OK".format(sim_time))
         return()
-
     
 def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
     """  ABIN memory allocation of Terachem fields:
@@ -175,14 +198,9 @@ def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
     qmcharges = np.zeros((natoms),dtype=np.float64)
     TDip =  np.zeros(((nstates-1)*3), dtype=np.float64)
     Dip = np.zeros((nstates*3), dtype=np.float64)
-    print("TC arrays allocated.")    
+    print("TC arrays allocated.")  
+    sys.stdout.flush()   
     return(MO, CiVecs, NAC, blob, SMatrix, qmcharges, TDip, Dip)
-
-def move_old2new_terash(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old):
-    MO = np.copy(MO_old)
-    CiVecs = np.copy(CiVecs_old)
-    blob = np.copy(blob_old)
-    return(MO, MO_old, CiVecs, CiVecs_old, blob, blob_old)
 
 def tera_init(comm, at_names, natoms, nstates, x,y,z):
     # Initial data transfer to Terachem through MPI (abin: init_terash)
@@ -204,22 +222,22 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     #  Send coordinates: Call MPI_Send( qmcoords, 3*natom, MPI_DOUBLE_PRECISION, 0, 2, newcomm, ierr )
     #  status = MPI.Status()  print("Status: {}, Error: {}".format(status.Get_tag(), status.Get_error()))   
     try:
-        print("Sending number of QM atoms.")
+        #print("Sending number of QM atoms.")
         comm.Send( [byte_natoms, 1, MPI.SHORT], dest=0, tag=2 )
-        print("Sending QM atom names.") 
+        #print("Sending QM atom names.") 
         comm.Send( [byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
-        print("Sending FMS init.")
+        #print("Sending FMS init.")
         comm.Send( [byte_ints, 3, MPI.INT], dest=0, tag=2 ) 
-        print("Sending atom names")
+        #print("Sending atom names")
         comm.Send([byte_names, 2*natoms, MPI.CHAR], dest=0, tag=2)
-        print("Sent initial coordinates to TeraChem.")
+        #print("Sent initial coordinates to TeraChem.")
         comm.Send([byte_coords, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
 
         #  Lets wait until Tera finished first ES calc.
         cc = 0
         while not comm.Iprobe(source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status):
-            print("Waiting for Terachem to finish calculations",
-                  "\n Probe status {}: {}".format(cc, status.Get_error()))
+            #print("Waiting for Terachem to finish calculations",
+            #      "\n Probe status {}: {}".format(cc, status.Get_error()))
             time.sleep(1) 
             cc += 1 
             if cc >= max_terachem_time:
@@ -233,16 +251,14 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         civec_size = buffer[0]
         nbf_size = buffer[1]
         blob_size = buffer[2]      
-        #print(civec_size, nbf_size, blob_size)         
+        #print(civec_size, nbf_size, blob_size)   
+        MO, CiVecs, NAC, blob, SMatrix, \
+        qmcharges, TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates)      
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
         print(traceback.format_exc())
         exit_tera(comm)
         error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
     else:
-        print("TC init done.")
-    
-    MO, CiVecs, NAC, blob, SMatrix, \
-    qmcharges, TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates)
-
-    return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
+        print("---------TC INIT DONE-----------")
+        return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
