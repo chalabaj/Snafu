@@ -117,14 +117,13 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                         fy_new[iat] = np.float64(NAC[xyz+1])
                         fz_new[iat] = np.float64(NAC[xyz+2])
                         xyz = xyz + 3
-                print(st1, st2, NAC) 
+                    print(st1, st2, NAC) 
                 sys.stdout.flush()  
     except Exception as excpt:
         print(traceback.format_exc())
         raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
     else:
-        print("DATA RECEIVED",
-              "\n Probe status: {}".format(status.Get_error()),
+        print("DATA RECEIVED\n Probe status: {}".format(status.Get_error()),
               "Energies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
         return(fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob)
     

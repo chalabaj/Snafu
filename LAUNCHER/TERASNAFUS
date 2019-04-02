@@ -50,7 +50,7 @@ function ifkill {
 	if `ps|grep -q $1` ;then
         	kill -9 $1
 	fi
-  clean_exit
+  cp -pr $SCRDIR/* $RUN_DIR/.
 }
 
 if [[ -d $SCRDIR ]];then
@@ -87,15 +87,16 @@ port_2=`grep port_name: tera.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
 
 $MPIRUN_TERA python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output python 
-pythonpid=$!
 
-sleep 10
-
-clean_exit  # kill processes whose parent process ID is listed.
 if [[ $? -ne "0" ]];then
-ifkill $terapid
-ifkill $pythonpid
+clean_exit  # kill processes whose parent process ID is listed.
+  if [[ $? -ne "0" ]];then
+    ifkill $terapid
+    ifkill $pythonpid
+  fi
+else
+cp -pr $SCRDIR/* $RUN_DIR/.
+rm -r $SCRDIR
 fi
-echo "All done! Exit." >> $jobfile
 
 exit 0
