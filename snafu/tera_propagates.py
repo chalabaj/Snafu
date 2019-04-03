@@ -68,7 +68,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                  MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size):
     
     status = MPI.Status()
-    
+    np.set_printoptions(precision=10)
    # status = MPI.Status()
 
     #  Lets wait until Tera finished ES calc.
@@ -111,9 +111,9 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                 if (st1 == st2) and (st1 == state):   
                     xyz = 0
                     for iat in range(0,natoms):
-                        fx_new[iat] = NAC[xyz]
-                        fy_new[iat] = NAC[xyz+1]
-                        fz_new[iat] = NAC[xyz+2]
+                        fx_new[iat] = np.float64(NAC[xyz])
+                        fy_new[iat] = np.float64(NAC[xyz+1])
+                        fz_new[iat] = np.float64(NAC[xyz+2])
                         xyz = xyz + 3
                     print(st1, st2, NAC) 
                 sys.stdout.flush()  
@@ -138,7 +138,7 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     bufints[4]=0               # T_FMS%CentID(1)
     bufints[5]=0               # T_FMS%CentID(2)
     bufints[6]=state           # T_FMS%StateID ! currently not used in fms.cpp
-    if not sim_time > 0:     # as soon as we have any previous data use, otherwise evolution differs with time, even for restarts, np.ndarray.any(MO) doesnot work
+    if sim_time == 0:     # as soon as we have any previous data use, otherwise evolution differs with time, even for restarts, np.ndarray.any(MO) doesnot work
         bufints[7]=0           # YES if write_wfn write to wfn.bin was don, only for restart 
     else:
         bufints[7]=1 

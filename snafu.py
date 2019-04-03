@@ -214,7 +214,7 @@ if __name__ == "__main__":
         #-------------------MAIN LOOP-----------------------------------------
         
          for step in range(init_step, maxsteps + 1):
-            sim_time = step * dt * AU_FS
+            sim_time = step * dt * AU_FS ## move to start of loop? sim_time TC issue 
             x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners, \
@@ -278,6 +278,7 @@ if __name__ == "__main__":
             y = np.copy(y_new)
             z = np.copy(z_new)
     
+
             Etot_prev = Etot
             Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                           state, pot_eners,
