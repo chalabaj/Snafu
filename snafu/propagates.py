@@ -63,8 +63,8 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
     natoms = len(x)
     grad = -1
     if not tera_mpi:
-        
-        if re.search(r'g09', ab_initio_file_path):
+        # GRADIENT/FORCES check
+        if re.search(r'g09', ab_initio_file_path) or re.search(r'gaus09', ab_initio_file_path):
                 grad = 1   # gaus exports forces -1
         elif re.search(r'molpro', ab_initio_file_path):
                 grad = -1  # molpro exports gradients
@@ -82,14 +82,12 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         agf.closed
     
         # CALL EXTERNAL AB-INITIO CALCULATIONS       
-    
         abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
     
         try:
             abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
             print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
-            
             error_exit(4)
     
         with open ("gradients.dat", "r") as gef:
@@ -104,8 +102,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         gef.closed
     else:
         try:
-            send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
-                      MO, CiVecs, blob, civec_size, nbf_size, blob_size)
+            send_tera(comm, natoms, nstates, state, sim_time, x ,y, z, MO, CiVecs, blob, civec_size, nbf_size, blob_size)
             
             fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob = receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new,
                                                                                MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size)
@@ -113,7 +110,6 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             fx_new = grad*fx_new
             fy_new = grad*fy_new
             fz_new = grad*fz_new
-            print(pot_eners, fx_new, fy_new, fz_new)
         except Exception as excpt:
             print("Something went wrong during MPI SEND/RECEIVE.",
                   "\n{}".format(excpt))

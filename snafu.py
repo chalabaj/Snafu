@@ -193,7 +193,7 @@ if __name__ == "__main__":
     for iat in range(0, natoms):
         print("{} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
-              "{:12.8f}".format(am[iat]))
+              "{:12.8f}".format(am[iat]/AMU))
 
     print("Initial velocities:\n   At    VX       VY       VZ")
     for iat in range(0, natoms):
@@ -214,7 +214,7 @@ if __name__ == "__main__":
         #-------------------MAIN LOOP-----------------------------------------
         
          for step in range(init_step, maxsteps + 1):
-    
+            sim_time = step * dt * AU_FS
             x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz)
     
             fx_new, fy_new, fz_new, pot_eners, \
@@ -278,7 +278,6 @@ if __name__ == "__main__":
             y = np.copy(y_new)
             z = np.copy(z_new)
     
-            sim_time = step * dt * AU_FS
             Etot_prev = Etot
             Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
                                                           state, pot_eners,
@@ -289,6 +288,7 @@ if __name__ == "__main__":
             print(" {:<6d}  {:<7.4f}  {:<12.4f}".format(step, sim_time, dE * AU_EV),
                   " {:<13.4f}".format(dE_step * AU_EV),
                   "{}     {}".format(str(hop)[0], state))
+            sys.stdout.flush()
             # SAVE POSITION, VELOCITIES, ENERGIES AND RESTART
             if (step%write_freq == 0):
                 print_energies(step,write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file)

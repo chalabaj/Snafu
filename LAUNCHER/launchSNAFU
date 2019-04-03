@@ -55,7 +55,7 @@ cat > r.$name << EOF
 #$ -cwd
 #$ -pe shm $nproc 
 #$ -notify
-
+#$ -l num_gpu=1
 export OMP_NUM_THREADS=1
 SNAFUS $input
 EOF

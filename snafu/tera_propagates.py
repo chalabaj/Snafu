@@ -68,7 +68,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                  MO, CiVecs, blob, SMatrix, NAC, TDip, Dip, qmcharges, civec_size, nbf_size, blob_size):
     
     status = MPI.Status()
-    print("MPI RECEIVE.")
+    
    # status = MPI.Status()
 
     #  Lets wait until Tera finished ES calc.
@@ -103,19 +103,17 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
         #sys.stdout.flush() 
         comm.Recv([SMatrix, nstates*nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         #print("SMatrix received\n")
-        sys.stdout.flush() 
         comm.Recv([blob, blob_size, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-        print("Blob received\n")
-        sys.stdout.flush() 
+        #print("Blob received\n")
         for st1 in range(nstates):
             for st2 in range(st1,nstates):
                 comm.Recv([NAC, 3*natoms, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
                 if (st1 == st2) and (st1 == state):   
                     xyz = 0
                     for iat in range(0,natoms):
-                        fx_new[iat] = np.float64(NAC[xyz])
-                        fy_new[iat] = np.float64(NAC[xyz+1])
-                        fz_new[iat] = np.float64(NAC[xyz+2])
+                        fx_new[iat] = NAC[xyz]
+                        fy_new[iat] = NAC[xyz+1]
+                        fz_new[iat] = NAC[xyz+2]
                         xyz = xyz + 3
                     print(st1, st2, NAC) 
                 sys.stdout.flush()  
@@ -123,8 +121,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
         print(traceback.format_exc())
         raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
     else:
-        print("DATA RECEIVED\n Probe status: {}".format(status.Get_error()),
-              "Energies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
+        print("MPI RECEIVED \nEnergies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
         return(fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob)
     
 def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
@@ -141,7 +138,10 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     bufints[4]=0               # T_FMS%CentID(1)
     bufints[5]=0               # T_FMS%CentID(2)
     bufints[6]=state           # T_FMS%StateID ! currently not used in fms.cpp
-    bufints[7]=0               #  YES if write_wfn write to wfn.bin was don, only for restart 
+    if not sim_time > 0:     # as soon as we have any previous data use, otherwise evolution differs with time, even for restarts, np.ndarray.any(MO) doesnot work
+        bufints[7]=0           # YES if write_wfn write to wfn.bin was don, only for restart 
+    else:
+        bufints[7]=1 
     bufints[8]=state           # iCalcState-1 ! TC Target State
     bufints[9]=state           # jCalcState-1
     bufints[10]=0              # first_call, not used
