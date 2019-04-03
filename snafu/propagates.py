@@ -61,7 +61,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
     state = current state - PES for the forces to calc 
     """
     natoms = len(x)
-    grad = 1
+    grad = -1
     if not tera_mpi:
         
         if re.search(r'g09', ab_initio_file_path):

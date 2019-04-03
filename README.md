@@ -46,6 +46,7 @@ grad_x(1at) grad_y(1at) grad_z(1at)
 ....  
 grad_x(n_at) grad_y(n_at) grad_z(n_at)  
 
+Be carefull: for now, the code expects gradients to be extracted (grepped) not forces (e.g. in Gaussian code, see calc_forces routine in the propagates.py module). If the interface script name contains the word gaus/molpro/orca/tera, the code will automatically transform gradients into forces (-1 multiplication) or take Gaussian forces directly. For other ab initio codes, unless the ab initio code extract forces, there is no need to change anything, but if the ab initio code exports forces, you have to add additional condition to the calc_forces function or rename interface script so it contains gaus word.
 
 3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
 The **veloc.in*** file with initial velocities is not mandatory. If there are no initial velocities, a simulation will start with zero velocities.
@@ -58,7 +59,7 @@ water molecule in angstorm units
  H     0.892841     0.000000    -0.315663  
 
 4) Launching:
-The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (e.g. SGE, PBS). 
+The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (e.g. SGE). 
 The launchSNAFU is not needed when running SNAFU directly without queuing; SNAFUS script must be adjusted as it takes SGE queuing parameters like JOB_ID env variable. 
 The launcher:  
 - submit the job to que
@@ -69,6 +70,9 @@ The launcher:
 
 During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable (in python this is os.environ['SNAFU_DIR']). This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here.
 
+SNAFU simulation with TeraChem interface can be launched by:  
+</code>launchSNAFU 1 aq-gpu-gtx980 tera </code>
+
 If the launcher is not used, just export the **SNAFU_DIR** variable:
   <code>
    export SNAFU_DIR="path/to/snafu/dir"
@@ -76,7 +80,8 @@ If the launcher is not used, just export the **SNAFU_DIR** variable:
 and then run the code:
  <code>
  python snafu.py > snafu.out
- </code>  
+ </code> 
+This will not work for TeraChem jobs, where terachem runs in background and awaits MPI communication with SNAFU (see TERASNAFUS). 
 File snafu.out file is copied during restart for backup. If you used other output filename, it will not becopied during restart backup process.  
  
 Environment variables for particular ab-initio code are exported in the interfaces scripts and have to be adjusted to your machine environment (see interface scripts in INTERFACE folder).
