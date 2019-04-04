@@ -22,7 +22,8 @@ def error_exit(error_number, error_desc=" "):
            "11 - Wrong input parameter.\nError:{}.".format(error_desc),
            "12 - Input variable {} not set.".format(error_desc),
            "13 - Error in TeraChem interface.Error:{}".format(error_desc),
-           "14 - Wrong format of geom.in or veloc.in. Should be XYZ format with geometry in Angstrom and velocities in atomic units.\nError:{}.".format(error_desc)
+           "14 - Wrong format of geom.in or veloc.in. Should be XYZ format with geometry in Angstrom and velocities in atomic units.\nError:{}.".format(error_desc),
+           "15 - MPI failure")
           )
     print("---------------------------------")
     print(err[error_number])

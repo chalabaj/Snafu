@@ -37,6 +37,7 @@ def global_except_hook(exctype, value, traceback):
     sys.stdout.flush() 
     MPI.COMM_WORLD.Abort(1)
     sys.__excepthook__(exctype, value, traceback)
+    error_exit(15)
     return() 
  
 def exit_tera(comm):
