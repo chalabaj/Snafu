@@ -130,25 +130,24 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     FMSinit = 0
     vels = np.zeros((natoms,3), dtype=np.float64)
     byte_coords = np.dstack((x,y,z))  # x,y,z must stack to single array
-    bufints = np.empty(12,order='C',dtype=np.intc)
+    bufints = np.zeros(12,order='C',dtype=np.intc)
     bufints[0]=FMSinit
     bufints[1]=natoms
     bufints[2]=1               # doCoup
-    bufints[3]=0               # TrajID=0 for SH
-    bufints[4]=0               # T_FMS%CentID(1)
-    bufints[5]=0               # T_FMS%CentID(2)
+    # bufints[3]=0               # TrajID=0 for SH
+    # bufints[4]=0               # T_FMS%CentID(1)
+    # bufints[5]=0               # T_FMS%CentID(2)
     bufints[6]=state           # T_FMS%StateID ! currently not used in fms.cpp
-    if sim_time == 0:     # as soon as we have any previous data use, otherwise evolution differs with time, even for restarts, np.ndarray.any(MO) doesnot work
+    if sim_time == 0:          # as soon as we have any previous data use
         bufints[7]=0           # YES if write_wfn write to wfn.bin was don, only for restart 
     else:
         bufints[7]=1 
-    bufints[8]=state           # iCalcState-1 ! TC Target State
-    bufints[9]=state           # jCalcState-1
-    bufints[10]=0              # first_call, not used
-    bufints[11]=0              # FMSRestart, not used
+    bufints[8]=state             # iCalcState-1 ! TC Target State
+    bufints[9]=state             # jCalcState-1
+    # bufints[10]=0              # first_call, not used
+    # bufints[11]=0              # FMSRestart, not used
 
-    #  We need to send only upper-triangle matrix
-    #  Diagonal elements are gradients, other NACs
+    #  We need to send only upper-triangle matrix, diagonal elements are gradients, other NACs
     tocacl = np.zeros((nstates, nstates), dtype=np.intc, order='C')
     uti = np.triu_indices(nstates)   #  upper-triangle indices
     tocacl[state][state] = 1 # gradients for the current state only, no NACs
