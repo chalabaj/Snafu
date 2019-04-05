@@ -22,22 +22,21 @@ except ImportError as ime:
     print("Module {} in {} not found.".format(ime,current_module))
     exit(1)
 
-def update_positions(
-        dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
-    for iat in range(0,len(am)):
-        x_new[iat] = x[iat] + vx[iat]*dt + ( fx[iat]/(2*am[iat])*dt**2 )
-        y_new[iat] = y[iat] + vy[iat]*dt + ( fy[iat]/(2*am[iat])*dt**2 )
-        z_new[iat] = z[iat] + vz[iat]*dt + ( fz[iat]/(2*am[iat])*dt**2 )
+def update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
+    # BROADCASTING instead of dummy for iat in range(0,len(am)):
+    x_new = x + vx*dt + fx/(2*am)*(dt**2)
+    y_new = y + vy*dt + fy/(2*am)*(dt**2)
+    z_new = z + vz*dt + fz/(2*am)*(dt**2)
     return(x_new, y_new, z_new)
 
 def update_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
     vxx = np.copy(vx)
     vyy = np.copy(vy)
     vzz = np.copy(vz)
-    for iat in range(0,len(am)):
-        vxx[iat] = vx[iat] + ( dt*(fx[iat] + fx_new[iat])/(2*am[iat]) )
-        vyy[iat] = vy[iat] + ( dt*(fy[iat] + fy_new[iat])/(2*am[iat]) )
-        vzz[iat] = vz[iat] + ( dt*(fz[iat] + fz_new[iat])/(2*am[iat]) )
+    # BROADCASTING  == for iat in range(0,len(am)):
+    vxx = vx + ((fx + fx_new)/(2*am)*dt)
+    vyy = vy + ((fy + fy_new)/(2*am)*dt)
+    vzz = vz + ((fz + fz_new)/(2*am)*dt)
     return(vxx, vyy, vzz)   
 
 def adjust_velocities(dt, am, vx, vy, vz, fx, fy, fz, fx_new, fy_new, fz_new):
@@ -64,15 +63,8 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
     grad = -1
     if not tera_mpi:
         # GRADIENT/FORCES check
-        if re.search(r'g09', ab_initio_file_path) or re.search(r'gaus09', ab_initio_file_path):
-                grad = 1   # gaus exports forces -1
-        elif re.search(r'molpro', ab_initio_file_path):
-                grad = -1  # molpro exports gradients
-                state = state + 1 #molpro index starts from 1
-        elif re.search(r'orca', ab_initio_file_path):
-                grad = -1  #orca exports gradients
-        elif re.search(r'tera', ab_initio_file_path):
-                grad = -1  #tera exports gradients                    
+        if re.search(r'g09', ab_initio_file_path) or re.search(r'gaus', ab_initio_file_path) or re.search(r'forces', ab_initio_file_path):
+                grad = 1   # gaus exports forces -1                   
         # Create geom file for which the forces will be calculated
         abinit_geom_file = "abinit_geom.xyz"
         with open (abinit_geom_file, "w") as agf:
@@ -87,8 +79,8 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         try:
             abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
-            print("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr))
-            error_exit(4)
+            #print(
+            error_exit(4,str("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr)))
     
         with open ("gradients.dat", "r") as gef:
             for st in range(0, nstates):
@@ -114,7 +106,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             print("Something went wrong during MPI SEND/RECEIVE.",
                   "\n{}".format(excpt))
             finish_tera(comm)
-            error_exit(error_exit(15, str("Error during sending/receive TC data {}".format(excpt)))) 
+            error_exit(15, str("Error during sending/receive TC data {}".format(excpt)))
         
     return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)
 

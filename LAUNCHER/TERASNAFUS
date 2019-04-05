@@ -23,11 +23,11 @@ export RUN_DIR=${PWD}                      # PBS uses PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
 source SetEnvironment.sh TERACHEM 1.9-dev
 source SetEnvironment.sh ABIN mpi
+export MPI_TERA=1   # SNAFU Var
 MPIRUN_TERA="$MPIRUN -np 1 "
 MPITYPE=2
 job_id=$$
 port=teraport${job_id}
-
 
 uname -n           >  $jobfile
 echo "${SCRDIR}"  >>  $jobfile

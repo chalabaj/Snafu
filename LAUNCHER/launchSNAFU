@@ -30,23 +30,22 @@ queue=$2
 
 # FILE SUBMITTED TO QUE (SGE-like)
 if [[ $# -eq 3 ]] || [[ $3 == "tera" ]];then
-if [[ -f ABINITIO/tera.inp ]];then
-cat > r.$name << EOF
+  if [[ ! -f ABINITIO/tera.inp ]];then
+  echo "tera.inp not found"
+  exit 1
+  else
+  cat > r.$name << EOF
 #!/bin/bash
-
+  
 #$ -V
 #$ -cwd
 #$ -pe shm 1 
 #$ -notify
 #$ -l num_gpu=1
-
 export OMP_NUM_THREADS=1
 TERASNAFUS $input
 EOF
-else
-echo "tera.inp not found"
-exit 1
-fi
+  fi
 else
 cat > r.$name << EOF
 #!/bin/bash
@@ -55,7 +54,6 @@ cat > r.$name << EOF
 #$ -cwd
 #$ -pe shm $nproc 
 #$ -notify
-#$ -l num_gpu=1
 export OMP_NUM_THREADS=1
 SNAFUS $input
 EOF

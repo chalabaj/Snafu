@@ -5,20 +5,20 @@ cd ABINITIO
 ##########SNAFU INPUTS###########################################
 abinit_geom_file=$1
 natoms=$2
-let state=$3+1   # which electronic state, SNAFU uses 0 for ground state thus the +1
-nstate=$4        # total number of state
+let state=$3+1     # which electronic state, SNAFU uses 0 for ground state thus the +1
+nstate=$4          # total number of state
 step=$5
 
 input=input
 nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g**"  
+basis="6-31g*"  
                # don't use Dunning basis sets, you won't get NACME
-nelectrons=9   # total number of electrons
-spin=1         # 0 for singlet, 1 for dublet etc.
-nocc=6         # occupied orbitals
-nclosed=2      # closed orbitals
-memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
+nelectrons=30   # total number of electrons
+spin=0         # 0 for singlet, 1 for dublet etc.
+nocc=18         # occupied orbitals
+nclosed=14      # closed orbitals
+memory=150    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
 
 #if [ -e ../gradients.dat ];then
@@ -51,17 +51,23 @@ if (lastorb.ne.MCSCF)then
    {hf;wf,$nelectrons,0,$spin}
 endif
 
-$multi;
+{$multi;
 occ,$nocc;
 closed,$nclosed;
 WF,$nelectrons,0,$spin;
 state,$nstate;
 maxiter,40;
+weight,1,1;
 ORBITAL,2140.2;
-NOEXTRA;
+NOEXTRA;}
 
-cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2; 
-forces;samc,5101.2;
+
+{RS2,shift=0.5,mix=$nstate,root=$state;
+state,$nstate;
+}
+
+forces;
+
 
 if (status.lt.0) then
    text, MCSCF failed to converge.
@@ -115,7 +121,7 @@ fi
 
 #echo "$step" >> grads.dat
 ################### Extracting energy 
-grep "MCSCF STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
+grep "RSPT2 STATE [[:alnum:]].1 Energy" $input.com.out | awk -F "Energy" '{print $2}' | tail -n $nstate > ../gradients.dat
 grep "GRADIENT," $input.pun | awk -F" " '{print $5" "$6" "$7" "}'>> ../gradients.dat #need space at the end for numpy float reading
 
 #cat ../gradients.dat >> grads.dat

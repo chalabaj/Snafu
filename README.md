@@ -28,12 +28,13 @@ The code was tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package. M
 
 1) **ABINITIO** folder has to contain one of the .sh script from INTERFACES folder or a terachem input file (or you can add your own interface, see below) .  
 Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
-Currently fully working:  
+Current implemented interfaces:  
 CASSCF in MOLPRO (2015.1)  
-ORCA(4.0.1): tddft -  working  
-GAUSSIAN 09: tdddft - working (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0 - weird)
-BOMD: MP2 in gaussian or MOLPRO  
-TERACHEM: works through FMS interface, testing
+CASPT2 in MOLPRO 
+TDDFT  in ORCA(4.0.1) & GAUSSIAN 09 (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0, one needs to check this on the run)
+OM3    in MNDO99 
+FOMO-CASCI in TERACHEM (works through MPI interface through FMS interface (see TC manual))
+BOMD: in Gaussian09 (MP2/DFT) or MOLPRO(MP2)
 
 TODO: EOM-IP, EOM-EA in QCHEM/ORCA,  
 ** Adding new ab initio interface **
@@ -46,7 +47,8 @@ grad_x(1at) grad_y(1at) grad_z(1at)
 ....  
 grad_x(n_at) grad_y(n_at) grad_z(n_at)  
 
-Be carefull: for now, the code expects gradients to be extracted (grepped) not forces (e.g. in Gaussian code, see calc_forces routine in the propagates.py module). If the interface script name contains the word gaus/molpro/orca/tera, the code will automatically transform gradients into forces (-1 multiplication) or take Gaussian forces directly. For other ab initio codes, unless the ab initio code extract forces, there is no need to change anything, but if the ab initio code exports forces, you have to add additional condition to the calc_forces function or rename interface script so it contains gaus word.
+Be carefull: the code expects gradients to be extracted, not forces (e.g. Gaussian code). If your ab initio code print forces, you can either grep the negative values of forces to get the gradients (F = - grad(E)) or rename your interface script so that the script name contains one the words forces,gaus or g09 ,separated by dot or minus sign (e.g. forces.sh, forces-gaus.sh, forces-abinitiocode.sh etc), SNAFU will then transform forces into gradients forces.
+Also: as the SNAFU is PYTHON based, so the states starts from 0 (ground state). Hence, if an ab initio code denotes ground state as 1, there should be modification in the interface skript (see e.g. molpro examples).  
 
 3) In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
 The **veloc.in*** file with initial velocities is not mandatory. If there are no initial velocities, a simulation will start with zero velocities.
@@ -63,7 +65,7 @@ The LAUNCHER folder contains launchSNAFU and SNAFUS bash scripts which will star
 The launchSNAFU is not needed when running SNAFU directly without queuing; SNAFUS script must be adjusted as it takes SGE queuing parameters like JOB_ID env variable. 
 The launcher:  
 - submit the job to que
-- export environment variables   
+- export necessary environment variables (SNAFU_DIR, MPI_TERA)
 - create folder on scratch  
 - start the simulation on scratch
 - copy data back to folder
@@ -73,9 +75,10 @@ During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable
 SNAFU simulation with TeraChem interface can be launched by:  
 </code>launchSNAFU 1 aq-gpu-gtx980 tera </code>
 
-If the launcher is not used, just export the **SNAFU_DIR** variable:
+If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:
   <code>
    export SNAFU_DIR="path/to/snafu/dir"
+   export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used
   </code>
 and then run the code:
  <code>
@@ -105,10 +108,10 @@ The output files are opened in the "append" mode. This will ensure the continuat
 natoms  = 3                # number of atoms in system  
 nstates = 3                # number of electronic states  
 init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state  
-timestep = 6               # in atomic unit au = 0.024 fs   
+timestep = 6               # in atomic unit, 1 au = 0.024 fs   
 maxsteps = 600             # total number of steps  
-method  = lz               # lz (Landau Zener, Belyaev) or BOMD on selected state(no hops allowed)
-abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, molpro, orca, tera input file - tera.inp
+method  = lz               # lz (default)/bomd on selected state(no hops allowed)
+abinitio  = molpro-casscf.sh  # name of ab initio interface file in the ABINITIO folder
 vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
 ener_thresh = 1.0          # threshold for max energy drift (in eV)     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
@@ -116,8 +119,8 @@ restart = 0                # N - restart from N-th step, restart_N.in must exist
                            # 1 - restart from the last completed step (i.e. restart.in)
                            # 0 - unset but writes restart information
 restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
-write_freq = 100           # how often print output, (default 10) 
-tera_mpi = 0               # use Terachem abinitio interface via MPI (default OFF)  
+write_freq = 100           # how often print output (default 10) 
+
 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  

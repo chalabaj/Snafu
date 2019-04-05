@@ -1,4 +1,4 @@
-#  DEFAULT VALUES 
+#  DEFAULT VALUES - do not change unless you know what you do!!!!
 #  might be overwriten by input.in values
 ener_thresh = 1.000   # (in eV)    
 hop_thresh = 0.50      # (in eV)    
@@ -10,13 +10,12 @@ timestep = 4
 method = "lz"
 hop = False
 step = 0
-dE = 0.000  # energy change since initial energies
+dE = 0.000         # energy change since initial (t=0) energy
 Etot_init = 0.000  # setting variable , total energy at the beginning
 Etot_prev = 0.000
 prob = 0.000
-tera_mpi = 0
 sim_time = 0.000
-max_terachem_time = 500 # wait for 1max_terachem_time s until terachem send data, otherwise too long step
+max_terachem_time = 200 # wait for 1max_terachem_time s until terachem send data, otherwise too long step
 liner = ("_") * 100
 
 # tera parameters for calc_forces, will be changed only if tera_mpi <>0

@@ -10,22 +10,37 @@ from datetime import datetime
 
 startTime = datetime.now()
 
-# ENVIRONMENT LAYER & LOCAL IMPORT
-# find local modules
-# SNAFU_DIR=/path/to/SNAFU/snafu variable must be set before launch
-# either export directly or in .bashrc SNAFU_DIR
-# launcher enter to scratch dir with copied input files
-cwd = os.getcwd()
-sys.path.append(cwd)
-
-modules_files = ['masses.py','constants.py','landauzener.py','restarts.py','propagates.py','prints.py',
-                 'errors.py','defaults.py','inits.py','tera-propagate.py']
-
-# if some of the imports fail during in-modules import ImportError rais None name
+# ENVIRONMENT LAYER 
 try:
+    cwd = os.getcwd()
+    sys.path.append(cwd)
     SNAFU_EXE = os.environ['SNAFU_DIR']
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
+except KeyError as ke:
+    # SNAFU_DIR=/path/to/SNAFU/snafu variable must be set before launch
+    print("SNAFU_DIR is not set.",
+          "See '.bashrc' file in your home directory",
+          "or use 'env' command and make sure $SNAFU_DIR is exported.",
+          "\nHint: export SNAFU_DIR=/path/to/SNAFU")
+    exit(1)
+
+# TERA MPI INTERFACE SMOOTH EXIT:    
+# load excepthook as soon as possible in order to prevent ancaught exceptions which can cause MPI deadlock state
+# This will mainly check code and runtime errors, wrong inputs; known errors are handled in error_exit module
+try: 
+    tera_mpi = int(os.environ['MPI_TERA'])
+    if tera_mpi:
+        from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
+        sys.excepthook = global_except_hook
+except KeyError as ke:
+     print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
+     tera_mpi = 0
+
+# LOCAL IMPORT OF SNAFU MODULES 
+try:
+    modules_files = ['masses.py','constants.py','landauzener.py','restarts.py','propagates.py','prints.py',
+                     'errors.py','defaults.py','inits.py','tera_propagates.py']    
     from inits import (
         file_check, read_input, 
         check_output_file, read_geoms, 
@@ -51,11 +66,9 @@ try:
         print_restart, check_restart_files, read_restart
     )
     from constants import *   #  import conversion factors and default values
-    from defaults import *    #  import all defualt values, only here otherwise
-    from tera_propagates import (
-        finish_tera, tera_connect, tera_init, global_except_hook
-    )
+    from defaults import *    #  import all default values, only here, later it can be setted by user
 except ImportError as ime:
+    # if some of the imports fail during in-modules import ImportError rais None
     # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
         print("Import in some modules {}".format(ime),
@@ -67,12 +80,6 @@ except ImportError as ime:
               "with: {}.".format('\n'.join(modules_files)),
               "\nOr check import in the wrong module")
         exit(1)
-except KeyError as ke:
-    print("SNAFU_DIR is not set.",
-          "See '.bashrc' file in your home directory",
-          "or use 'env' command and make sure $SNAFU_DIR is exported.",
-          "\nHint: export SNAFU_DIR=/path/to/SNAFU")
-    exit(1)
 else:
     print("All modules loaded succesfully.\n \n")
     print_snafu()
@@ -116,7 +123,7 @@ if __name__ == "__main__":
         restart = int(restart)
         restart_freq = int(restart_freq)
         tera_mpi = int(tera_mpi)
-        write_freq = int(write_freq)            
+        write_freq = int(write_freq)          
         print("Simulation will statr with the following parameters:\n",
               "{} = {}\n".format("natoms", natoms),
               "{} = {}\n".format("maxsteps",maxsteps),
@@ -136,7 +143,6 @@ if __name__ == "__main__":
         error_exit(9, str(VE))
     
     if tera_mpi:
-        sys.excepthook = global_except_hook   # Ancaught exception can cause MPI deadlock, this should prevent it and ABORT MPI comm
         comm = tera_connect()       
 
     fx, fy, fz, fx_new, fy_new, fz_new, \

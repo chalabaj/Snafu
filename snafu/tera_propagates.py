@@ -33,11 +33,11 @@ def global_except_hook(exctype, value, traceback):
     # Prevent deadlock state when some exception is not handled (caught) a MPI still runs without exit    
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
-    sys.stdout.write("Except_hook. Probably some syntax error. Calling MPI_Abort().\n")
+    sys.stdout.write("Except_hook. Probably some user input/syntax error.\n") 
     sys.stdout.flush() 
-    MPI.COMM_WORLD.Abort(1)
     sys.__excepthook__(exctype, value, traceback)
-    error_exit(15)
+  
+    MPI.COMM_WORLD.Abort(1)    
     return() 
  
 def exit_tera(comm):
@@ -81,7 +81,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
             cc += 1 
             if cc >= max_terachem_time:
                 exit_tera(comm)   
-                error_exit(15, "Didn't receive data from TC in time during initial comminucation") 
+                error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         pot_eners  

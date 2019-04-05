@@ -15,7 +15,7 @@ export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path
 export SNAFU_DIR="/home/chalabaj/SNAFU-DEV"  #folder with python files, needs to be set
 export RUN_DIR=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
-
+export MPI_TERA=0
 uname -n     >  $jobfile  #if the scratch is on other node
 echo "${SCRDIR}"    >>  $jobfile
 
