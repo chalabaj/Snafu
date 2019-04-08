@@ -28,11 +28,12 @@ except KeyError as ke:
 # TERA MPI INTERFACE SMOOTH EXIT:    
 # load excepthook as soon as possible in order to prevent ancaught exceptions which can cause MPI deadlock state
 # This will mainly check code and runtime errors, wrong inputs; known errors are handled in error_exit module
+# sys.excepthook has some collisions and does NOT work if syntax error is in some imported module bellow, use mangling
 try: 
     tera_mpi = int(os.environ['MPI_TERA'])
     if tera_mpi:
         from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
-        sys.excepthook = global_except_hook
+        sys.__excepthook__ = global_except_hook    
 except KeyError as ke:
      print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
      tera_mpi = 0
@@ -109,7 +110,6 @@ if __name__ == "__main__":
 
     #  READ INPUT OPTIONS AND SET THEM AS VARIABLES:
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
-    #  Need to pass variables to function so that modules wont used defaults from constats mod
     globals().update(input_vars)
     try:
         natoms = int(natoms)
@@ -183,13 +183,23 @@ if __name__ == "__main__":
         init_step, at_names, state, \
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
-        pot_eners_array = read_restart(rst_file_path, natoms)
+        pot_eners_array, CiVecs, MO, blob, civec_size, nbf_size, blob_size = read_restart(rst_file_path, natoms, nstates, tera_mpi)
 
         am = assign_masses(at_names)
         init_step = init_step + 1         #  main loop counter will start with a following step
         if tera_mpi:
-            MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
-                           
+            temp_MO, temp_CiVecs, temp_NAC, temp_blob, temp_SMatrix, temp_civec_size, \
+            temp_nbf_size, temp_blob_size, temp_qmcharges, temp_TDip, temp_Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
+        
+        # Check the shape of INIT and RESTART arrays - must equal
+        dim_match = "{d}:{d}\n{d}:{d}\n{d}:{d}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
+        if not (temp_MO.shape == MO.shape and 
+                temp_CiVecs.shape == CiVecs.shape and
+                temp_blob.shape == blob.shape):
+            error_exit(18, dim_match)
+        else:
+            print("Restart and init dimensions match\n",dim_match)
+                            
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
     print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
@@ -209,7 +219,6 @@ if __name__ == "__main__":
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
     print(liner)
-    sys.stdout.flush()
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
@@ -217,7 +226,7 @@ if __name__ == "__main__":
          open('state.dat', 'a') as state_file, \
          open('restart.in', 'w') as rsf_file:
 
-        #-------------------MAIN LOOP-----------------------------------------
+    #-------------------MAIN LOOP----------------------------------------------------------------
         
          for step in range(init_step, maxsteps + 1):
             sim_time = step * dt * AU_FS
@@ -265,12 +274,11 @@ if __name__ == "__main__":
                         fx_new, fy_new, fz_new, pot_eners, \
                         MO, CiVecs, blob = calc_forces(step, at_names, state, nstates, x_new, y_new, z_new, fx_new, fy_new, fz_new, pot_eners, ab_initio_file_path,
                                                        tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
+                    #  Keep only last two pot_eners, 3rd pot_energs is appended during hopping evaluation for minima derivation, 
+                    pot_eners_array = np.delete(pot_eners_array, 0, axis = 0) 
     
-                    pot_eners_array = np.delete(pot_eners_array, 0, axis = 0)
-                    pot_eners_array = np.vstack((pot_eners_array, pot_eners))  #  keep last two steps
-    
-                else:
-                    pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
+                #  Allways append the last pot_eners to the pot_eners_array 
+                pot_eners_array = np.vstack((pot_eners_array, pot_eners)) 
     
             vx, vy, vz = update_velocities(dt, am, 
                                            vx, vy, vz,
@@ -305,8 +313,10 @@ if __name__ == "__main__":
                 print_state(step, write_freq, sim_time, state, state_file)
             
             print_restart(step, sim_time, natoms, at_names, state, timestep,
-                          x, y, z, vx, vy, vz, fx, fy, fz,
-                          Ekin, Epot, Etot, Etot_init, pot_eners_array, restart_freq, rsf_file)
+                          x, y, z, vx, vy, vz, fx, fy, fz, nstates,
+                          Ekin, Epot, Etot, Etot_init, pot_eners_array, 
+                          MO, CiVecs, blob, civec_size, nbf_size, blob_size,
+                          restart_freq, rsf_file, tera_mpi)
 
     # FINAL PRINTS
     print(liner)

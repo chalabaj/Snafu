@@ -4,22 +4,14 @@
 
 OUTFILE=snafu.out
 
-if [[ -e $OUTFILE ]] ;then
-rm $OUTFILE 
-fi
-
-if [[ -e tera.out ]];then
-rm tera.out
-fi
-
 jobfile=job.log
 delscratch="true"
 
 ### ENVIRONMENT ######
 export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
 export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # python
-export SNAFU_DIR="/home/chalabaj/SNAFU-DEV"    # SNAFU modules
-export RUN_DIR=${PWD}                      # PBS uses PBS_O_WORKDIR
+export SNAFU_DIR="/home/chalabaj/SNAFU-DEV"                               # SNAFU modules
+export RUN_DIR=${PWD}                                                     # PBS uses PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
 source SetEnvironment.sh TERACHEM 1.9-dev
 source SetEnvironment.sh ABIN mpi
@@ -64,9 +56,9 @@ fi
 # input file
 cp -r $RUN_DIR/* $SCRDIR/.
 cd $SCRDIR
-trap clean_exit SIGUSR2  #if qdel JOBID then copy current data back to RUN_DIR
+trap clean_exit SIGUSR2 SIGKILL SIGTERM#if qdel JOBID then copy current data back to RUN_DIR
 
-$MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port >> tera.out 2>&1 &
+$MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port > tera.out 2>&1 &
 terapid=$!
 
 for i in {1..100}
@@ -86,7 +78,7 @@ done
 port_2=`grep port_name: tera.out | awk '{print $6}' | tail -1`
 export MPI_TERA_PORT=${port_2}
 
-$MPIRUN_TERA python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output python 
+$MPIRUN_TERA python $SNAFU_DIR/snafu.py > $OUTFILE 2>&1   # errors also to output python 
 
 if [[ $? -ne "0" ]];then
 clean_exit  # kill processes whose parent process ID is listed.

@@ -1,0 +1,279 @@
+
+ Primary working directories    : /home/chalabaj/SNAFU-DEV/ABINITIO/scratch
+ Secondary working directories  : /home/chalabaj/SNAFU-DEV/ABINITIO/scratch
+ Wavefunction directory         : /home/chalabaj/SNAFU-DEV/ABINITIO/scratch/
+ Main file repository           : /home/chalabaj/SNAFU-DEV/ABINITIO/
+
+ SHA1      : ff24c56d2a0a94969fcbec04a36b96e977f08fcb
+ NAME      : 2015.1.28
+ ARCHNAME  : linux/x86_64
+ FC        : /opt/intel/composer_xe_2015.1.133/bin/intel64/ifort
+ BLASLIB   : -Wl,-_start-group /opt/intel/mkl/lib/intel64/libmkl_intel_ilp64.a /opt/intel/mkl/lib/intel64/libmkl_intel_thread.a /opt/intel/mkl/lib/intel64/libmkl_core.a -Wl,-_end-group
+ id        : vscht
+
+ Nodes      nprocs
+ 403-a324-01    1
+
+ Using customized tuning parameters: mindgm=1; mindgv=20; mindgc=4; mindgr=1; noblas=0; minvec=7
+ default implementation of scratch files=df  
+
+ memory, 1000,m;
+ file, 2, input.wfu,unknown
+ PUNCH, input.pun,new
+ gprint, orbital,civector
+ symmetry,nosym
+ Angstrom
+ 
+ geometry=../abinit_geom.xyz
+ Including file /home/chalabaj/SNAFU-DEV/ABINITIO/../abinit_geom.xyz
+ 
+ basis=6-31g**
+ 
+                                                                  !-for simple CASSCF, you don't need to modify anything below this
+ 
+                                                        !-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
+                                                               !-otherwise, the forces and NACME are wrong for the following reason
+                                                         !-cpmscf will not rewrite itself it but ather write into following records
+                                                   !-but the subsequent call to forces would read from old records -&gt; wrong numbers
+                                                                              !-we use file 2 for forces and NACME due to df-casscf
+ 
+ data,truncate,2,5101
+ 
+ if (lastorb.ne.MCSCF)then
+    {hf;wf,9,0,1}
+ endif
+ 
+ multi;
+ occ,6;
+ closed,2;
+ WF,9,0,1;
+ state,3;
+ maxiter,40;
+ ORBITAL,2140.2;
+ NOEXTRA;
+ 
+ cpmcscf,grad,2.1,ACCU=1d-9,save=5101.2;
+ forces;samc,5101.2;
+ 
+ if (status.lt.0) then
+    text, MCSCF failed to converge.
+    text, Attempting uncoupled iterations.
+    text, Enlarging PSPACE.
+    {multi;
+    occ,6;
+    closed,2;
+    WF,9,0,1;
+                                                    ! Info about pspace: https://www.molpro.net/info/2015.1/doc/manual/node244.html
+                                                                                 ! uncomment in case of convergence difficulties...
+    pspace, 2;
+    state,3;
+    maxiter,40;
+    {iterations
+    do,uncouple,1,to,5}
+    }
+ endif
+
+ Variables initialized (889), CPU time= 0.01 sec
+ Commands  initialized (702), CPU time= 0.01 sec, 572 directives.
+ Default parameters read. Elapsed time= 0.07 sec
+
+ Checking input...
+ Passed
+1
+
+
+                                         ***  PROGRAM SYSTEM MOLPRO  ***
+                                       Copyright, TTI GmbH Stuttgart, 2015
+                                    Version 2015.1 linked Dec 21 2017 14:32:04
+
+
+ **********************************************************************************************************************************
+ LABEL *                                                                                 
+  64 bit serial version                                                                  DATE: 08-Apr-19          TIME: 16:19:55  
+ **********************************************************************************************************************************
+
+ SHA1:             ff24c56d2a0a94969fcbec04a36b96e977f08fcb
+ **********************************************************************************************************************************
+
+ Variable memory set to 1000000000 words,  buffer space   230000 words
+
+
+
+ Permanent file  2  input.wfu        assigned.  Implementation=df    Size=  6.96 MB
+ 
+
+ PROGRAM * RESTART 
+
+
+ Reading variables from file 2
+
+ _NUMVAR         =    896.00000000
+ _DKROLL_DONE    =      0.00000000
+ _FOCKDONE       =      1.00000000
+ _GRADONE        =      1.00000000
+ _INTDONE        =      1.00000000
+ _DIRECT         =      0.00000000
+ _DKHO           =     -1.00000000
+ _BASIS          =    6-31G**
+ _ZUNIT          =    ANG
+ _NELEC          =      9.00000000
+ _PROGRAM        =    FORCES
+ _CPUSTEP        =      0.04000000
+ _SYSSTEP        =      0.01000000
+ _WALLSTEP       =      0.06000000
+ _BASINP         =    610.00000000
+ _CPUTOT         =      0.67000000
+ _DFTEXFAC       =      1.00000000
+ _DMX(1:3)       =      0.78522197     0.63516754     0.99371588
+ _DMY(1:3)       =     -0.00000000     0.00000000    -0.00000000
+ _DMZ(1:3)       =      0.64474813     0.51221176     0.78251762
+ _DMX_SCF        =      0.82287042
+ _DMY_SCF        =     -0.00000000
+ _DMZ_SCF        =      0.64289675
+ _EHOMO          =     -1.12124037
+ _ELUMO          =     -0.12639805
+ _EIGS(1:24)     =    -21.12147512    -1.83277762    -1.19744363    -1.07141239    -1.12124037    -0.12639805
+                       -0.03821331     0.59344802     0.64943819     0.64956023     0.74670738     0.86103426
+                        1.13263371     1.30422684     1.34702425     1.41583124     2.08125730     2.15015639
+                        2.33505470     2.49870392     2.52393342     2.92537502     3.27844797     3.46460561
+ _ENERGY(1:3)    =    -75.63639326   -75.55044399   -75.38400233
+ _ENERGY_METHOD  =    MULTI
+ _ENERGY_BASIS   =    6-31G**
+ _GEOMETRY_METHOD=     
+ _GEOMETRY_BASIS =     
+ _ENUC           =      9.09948012
+ _EPS1(1:6)      =    -21.09828071    -1.81619849    -1.01315079    -0.89417651    -1.05172015     0.42681691
+ _GRADENERG      =    -75.55044399
+ _GRADEXFAC      =   9999.00000000
+ _GRADMETHOD     =      5.00000000
+ _VIRIAL         =     -0.09775951
+ _ITERATIONS     =      4.00000000
+ _LASTNELEC      =      5.00000000
+ _LASTSPIN       =      1.00000000
+ _LASTSYM        =      1.00000000
+ _ORBITAL        =   2140.20000000
+ _SEIG_MIN       =      0.04431384
+ _SEWPROP        =      1.00000000
+ _STATUS         =      1.00000000
+ _SYSTOT         =      0.78000000
+ _WALLTOT        =      1.47000000
+ _DATE           =    10-Jan-19
+ _LASTORB        =    MCSCF
+ _PGROUP         =    C1  
+ _TIME           =    11:03:21
+ _DMX_CC(1:3)    =     -0.08563360    -0.08563360    -0.08563360
+ _DMY_CC(1:3)    =      0.00000000     0.00000000     0.00000000
+ _DMZ_CC(1:3)    =     -0.19516020    -0.19516020    -0.19516020
+ _DMX_NUC(1:3)   =      0.76653347     0.76653347     0.76653347
+ _DMY_NUC(1:3)   =      0.00000000     0.00000000     0.00000000
+ _DMZ_NUC(1:3)   =      0.59825857     0.59825857     0.59825857
+ _TRDMX(1:3)     =     -0.00000000    -0.00000000    -0.07146562
+ _TRDMY(1:3)     =     -0.16293231    -0.00835791    -0.00000000
+ _TRDMZ(1:3)     =     -0.00000000     0.00000000     0.07406760
+
+ Geometry written to block  1 of record 700
+
+
+ **********************************************************************************************************************************
+ DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
+              2       8        7.30       500      700      610     1000      520     2100     2140     5101   
+                                          VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   CPSAMC    
+
+ PROGRAMS   *        TOTAL   RESTART
+ CPU TIMES  *         0.21      0.02
+ REAL TIME  *         0.29 SEC
+ DISK USED  *         0.03 MB      
+ **********************************************************************************************************************************
+
+ PUNCHFILE INPUT.PUN OPENED
+
+ ZSYMEL=NOSYM
+ ZUNIT=ANG
+ 
+
+Geometry recognized as XYZ
+
+ SETTING BASIS          =    6-31G**
+
+ 
+
+ TRUNCATING FILE 1 AFTER   1 RECORDS
+
+ TRUNCATING FILE 2 BEFORE RECORD  5101
+
+
+ **********************************************************************************************************************************
+ DATASETS  * FILE   NREC   LENGTH (MB)   RECORD NAMES
+              2       7        7.30       500      700      610     1000      520     2100     2140   
+                                          VAR     GEOM    BASINP    BASIS   MCVARS     RHF     MCSCF   
+
+ PROGRAMS   *        TOTAL      DATA   RESTART
+ CPU TIMES  *         0.22      0.00      0.02
+ REAL TIME  *         0.32 SEC
+ DISK USED  *         9.25 MB      
+ **********************************************************************************************************************************
+
+
+ Recomputing integrals since basis changed
+
+
+ Using spherical harmonics
+
+ Library entry O      S 6-31G                selected for orbital group  1
+ Library entry O      P 6-31G                selected for orbital group  1
+ Library entry O      D 6-31G*               selected for orbital group  1
+ Library entry H      S 6-31G                selected for orbital group  2
+ Library entry H      P 6-31G**              selected for orbital group  2
+
+
+ PROGRAM * SEWARD (Integral evaluation for generally contracted gaussian basis sets)     Author: Roland Lindh, 1990
+
+ Geometry written to block  1 of record 700
+
+
+ Point group  C1  
+
+
+
+ ATOMIC COORDINATES
+
+ NR  ATOM    CHARGE       X              Y              Z
+
+   1  O       8.00   -0.096943542    0.000000000   -0.075633218
+   2  H       1.00   -0.132721594    0.000000000    1.754062502
+   3  H       1.00    1.671503399    0.000000000   -0.553538811
+
+ Bond lengths in Bohr (Angstrom)
+
+ 1-2  1.830045490  1-3  1.831883822
+     ( 0.968418368)     ( 0.969391172)
+
+ Bond angles
+
+  2-1-3  106.24263046
+
+ NUCLEAR CHARGE:                   10
+ NUMBER OF PRIMITIVE AOS:          42
+ NUMBER OF SYMMETRY AOS:           41
+ NUMBER OF CONTRACTIONS:           24   (  24A   )
+ NUMBER OF CORE ORBITALS:           1   (   1A   )
+ NUMBER OF VALENCE ORBITALS:        6   (   6A   )
+
+
+ NUCLEAR REPULSION ENERGY    9.07995457
+
+ EXTRA SYMMETRY OF AOS IN SYMMETRY 1:   1 1 1 1 2 1 1 2 1 1   2 1 1 2 1 1 1 2 1 1   1 1 2 1
+
+ Eigenvalues of metric
+
+         1 0.446E-01 0.683E-01 0.164E+00 0.216E+00 0.347E+00 0.376E+00 0.383E+00 0.423E+00
+
+
+ Contracted 2-electron integrals neglected if value below      1.0D-11
+[mpiexec@403-a324-01] Sending Ctrl-C to processes as requested
+[mpiexec@403-a324-01] Press Ctrl-C again to force abort
+Received signal 2 Interrupt
+
+ GLOBAL ERROR fehler on processor   0                                         
+0:fehler:Received an Error in Communication
+application called MPI_Abort(comm=0x84000000, 1) - process 0

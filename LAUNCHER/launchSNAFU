@@ -42,7 +42,6 @@ if [[ $# -eq 3 ]] || [[ $3 == "tera" ]];then
 #$ -pe shm 1 
 #$ -notify
 #$ -l num_gpu=1
-export OMP_NUM_THREADS=1
 TERASNAFUS $input
 EOF
   fi
@@ -54,7 +53,6 @@ cat > r.$name << EOF
 #$ -cwd
 #$ -pe shm $nproc 
 #$ -notify
-export OMP_NUM_THREADS=1
 SNAFUS $input
 EOF
 fi

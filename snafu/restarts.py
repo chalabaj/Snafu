@@ -36,7 +36,7 @@ def check_restart_files(restart, cwd):
             error_exit(10, "({})".format(rst_file))
     return(rst_file_path)
     
-def read_restart(rst_file_path, natoms, nstates):
+def read_restart(rst_file_path, natoms, nstates, tera_mpi):
     # TO DO: should be done with far less condiotion, however there would have to be another convertion from disctionary to variables of different types
     err = "0"
     rst_file = rst_file_path
@@ -159,16 +159,16 @@ def read_restart(rst_file_path, natoms, nstates):
                     vz = np.genfromtxt(rst_file, dtype=np.float64,
                                                skip_header=vnum+1, max_rows=natoms, usecols=[3])
                                                
-
-                    #CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)                   
-                    CiVecs = np.genfromtxt(rst_file, dtype=np.float64,
-                                               skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
-                    #MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
-                    MO = np.genfromtxt(rst_file, dtype=np.float64,
-                                               skip_header=civecnum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
-                    #blob = np.zeros((blob_size),dtype=np.float64)
-                    blob = np.genfromtxt(rst_file, dtype=np.float64,
-                                               skip_header=civecnum+1, max_rows=blob_size, usecols=0)                             
+                    if not tera_mpi == 0:
+                        #CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)                   
+                        CiVecs = np.genfromtxt(rst_file, dtype=np.float64,
+                                                   skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
+                        #MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
+                        MO = np.genfromtxt(rst_file, dtype=np.float64,
+                                                   skip_header=civecnum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
+                        #blob = np.zeros((blob_size),dtype=np.float64)
+                        blob = np.genfromtxt(rst_file, dtype=np.float64,
+                                                   skip_header=civecnum+1, max_rows=blob_size, usecols=0)                             
                 except Exception as expt:
                     print(expt)
                     error_exit(16)
@@ -189,7 +189,7 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
                   x, y, z, vx, vy, vz, fx, fy, fz, nstates,
                   Ekin, Epot, Etot, Etot_init, pot_eners_array, 
                   MO, CiVecs, blob, civec_size, nbf_size, blob_size,
-                  restart_freq, rsf_file):
+                  restart_freq, rsf_file, tera_mpi):
 
     rsf = rsf_file
     rsf.truncate(0)  #  empty file
@@ -201,9 +201,9 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
                 "Epot: {:14.10f}".format(Epot),
                 "Etot: {:14.10f}".format(Etot),
                 "Etot_init: {:14.10f}".format(Etot_init),
-                "civec_size: {:d}".format(civec_size), 
-                "blob_size: {:d}".format(blob_size),
-                "nbf_size: {:d}".format(nbf_size), 
+                "civec_size: {}".format(int(civec_size)), 
+                "blob_size: {}".format(int(blob_size)),
+                "nbf_size: {}".format(int(nbf_size)), 
                 "Pot_eners_array:\n"
                 )
     
@@ -244,15 +244,15 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
                                                                ffz[iat])
             rsf.write(f_line)
             
-    # if tera_mpi = 0, the following will be zeros
-    rsf.write("MO:\n")
-    np.savetxt(rsf, MO, fmt="%20.10f", delimiter=' ', newline='\n')
-    
-    rsf.write("CiVecs:\n")
-    np.savetxt(rsf, CiVecs, fmt="%20.10f", delimiter=' ', newline='\n')
-    
-    rsf.write("blob:\n")
-    np.savetxt(rsf, blob, fmt="%20.10f", delimiter=' ', newline='\n')
+    if not tera_mpi == 0:
+        rsf.write("MO:\n")
+        np.savetxt(rsf, MO, fmt="%20.10f", delimiter=' ', newline='\n')
+        
+        rsf.write("CiVecs:\n")
+        np.savetxt(rsf, CiVecs, fmt="%20.10f", delimiter=' ', newline='\n')
+        
+        rsf.write("blob:\n")
+        np.savetxt(rsf, blob, fmt="%20.10f", delimiter=' ', newline='\n')
 
     rsf.flush()  # need to flush, cause it is still open and buffer probably not full yet, otherwise we copy empty file
     
