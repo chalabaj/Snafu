@@ -1,4 +1,4 @@
-"""" 
+""" 
 Terachem MPI interface adapted from the ABIN code
 Modules: forces_tera.F90 forces_terash.F90
 Terachem is very sensitive to the type, lenght and order of transferred data        
@@ -33,10 +33,16 @@ def global_except_hook(exctype, value, traceback):
     # Prevent deadlock state when some exception is not handled (caught) a MPI still runs without exit    
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
-    sys.stdout.write("Except_hook. Probably some user input/syntax error.\n") 
+    # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
+    sys.stdout.write("Except_hook.\n") 
     sys.stdout.flush() 
+    try: 
+        #if sys.exc_info()[1] == "handled_excp"
+        print(sys.exc_info())
+        print(traceback.print_exc(file=sys.stdout))
+    except Exception:
+        print("Probably some user input error.")
     sys.__excepthook__(exctype, value, traceback)
-  
     MPI.COMM_WORLD.Abort(1)    
     return() 
  
@@ -49,7 +55,7 @@ def tera_connect():
     #call MPI_COMM_CONNECT(port_name, MPI_INFO_NULL, 0, MPI_COMM_SELF, newcomm, ierr)
         
     # this should be moved to init routine
-    print("-------TERCHAME INTERFACE------")
+    print("-------TERCHAME INTERFACE--------")
     try:
         mpi_port = os.environ['MPI_TERA_PORT']
         print("MPI_TERA_PORT {} found ".format(mpi_port)) 

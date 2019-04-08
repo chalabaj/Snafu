@@ -12,7 +12,7 @@ def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
     mov = mov_file
     header = ("{} \n".format(natoms))
     mov.write(header)
-    comment = ("Step: {}      Time_fs: {}\n".format(step,sim_time))
+    comment = ("Step: {}      Time_fs: {}\n".format(step, sim_time))
     mov.write(comment)
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
@@ -31,7 +31,7 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
     comment = ("Step: {}      Time_fs:{}\n".format(step, sim_time))
     vel.write(comment)
     for iat in range(0, natoms):
-       line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat],vx[iat],vy[iat],vz[iat])))
+       line = ("".join("%2s %5.8f %5.8f %5.8f\n"  %(at_names[iat], vx[iat], vy[iat], vz[iat])))
        vel.write(line)
     vel.flush()
     return()
@@ -39,7 +39,7 @@ def print_velocities(step,sim_time,natoms, at_names, vx, vy, vz, vel_file):
 def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, eners_file):
     ef = eners_file
     if step == 1 or step == write_freq:
-        headline = "# Time,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
+        headline = "# Time_fs,  Ekin,  Epot,  Etot,  dE,  dE_step (a.u.)\n"
         ef.write(str(headline))
     line = "{:>10.4f} {:20.10f} {:20.10f} {:20.10f} {:20.10f}  {:20.10f}\n".format(sim_time,Ekin,Epot,Etot,dE, dE_step )
     ef.write(str(line))
@@ -48,7 +48,7 @@ def print_energies(step, write_freq, sim_time, Ekin, Epot, Etot, dE, dE_step, en
 
 def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
     if step == 1 or  step == write_freq:
-        headline = "# Time,  E(GS)/au,  E(1. ex)/au,....\n"
+        headline = "# Time_fs,  E(GS)/au,  E(1. ex)/au,....\n"
         pes_file.write(str(headline))
     line = ("{:10.4f}".format(sim_time)
                 + ' '.join('{:20.10f}'.format(pot_eners[st]) 
@@ -60,7 +60,7 @@ def print_pes(step, write_freq, sim_time, pot_eners, pes_file):
 
 def print_state(step, write_freq, sim_time, state, state_file):
     if step == 1 or  step == write_freq:
-        headline = "# Time,  Electronic state(0 = gs)\n"
+        headline = "# Time_fs,  Electronic state(0 = gs)\n"
         state_file.write(str(headline)) 
     line = ("{:10.4f} {:4d}\n".format(sim_time, state)) 
     state_file.write(str(line))   

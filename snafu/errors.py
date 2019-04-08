@@ -17,22 +17,24 @@ def error_exit(error_number, error_desc=" "):
            "6 - Hopping probability larger than 1, something went wrong.\n",
            "7 - Too large energy drift.\n",
            "8 - File {} exists, but the restart option is turned off (restart = 0). Either remove file or change the restart option.\n".format(error_desc),
-           "9 - Input varible(s) is not properly set. See input.in.\nError:{}".format(error_desc),
+           "9 - Input varible(s) is not properly set. See input.in.\n{}".format(error_desc),
            "10 - Restart file {} was not found.".format(error_desc),
            "11 - Wrong input parameter.\nError:{}.".format(error_desc),
            "12 - Input variable {} not set.".format(error_desc),
            "13 - Error in TeraChem interface.Error:{}".format(error_desc),
            "14 - Wrong format of geom.in or veloc.in. Should be XYZ format with geometry in Angstrom and velocities in atomic units.\nError:{}.".format(error_desc),
-           "15 - {}".format(error_desc)
+           "15 - {}".format(error_desc),
+           "16 - Error when reading data from restart file.",
+           "17 - Error when reading restart file. Option \"{}\" not found.".format(error_desc)
           )
     print("-------------------------------------------------------------------")
     print(err[error_number])
     print("\nProgram was terminated due to an error!") 
-    # prevent MPI deadlock without raiseing runtime error which is caught by excepthook
+    # prevent MPI deadlock without raiseing runtime error which is caught by excepthook, does not create traceback
     try: 
         tera_mpi = int(os.environ['MPI_TERA'])
         if tera_mpi:
-             raise RuntimeError() 
+             raise RuntimeError("handled_excp") 
              sys.exit(1)
     except KeyError as ke:
         sys.exit(1)

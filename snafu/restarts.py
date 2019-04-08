@@ -36,63 +36,143 @@ def check_restart_files(restart, cwd):
             error_exit(10, "({})".format(rst_file))
     return(rst_file_path)
     
-def read_restart(rst_file_path, natoms):
-    #  with open restart.in as rsf:
-    #  print(rst_file_path)
+def read_restart(rst_file_path, natoms, nstates):
+    # TO DO: should be done with far less condiotion, however there would have to be another convertion from disctionary to variables of different types
+    err = "0"
     rst_file = rst_file_path
     with open(rst_file_path, 'r') as rstf:
         for num, line in enumerate(rstf):
             #print(num, line)        
-            if re.search(r'Step', line):
-                step = int(line.split()[1])
-            if re.search(r'State', line):
-                state = int(line.split()[1])
-            if re.search(r'Ekin', line):
-                Ekin = float(line.split()[1])
-            if re.search(r'Epot', line):
-                Epot = float(line.split()[1])
-            if re.search(r'Etot', line):
-                Etot = float(line.split()[1])
-            if re.search(r'Etot_init', line):
-               Etot_init = float(line.split()[1])
-            if re.search(r'Positions', line):
-               pnum = num
-            if re.search(r'Velocities', line):
-                vnum = num
-            if re.search(r'Forces', line):
-                fnum = num
-            if re.search(r'Pot_eners_array', line):
-                peanum = num    
-        
-        atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'),
-                                skip_header=pnum+1, max_rows=natoms, usecols=[0])
-        at_names =  atnames.tolist()
-        
-        pot_eners_array = np.genfromtxt(rst_file, dtype=np.float64,
-                                        skip_header=peanum+1, max_rows=2,
-                                        usecols=[0,1,2])         
-        fx = np.genfromtxt(rst_file, dtype=np.float64,
-                           skip_header=fnum+1, max_rows=natoms, usecols=[1])  
-        fy = np.genfromtxt(rst_file, dtype=np.float64,
-                           skip_header=fnum+1, max_rows=natoms, usecols=[2])
-        fz = np.genfromtxt(rst_file, dtype=np.float64,
-                           skip_header=fnum+1, max_rows=natoms, usecols=[3])
-                                   
-                                   
-        x = np.genfromtxt(rst_file, dtype=np.float64,
-                                  skip_header=pnum+1, max_rows=natoms, usecols=[1])  
-        y = np.genfromtxt(rst_file, dtype=np.float64, 
-                                  skip_header=pnum+1, max_rows=natoms, usecols=[2])
-        z = np.genfromtxt(rst_file, dtype=np.float64,
-                                  skip_header=pnum+1, max_rows=natoms, usecols=[3])
-                                  
-        vx = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=vnum+1, max_rows=natoms, usecols=[1])  
-        vy = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=vnum+1, max_rows=natoms, usecols=[2])
-        vz = np.genfromtxt(rst_file, dtype=np.float64,
-                                   skip_header=vnum+1, max_rows=natoms, usecols=[3])
-                   
+            try:
+                if re.search(r'Step', line):
+                     step = int(line.split()[1])
+                else:
+                    err="Step"
+                
+                if re.search(r'State', line):
+                     state = int(line.split()[1])
+                else:
+                     err="State"
+                
+                if re.search(r'Ekin', line):
+                     Ekin = float(line.split()[1])
+                else:
+                     err="Ekin"
+                
+                if re.search(r'Epot', line):
+                     Epot = float(line.split()[1])
+                else:
+                     err="Epot"
+                
+                if re.search(r'Etot', line):
+                     Etot = float(line.split()[1])
+                else:
+                    err="Etot"                 
+                
+                if re.search(r'Etot_init', line):
+                    Etot_init = float(line.split()[1])             
+                else:
+                    err="Etot_init"
+                    
+                if re.search(r'Positions', line):
+                    pnum = num
+                else:
+                    err="Position"
+                
+                if re.search(r'Velocities', line):
+                    vnum = num
+                else:
+                    err="Velocities"
+                
+                if re.search(r'Forces', line):
+                    fnum = num
+                else:
+                    err="Forces"
+                
+                if re.search(r'Pot_eners_array', line):
+                    peanum = num 
+                else:
+                    err="Pot_eners_array"
+                
+                # TC WF
+                if re.search(r'blob_size', line):
+                    blob_size= int(line.split()[1])
+                else:
+                    err="blob_size"
+                
+                if re.search(r'civec_size', line):
+                    civec_size = int(line.split()[1])  
+                else:
+                    err="civec_size"                               
+                
+                if re.search(r'nbf_size', line):
+                    nbf_size= int(line.split()[1])  
+                else:
+                    err="nbf_size"  
+                
+                if re.search(r'MO', line):
+                    monum = num
+                else:
+                    err="MO line"    
+
+                if re.search(r'CiVecs', line):
+                    civecnum = num
+                else:
+                    err="CiVecs line"  
+                if re.search(r'blob$', line):
+                    blobnum = num
+                else:
+                    err="blob line"  
+               
+            except ValueError as VE:
+                error_exit(9, "Wrong format of restart option {}\n{}".fomat(err, str(VE)))
+            else:
+                if not err == "0":
+                    error_exit(17, err)
+                try:          
+                    atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'),
+                                            skip_header=pnum+1, max_rows=natoms, usecols=[0])
+                    at_names =  atnames.tolist()
+                    
+                    pot_eners_array = np.genfromtxt(rst_file, dtype=np.float64,
+                                                    skip_header=peanum+1, max_rows=2,
+                                                    usecols=[0,1,2])         
+                    fx = np.genfromtxt(rst_file, dtype=np.float64,
+                                       skip_header=fnum+1, max_rows=natoms, usecols=[1])  
+                    fy = np.genfromtxt(rst_file, dtype=np.float64,
+                                       skip_header=fnum+1, max_rows=natoms, usecols=[2])
+                    fz = np.genfromtxt(rst_file, dtype=np.float64,
+                                       skip_header=fnum+1, max_rows=natoms, usecols=[3])
+                                               
+                                               
+                    x = np.genfromtxt(rst_file, dtype=np.float64,
+                                              skip_header=pnum+1, max_rows=natoms, usecols=[1])  
+                    y = np.genfromtxt(rst_file, dtype=np.float64, 
+                                              skip_header=pnum+1, max_rows=natoms, usecols=[2])
+                    z = np.genfromtxt(rst_file, dtype=np.float64,
+                                              skip_header=pnum+1, max_rows=natoms, usecols=[3])
+                                              
+                    vx = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=vnum+1, max_rows=natoms, usecols=[1])  
+                    vy = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=vnum+1, max_rows=natoms, usecols=[2])
+                    vz = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=vnum+1, max_rows=natoms, usecols=[3])
+                                               
+
+                    #CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)                   
+                    CiVecs = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
+                    #MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
+                    MO = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=civecnum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
+                    #blob = np.zeros((blob_size),dtype=np.float64)
+                    blob = np.genfromtxt(rst_file, dtype=np.float64,
+                                               skip_header=civecnum+1, max_rows=blob_size, usecols=0)                             
+                except Exception as expt:
+                    print(expt)
+                    error_exit(16)
+           
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
@@ -102,15 +182,14 @@ def read_restart(rst_file_path, natoms):
     print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
     print("FX FY FZ:\n{}".format(np.dstack((fx,fy,fz))))
     print("Pot ener step-1/step \n{}".format(pot_eners_array))
-    return(step, at_names, state, 
-           x, y, z, vx, vy, vz, 
-           fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array)
+    return(step, at_names, state, x, y, z, vx, vy, vz, 
+           fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array, CiVecs, MO, blob, civec_size, nbf_size, blob_size)
 
-def print_restart(
-        step, time, natoms, at_names, state, timestep,
-        x, y, z, vx, vy, vz, fx, fy, fz,
-        Ekin, Epot, Etot, Etot_init, pot_eners_array,
-        restart_freq, rsf_file):
+def print_restart(step, sim_time, natoms, at_names, state, timestep,
+                  x, y, z, vx, vy, vz, fx, fy, fz, nstates,
+                  Ekin, Epot, Etot, Etot_init, pot_eners_array, 
+                  MO, CiVecs, blob, civec_size, nbf_size, blob_size,
+                  restart_freq, rsf_file):
 
     rsf = rsf_file
     rsf.truncate(0)  #  empty file
@@ -122,6 +201,9 @@ def print_restart(
                 "Epot: {:14.10f}".format(Epot),
                 "Etot: {:14.10f}".format(Etot),
                 "Etot_init: {:14.10f}".format(Etot_init),
+                "civec_size: {:d}".format(civec_size), 
+                "blob_size: {:d}".format(blob_size),
+                "nbf_size: {:d}".format(nbf_size), 
                 "Pot_eners_array:\n"
                 )
     
@@ -161,6 +243,17 @@ def print_restart(
                                                                ffy[iat],
                                                                ffz[iat])
             rsf.write(f_line)
+            
+    # if tera_mpi = 0, the following will be zeros
+    rsf.write("MO:\n")
+    np.savetxt(rsf, MO, fmt="%20.10f", delimiter=' ', newline='\n')
+    
+    rsf.write("CiVecs:\n")
+    np.savetxt(rsf, CiVecs, fmt="%20.10f", delimiter=' ', newline='\n')
+    
+    rsf.write("blob:\n")
+    np.savetxt(rsf, blob, fmt="%20.10f", delimiter=' ', newline='\n')
+
     rsf.flush()  # need to flush, cause it is still open and buffer probably not full yet, otherwise we copy empty file
     
     if not (step%restart_freq):
@@ -199,7 +292,7 @@ def truncate_output_files(init_step, write_freq, natoms):
 
 def backup_output_files(cwd):
     # RESTART PART - CREATING BACKUP OF OUTPUT FILES
-    print(".................................................")    
+    print(liner)    
     N=0
     while os.path.isdir(os.path.join(cwd,"PREV_RUN"+str(N))):
         print("{} backup folder already exists".format("PREV_RUN"+str(N)))
@@ -207,14 +300,14 @@ def backup_output_files(cwd):
     else:
         backup_folder = os.path.join(cwd,"PREV_RUN"+str(N))
         os.mkdir(backup_folder)
-        print("Creating backup folder {}\n".format("PREV_RUN"+str(N)))
+        print("Creating backup folder: {}\n".format("PREV_RUN"+str(N)))
     output_files= []
     output_files.append("movie.xyz")
     output_files.append("velocities.dat")
     output_files.append("PES.dat")
     output_files.append("energies.dat")
     output_files.append("state.dat")
-    output_files.append("snafu.out")
+    #  output_files.append("snafu.out") file is rewritten upon restart
     output_files.append("restart.in")
     rest_files = os.listdir(os.getcwd())
     restart_files = [ rf for rf in rest_files if re.search(r'restart', rf)]
@@ -222,7 +315,8 @@ def backup_output_files(cwd):
     for bf in backup_files:
         try:
             shutil.copy(bf,backup_folder)
+            print("File {} was not backed-up.".format(bf))
         except FileNotFoundError as FNT:
-            print("Warning: file {} was not found and will not be backed-up!!!".format(FNT.filename))
+            print("Warning: file {} was not found and was not be backed-up!!!".format(FNT.filename))
     print("Old output data were backed-up:\n{}".format(os.listdir(backup_folder)))
     return()
