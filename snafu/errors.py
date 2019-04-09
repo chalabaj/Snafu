@@ -31,17 +31,15 @@ def error_exit(error_number, error_desc=" "):
           )
     print("-------------------------------------------------------------------")
     print(err[error_number])
-    print("\nProgram was terminated due to an error!")
+    print("Program was terminated due to an error!")
     sys.stdout.flush() 
+    
     # prevent MPI deadlock without raiseing runtime error which is caught by excepthook, does not create traceback
-    try: 
-        tera_mpi = int(os.environ['MPI_TERA'])
-        if tera_mpi:
-             from tera_propagates import global_except_hook
-             global_except_hook()
-             sys.exit(1)
-    except KeyError as ke:
-        sys.exit(1)
-    finally:
-        sys.exit(1)    
+    tera_mpi = 0
+    tera_mpi = int(os.environ['MPI_TERA'])
+    if tera_mpi:
+         from tera_propagates import global_except_hook
+         sys.excepthook = global_except_hook 
+         raise RuntimeError() 
+    sys.exit(1)    
     return()

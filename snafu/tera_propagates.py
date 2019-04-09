@@ -16,7 +16,7 @@ from mpi4py import MPI
 
 try:
     from errors import error_exit
-    from defaults import max_terachem_time
+    from defaults import max_terachem_time, liner
     from constants import *
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
@@ -28,20 +28,22 @@ def finish_tera(comm):
     comm.Disconnect()
     return()
     
-def global_except_hook():
+def global_except_hook(exctype, value, traceback):
     # Prevent deadlock state when some exception is not handled (caught) a MPI still runs without exit    
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
     sys.stdout.write("TERA_MPI=1. Calling MPI ABORT....\n") 
+    sys.stdout.write("If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
     sys.stdout.flush() 
     
     try: 
+        print_exception(exctype, value, traceback)
         print(traceback.format_exc())
     except Exception:
         print("No traceback, user-input exception.")
     finally:
-        MPI.COMM_WORLD.Abort(1)   
+        MPI.COMM_WORLD.Abort()   
     return() 
  
 def exit_tera(comm):
@@ -51,7 +53,7 @@ def exit_tera(comm):
         sys.stdout.flush() 
         time.sleep(1)
     finally:
-        MPI.COMM_WORLD.Abort(1)   
+        MPI.COMM_WORLD.Abort()   
     # comm.Abort()   ABORT kills all execution and does not flush the buffer unless flush called
     return()
  
@@ -258,5 +260,7 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         print(traceback.format_exc())
         error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
     else:
-        print("TC INIT DONE\n",liner)
+        print("TC INIT DONE\n")
         return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
+
+sys.__excepthook__ = global_except_hook  

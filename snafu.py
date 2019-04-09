@@ -149,6 +149,7 @@ if __name__ == "__main__":
     sys.stdout.flush()
     # READ INITIAL OR RESTART DATA
     if restart == 0:
+        print("Restart option turned OFF.")
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 
@@ -175,7 +176,6 @@ if __name__ == "__main__":
                                                       Etot_prev, ener_thresh)
         Etot_init = Etot
         init_step = 1
-        print("Restart option turned OFF.")
     else:
         rst_file_path = check_restart_files(restart, cwd)
         print(liner)
