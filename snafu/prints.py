@@ -13,7 +13,7 @@ except KeyError as ke:
     print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
     tera_mpi = 0
 if tera_mpi:
-    from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
+    from tera_propagates import global_except_hook
     sys.excepthook = global_except_hook  
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------    
