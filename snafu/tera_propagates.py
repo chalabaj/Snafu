@@ -13,14 +13,15 @@ import time
 current_module = sys.modules[__name__]
 sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
 from mpi4py import MPI
-
+import logging
 try:
     from errors import error_exit
     from defaults import max_terachem_time, liner
-    from constants import *
+    from constants import * 
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
-
+    
+# ---------------------------------------------------------------------------------------------------------------------------------------------    
 def finish_tera(comm):
     print("All MPI communication done.\nDisconnecting Terachem communication.")
     comm.Send(str.encode("0"), dest=0, tag=0 )  # MPI_TAG_EXIT = 0
@@ -33,17 +34,19 @@ def global_except_hook(exctype, value, traceback):
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
-    sys.stdout.write("TERA_MPI=1. Calling MPI ABORT....\n") 
-    sys.stdout.write("If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
-    sys.stdout.flush() 
     
+    # "If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
+    raise RuntimeError("EXCEPT_HOOK_ERROR FOR MPI INTERFACE:")
+    sys.stdout.write("\nTERA_MPI=1. Calling MPI ABORT....\n") 
+    sys.stdout.flush() 
     try: 
-        print_exception(exctype, value, traceback)
-        print(traceback.format_exc())
+        print("lala")
+       # traceback.print_exception()
     except Exception:
         print("No traceback, user-input exception.")
     finally:
-        MPI.COMM_WORLD.Abort()   
+        MPI.COMM_WORLD.Abort() 
+        sys.exit(1)  
     return() 
  
 def exit_tera(comm):
@@ -263,4 +266,4 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         print("TC INIT DONE\n")
         return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
 
-sys.__excepthook__ = global_except_hook  
+sys.excepthook = global_except_hook

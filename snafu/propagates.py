@@ -20,7 +20,16 @@ try:
     )
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
+try:
+    tera_mpi = int(os.environ['MPI_TERA'])
+except KeyError as ke:
+    print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
+    tera_mpi = 0
+if tera_mpi:
+    from tera_propagates import global_except_hook
+    sys.excepthook = global_except_hook  
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------    
 def update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
     # BROADCASTING instead of dummy for iat in range(0,len(am)):
     x_new = x + vx*dt + fx/(2*am)*(dt**2)

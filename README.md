@@ -91,8 +91,8 @@ Environment variables for particular ab-initio code are exported in the interfac
 
 ## How to restart dynamics
 
-You can restart dynamics from the last completed step or from the chosen step XX depending on how often you wrote restart file during the original simulation.  
-The **restart.in** file contains all needed information from the last completed simulation step. Similarly, **restart_freq = XX** option sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). Before restart, do NOT change the **input.in** file with an exception to extend the simulation time by increasing the **maxsteps** option.   
+You can restart dynamics from the step XX depending on how often you wrote restart file during the original simulation.  
+The **restart_XX.in** file contains all needed information from the XX simulation step. Option **restart_freq = XX** sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). Before restart, do NOT change the **input.in** file with an exception to extend the simulation time by increasing the **maxsteps** option.   
 
 * To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.

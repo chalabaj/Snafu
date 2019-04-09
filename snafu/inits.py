@@ -10,6 +10,7 @@ e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
 import sys
 import os
 import configparser
+import traceback
 import numpy as np
 current_module = sys.modules[__name__]
 try:
@@ -20,7 +21,16 @@ try:
     from constants import *
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
-
+    
+try:
+    tera_mpi = int(os.environ['MPI_TERA'])
+except KeyError as ke:
+    print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
+    tera_mpi = 0
+if tera_mpi:
+    from tera_propagates import global_except_hook
+    sys.excepthook = global_except_hook    
+              
 def file_check(cwd):
     # input files names - these are defaults otherwise not found
     veloc_file = "veloc.in"
@@ -36,12 +46,9 @@ def file_check(cwd):
     if (not os.path.isfile(geom_file_path)):
          error_exit(1, " ")
     if (not os.path.isfile(vel_file_path)):
-        print("No initial velocities.")
         init_vel = 0
     else:
-        print("Initial velocities read from {}".format(veloc_file)) 
         init_vel = 1
-    
     return(input_file_path, geom_file_path, vel_file_path, init_vel)
     
 def read_input(cwd, input_file_path):
@@ -166,8 +173,6 @@ def init_fep_arrays(natoms, nstates):
     z_new = np.zeros(natoms, dtype=np.float64)  
         
     return(fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new)
-    
-
     
 def com_removal(x, y, z, am):
     totmass, xsum, ysum, zsum = 0.0, 0.0, 0.0, 0.0

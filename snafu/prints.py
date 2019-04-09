@@ -1,11 +1,22 @@
 import os
 import numpy as np
 import shutil
+import sys
 try:
     from constants import *
-    from errors import error_exit
+    from errors import error_exit   
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
+try:
+    tera_mpi = int(os.environ['MPI_TERA'])
+except KeyError as ke:
+    print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
+    tera_mpi = 0
+if tera_mpi:
+    from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
+    sys.excepthook = global_except_hook  
+
+# ---------------------------------------------------------------------------------------------------------------------------------------------    
 
 def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
     mov = mov_file

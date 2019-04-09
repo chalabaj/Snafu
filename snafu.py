@@ -32,8 +32,8 @@ except KeyError as ke:
 try: 
     tera_mpi = int(os.environ['MPI_TERA'])
     if tera_mpi:
-        from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
-        sys.__excepthook__ = global_except_hook    
+        from tera_propagates import (finish_tera, tera_init, global_except_hook)
+        sys.excepthook = global_except_hook    
 except KeyError as ke:
      print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
      tera_mpi = 0
@@ -123,7 +123,7 @@ if __name__ == "__main__":
         restart_freq = int(restart_freq)
         tera_mpi = int(tera_mpi)
         write_freq = int(write_freq)          
-        print("Simulation will statr with the following parameters:\n",
+        print("Simulation will start with the following parameters:\n",
               "{} = {}\n".format("natoms", natoms),
               "{} = {}\n".format("maxsteps",maxsteps),
               "{} = {}\n".format("initial state", state),
@@ -149,7 +149,12 @@ if __name__ == "__main__":
     sys.stdout.flush()
     # READ INITIAL OR RESTART DATA
     if restart == 0:
+        if init_vel:
+            print("Initial velocities read from {}".format(vel_file_path)) 
+        else: 
+            print("No initial velocities.")
         print("Restart option turned OFF.")
+             
         at_names, x, y, z  = read_geoms(natoms, geom_file_path)
         vx, vy, vz = read_velocs(init_vel, natoms, vel_file_path)
 
@@ -183,9 +188,11 @@ if __name__ == "__main__":
         x, y, z, vx, vy, vz, fx, fy, fz, \
         Ekin, Epot, Etot, Etot_init, \
         pot_eners_array, CiVecs, MO, blob, civec_size, nbf_size, blob_size = read_restart(rst_file_path, natoms, nstates, tera_mpi)
-
+         
         am = assign_masses(at_names)
         init_step = init_step + 1         #  main loop counter will start with a following step
+        # if init_step = maxsteps:
+        # error_exit(18, "Reaachem mxium number of steps")
         if tera_mpi:
             temp_MO, temp_CiVecs, temp_NAC, temp_blob, temp_SMatrix, temp_civec_size, \
             temp_nbf_size, temp_blob_size, temp_qmcharges, temp_TDip, temp_Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
@@ -201,7 +208,7 @@ if __name__ == "__main__":
                             
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
-    print("{}\nInitial geometry:\n  At    X         Y         Z         MASS:".format(liner))
+    print("{}\nInitial geometry:\nAt       X           Y            Z           MASS:".format(liner))
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
@@ -210,10 +217,11 @@ if __name__ == "__main__":
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
               "{:12.8f}".format(am[iat]/AMU))
 
-    print("Initial velocities:\n   At    VX       VY       VZ")
+    print("Initial velocities:\n At    VX      VY      VZ")
     for iat in range(0, natoms):
-        print("".join("%2s" " " "%3.3f" % (at_names[iat], vx[iat])),
-              " %3.6f %2.6f " % (vy[iat], vz[iat]))
+        print("".join("%2s" "   " "%3.3f" % (at_names[iat], vx[iat])),
+              " %3.3f    %3.3f " % (vy[iat], vz[iat]))
+   
     print("{}".format(liner),
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
@@ -222,8 +230,7 @@ if __name__ == "__main__":
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
          open('velocities.dat', 'a') as vel_file, \
-         open('state.dat', 'a') as state_file, \
-         open('restart.in', 'w') as rsf_file:
+         open('state.dat', 'a') as state_file:
 
     #-------------------MAIN LOOP----------------------------------------------------------------
         
@@ -311,11 +318,11 @@ if __name__ == "__main__":
                 print_velocities(step, sim_time, natoms, at_names, vx, vy, vz, vel_file)
                 print_state(step, write_freq, sim_time, state, state_file)
             
-            print_restart(step, sim_time, natoms, at_names, state, timestep,
-                          x, y, z, vx, vy, vz, fx, fy, fz, nstates,
-                          Ekin, Epot, Etot, Etot_init, pot_eners_array, 
-                          MO, CiVecs, blob, civec_size, nbf_size, blob_size,
-                          restart_freq, rsf_file, tera_mpi)
+            if (step%restart_freq) == 0:
+                print_restart(step, sim_time, natoms, at_names, state, timestep,
+                              x, y, z, vx, vy, vz, fx, fy, fz, nstates,
+                              Ekin, Epot, Etot, Etot_init, pot_eners_array, 
+                              MO, CiVecs, blob, civec_size, nbf_size, blob_size, tera_mpi)
 
     # FINAL PRINTS
     print(liner)
