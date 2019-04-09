@@ -72,15 +72,13 @@ except ImportError as ime:
     # if some of the imports fail during in-modules import ImportError rais None
     # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
-        print("Import in some modules {}".format(ime),
-              "in snafu dir failed. Exiting...")
-        exit(1)
+        error_exit(19, "Import or internal error in some module {}.".format(ime))
     else:
         print("Module {} not found!!!".format(ime.name),
               "Make sure that {} contains snafu folder".format(SNAFU_EXE),
               "with: {}.".format('\n'.join(modules_files)),
               "\nOr check import in the wrong module")
-        exit(1)
+        error_exit(19, "Some python file probably missing {}".format(ime))
 else:
     print("All modules loaded succesfully.\n \n")
     print_snafu()
@@ -93,7 +91,8 @@ if __name__ == "__main__":
           "\nPython base: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
           "\nSystem platform: {}".format(sys.platform),
-          "\nRunning executable: {}".format(sys.path[:])
+          "\nSystem path: {}\n".format(sys.path[0]),
+          "\n".join(sys.path[1:]) 
           )
     
     # Local runs dont create HOSTNAME var, qsub SGE system does

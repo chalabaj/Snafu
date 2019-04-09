@@ -19,8 +19,7 @@ try:
     )
     from constants import *
 except ImportError as ime:
-    print("Module {} in {} not found.".format(ime,current_module))
-    exit(1)
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 
 def file_check(cwd):
     # input files names - these are defaults otherwise not found

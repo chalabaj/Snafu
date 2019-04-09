@@ -10,8 +10,7 @@ try:
     from errors import error_exit
     from constants import *
 except ImportError as ime:
-    print("Module {} in {} not found.".format(ime,current_module))
-    exit(1)
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 
 def check_restart_files(restart, cwd):
     rst_file = "restart.in"  
@@ -44,86 +43,85 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
         for num, line in enumerate(rstf):
             #print(num, line)        
             try:
-                if re.search(r'Step', line):
+                if re.search(r'Step', str(line)):
                      step = int(line.split()[1])
                 else:
-                    err="Step"
+                     err = " Step"
                 
-                if re.search(r'State', line):
+                if re.search(r'State', str(line)):
                      state = int(line.split()[1])
                 else:
-                     err="State"
+                     err = " State"
                 
-                if re.search(r'Ekin', line):
+                if re.search(r'Ekin', str(line)):
                      Ekin = float(line.split()[1])
                 else:
-                     err="Ekin"
+                     err = " Ekin"
                 
-                if re.search(r'Epot', line):
+                if re.search(r'Epot', str(line)):
                      Epot = float(line.split()[1])
                 else:
-                     err="Epot"
+                     err = " Epot"
                 
-                if re.search(r'Etot', line):
+                if re.search(r'Etot', str(line)):
                      Etot = float(line.split()[1])
                 else:
-                    err="Etot"                 
+                    err = " Etot"                 
                 
-                if re.search(r'Etot_init', line):
+                if re.search(r'Etot_init', str(line)):
                     Etot_init = float(line.split()[1])             
                 else:
-                    err="Etot_init"
+                    err = " Etot_init"
                     
-                if re.search(r'Positions', line):
+                if re.search(r'Positions', str(line)):
                     pnum = num
                 else:
-                    err="Position"
+                    err = " Position"
                 
-                if re.search(r'Velocities', line):
+                if re.search(r'Velocities', str(line)):
                     vnum = num
                 else:
-                    err="Velocities"
+                    err = " Velocities"
                 
-                if re.search(r'Forces', line):
+                if re.search(r'Forces', str(line)):
                     fnum = num
                 else:
-                    err="Forces"
+                    err = " Forces"
                 
-                if re.search(r'Pot_eners_array', line):
+                if re.search(r'Pot_eners_array', str(line)):
                     peanum = num 
                 else:
-                    err="Pot_eners_array"
+                    err = " Pot_eners_array"
                 
                 # TC WF
-                if re.search(r'blob_size', line):
+                if re.search(r'blob_size', str(line)):
                     blob_size= int(line.split()[1])
                 else:
-                    err="blob_size"
+                    err = " blob_size"
                 
-                if re.search(r'civec_size', line):
+                if re.search(r'civec_size', str(line)):
                     civec_size = int(line.split()[1])  
                 else:
-                    err="civec_size"                               
+                    err = " civec_size"                               
                 
-                if re.search(r'nbf_size', line):
+                if re.search(r'nbf_size', str(line)):
                     nbf_size= int(line.split()[1])  
                 else:
-                    err="nbf_size"  
+                    err = " nbf_size"  
                 
-                if re.search(r'MO', line):
+                if re.search(r'MO', str(line)):
                     monum = num
                 else:
-                    err="MO line"    
+                    err = " MO line"    
 
-                if re.search(r'CiVecs', line):
+                if re.search(r'CiVecs', str(line)):
                     civecnum = num
                 else:
-                    err="CiVecs line"  
-                if re.search(r'blob$', line):
+                    err = " CiVecs line"  
+                if re.search(r'blob:$', str(line)):
                     blobnum = num
                 else:
-                    err="blob line"  
-               
+                    err = " blob line"  
             except ValueError as VE:
                 error_exit(9, "Wrong format of restart option {}\n{}".fomat(err, str(VE)))
             else:

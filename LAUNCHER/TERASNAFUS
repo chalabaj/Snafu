@@ -56,7 +56,9 @@ fi
 # input file
 cp -r $RUN_DIR/* $SCRDIR/.
 cd $SCRDIR
-trap clean_exit SIGUSR2 SIGKILL SIGTERM#if qdel JOBID then copy current data back to RUN_DIR
+trap clean_exit SIGUSR2 
+trap clean_exit SIGKILL 
+trap clean_exit SIGTERM #if qdel JOBID then copy current data back to RUN_DIR
 
 $MPIRUN_TERA $TERAEXE --inputfile=ABINITIO/tera.inp --UseMPI=$MPITYPE --MPIPort=$port > tera.out 2>&1 &
 terapid=$!

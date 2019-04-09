@@ -19,8 +19,7 @@ try:
     from defaults import max_terachem_time
     from constants import *
 except ImportError as ime:
-    print("Module {} in {} not found.".format(ime,current_module))
-    exit(1)
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 
 def finish_tera(comm):
     print("All MPI communication done.\nDisconnecting Terachem communication.")
@@ -29,46 +28,45 @@ def finish_tera(comm):
     comm.Disconnect()
     return()
     
-def global_except_hook(exctype, value, traceback):
+def global_except_hook():
     # Prevent deadlock state when some exception is not handled (caught) a MPI still runs without exit    
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
-    sys.stdout.write("Except_hook.\n") 
+    sys.stdout.write("TERA_MPI=1. Calling MPI ABORT....\n") 
     sys.stdout.flush() 
+    
     try: 
-        #if sys.exc_info()[1] == "handled_excp"
-        print(sys.exc_info())
-        print(traceback.print_exc(file=sys.stdout))
+        print(traceback.format_exc())
     except Exception:
-        print("Probably some user input error.")
-    sys.__excepthook__(exctype, value, traceback)
-    MPI.COMM_WORLD.Abort(1)    
+        print("No traceback, user-input exception.")
+    finally:
+        MPI.COMM_WORLD.Abort(1)   
     return() 
  
 def exit_tera(comm):
-    comm.Disconnect()
-    # comm.Abort()   ABORT kills all execution and does not flush the buffer unless flush called, can cause headpain when looking for error source
+    try: 
+        print(traceback.format_exc())
+        print("MPI ERROR")
+        sys.stdout.flush() 
+        time.sleep(1)
+    finally:
+        MPI.COMM_WORLD.Abort(1)   
+    # comm.Abort()   ABORT kills all execution and does not flush the buffer unless flush called
     return()
  
 def tera_connect():
     #call MPI_COMM_CONNECT(port_name, MPI_INFO_NULL, 0, MPI_COMM_SELF, newcomm, ierr)
-        
-    # this should be moved to init routine
-    print("-------TERCHAME INTERFACE--------")
+    print("TeraChem initialization:")
     try:
         mpi_port = os.environ['MPI_TERA_PORT']
-        print("MPI_TERA_PORT {} found ".format(mpi_port)) 
-        comm = MPI.COMM_WORLD.Connect(mpi_port, MPI.INFO_NULL, 0)  #  ,MPI.INFO_NULL     
+        comm = MPI.COMM_WORLD.Connect(mpi_port, MPI.INFO_NULL, 0)    
     except KeyError as PE:
-        print("MPI port for communication with TERAPORT was not exported.",
-              "Check tera.out.") 
+        error_exit(15, "MPI port for communication with TERAPORT was not exported. Check tera.out.\n{}".format(PE)) 
     except Exception as ANYE:
-        print("MPI connection to Terachem failed.",
-              "\n{}".format(ANYE))
-        exit(1)
+        error_exit(15, "MPI connection to Terachem failed\n{}".format(ANYE))   
     else:
-        print("Terachem connection established through port: {}.".format(mpi_port))          
+        print("TC connection established using port: {}.".format(mpi_port))          
     return(comm)
 
 def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new,
@@ -123,10 +121,9 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                         fz_new[iat] = np.float64(NAC[xyz+2])
                         xyz = xyz + 3
                     print(st1, st2, NAC) 
-                sys.stdout.flush()  
     except Exception as excpt:
         print(traceback.format_exc())
-        raise RuntimeError("Problem during receiving data from Terachem: {}".format(excpt))
+        error_exit(15, "Problem during receiving data from Terachem: {}".format(excpt))
     else:
         print("MPI RECEIVED \nEnergies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
         return(fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob)
@@ -177,9 +174,8 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
         comm.Send([vels, 3*natoms, MPI.DOUBLE], dest=0, tag=2)
         #print(MPI.Status().Get_error())
     except Exception as excpt:
-        # any error => RAISE => MPI.ABORT => KILL TERA
         print(traceback.format_exc())
-        raise RuntimeError("Problem during sending dat to Terachem: {}".format(excpt))
+        error_exit(15, "Problem during sending data from Terachem: {}".format(excpt))
     else:
         print("MPI SEND OK".format(sim_time))
         return()
@@ -203,14 +199,13 @@ def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
     qmcharges = np.zeros((natoms),dtype=np.float64)
     TDip =  np.zeros(((nstates-1)*3), dtype=np.float64)
     Dip = np.zeros((nstates*3), dtype=np.float64)
-    print("TC arrays allocated.")  
-    sys.stdout.flush()   
+    #print("TC arrays allocated.")   
     return(MO, CiVecs, NAC, blob, SMatrix, qmcharges, TDip, Dip)
 
 def tera_init(comm, at_names, natoms, nstates, x,y,z):
     # Initial data transfer to Terachem through MPI (abin: init_terash)
     status = MPI.Status()
-    print("Sending initial data to Terachem.")     
+    #print("Sending initial data to Terachem.")     
     FMSinit = 1
     buffer = np.empty(3,dtype=np.intc) 
     natmm_tera = 0 
@@ -246,8 +241,7 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
             time.sleep(1) 
             cc += 1 
             if cc >= max_terachem_time:
-                exit_tera(comm)   
-                error_exit(15, "Didn't receive data from TC in time during initial comminucation") 
+                error_exit(15, "Didn't receive data from TC in time during initial communication.") 
         
         #   civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
         #  .tobytes() or buffer = bytearray(32*3)
@@ -262,8 +256,7 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
         print(traceback.format_exc())
-        exit_tera(comm)
         error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
     else:
-        print("---------TC INIT DONE-----------")
+        print("TC INIT DONE\n",liner)
         return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)

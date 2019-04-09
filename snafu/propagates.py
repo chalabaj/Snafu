@@ -19,8 +19,7 @@ try:
         receive_tera, send_tera, exit_tera
     )
 except ImportError as ime:
-    print("Module {} in {} not found.".format(ime,current_module))
-    exit(1)
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 
 def update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz):
     # BROADCASTING instead of dummy for iat in range(0,len(am)):

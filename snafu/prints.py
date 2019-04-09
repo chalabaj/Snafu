@@ -5,8 +5,7 @@ try:
     from constants import *
     from errors import error_exit
 except ImportError as ime:
-    print("Module {} in prints not found.".format(ime))
-    exit(1)
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 
 def print_positions(step,sim_time,natoms, at_names, x, y, z, mov_file):
     mov = mov_file

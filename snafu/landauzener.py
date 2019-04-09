@@ -6,9 +6,8 @@ try:
     from constants import *
     from errors import  error_exit
 except ImportError as ime:
-    print("Module {} in landauzener not found.".format(ime))
-    exit(1)
- 
+    error_exit(19, "Module {} in {} not found.".format(ime,current_module))
+    
 def calc_hopp(method, state, pot_eners,
               pot_eners_array, Ekin, dt, hop_thresh):
     

@@ -25,19 +25,23 @@ def error_exit(error_number, error_desc=" "):
            "14 - Wrong format of geom.in or veloc.in. Should be XYZ format with geometry in Angstrom and velocities in atomic units.\nError:{}.".format(error_desc),
            "15 - {}".format(error_desc),
            "16 - Error when reading data from restart file.",
-           "17 - Error when reading restart file. Option \"{}\" not found.".format(error_desc)
+           "17 - Error when reading restart file. Option \"{}\" not found.".format(error_desc),
+           "18 - User called ABORT {}.".format(error_desc),
+           "19 - Import error: {}.".format(error_desc)
           )
     print("-------------------------------------------------------------------")
     print(err[error_number])
-    print("\nProgram was terminated due to an error!") 
+    print("\nProgram was terminated due to an error!")
+    sys.stdout.flush() 
     # prevent MPI deadlock without raiseing runtime error which is caught by excepthook, does not create traceback
     try: 
         tera_mpi = int(os.environ['MPI_TERA'])
         if tera_mpi:
-             raise RuntimeError("handled_excp") 
+             from tera_propagates import global_except_hook
+             global_except_hook()
              sys.exit(1)
     except KeyError as ke:
         sys.exit(1)
-    else:
+    finally:
         sys.exit(1)    
     return()
