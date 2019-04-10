@@ -141,6 +141,7 @@ if __name__ == "__main__":
         error_exit(9, str(VE))
     
     fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
+    
     # READ INITIAL OR RESTART DATA
     if restart == 0:
         if init_vel:

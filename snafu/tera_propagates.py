@@ -42,7 +42,7 @@ def global_except_hook(exctype, value, traceback):
     sys.stdout.write("\nCalling MPI ABORT....\n")   
     sys.exc_info()  
     sys.stdout.flush() 
-    raise RuntimeError("syntax error raise")
+    # raise RuntimeError("syntax error raise")
     try:   
         print(traceback.format_exc())
     except Exception:
@@ -96,10 +96,9 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                 error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-        print(pot_eners, pot_eners.shape) 
+        #print(pot_eners, pot_eners.shape) 
         #print("Energies received\n")
         #sys.stdout.flush() 
-        print(TDip)
         comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status) 
         #print("TDip received\n")
         #sys.stdout.flush() 

@@ -91,45 +91,29 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
         except Exception as ne:
             error_exit(17, str(ne))
         try:          
-            atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'),
-                                    skip_header=pnum+1, max_rows=natoms, usecols=[0])
+            atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'), skip_header=pnum+1, max_rows=natoms, usecols=[0])
             at_names =  atnames.tolist()
             
-            pot_eners_array = np.genfromtxt(rst_file, dtype=np.float64,
-                                            skip_header=peanum+1, max_rows=2,
-                                            usecols=[0,1,2])         
-            fx = np.genfromtxt(rst_file, dtype=np.float64,
-                               skip_header=fnum+1, max_rows=natoms, usecols=[1])  
-            fy = np.genfromtxt(rst_file, dtype=np.float64,
-                               skip_header=fnum+1, max_rows=natoms, usecols=[2])
-            fz = np.genfromtxt(rst_file, dtype=np.float64,
-                               skip_header=fnum+1, max_rows=natoms, usecols=[3])
+            pot_eners_array = np.genfromtxt(rst_file, dtype=np.float64, skip_header=peanum+1, max_rows=2, usecols=(x for x in range(nstates)))         
+            fx = np.genfromtxt(rst_file, dtype=np.float64, skip_header=fnum+1, max_rows=natoms, usecols=[1])  
+            fy = np.genfromtxt(rst_file, dtype=np.float64, skip_header=fnum+1, max_rows=natoms, usecols=[2])
+            fz = np.genfromtxt(rst_file, dtype=np.float64, skip_header=fnum+1, max_rows=natoms, usecols=[3])
                                        
-                                       
-            x = np.genfromtxt(rst_file, dtype=np.float64,
-                                      skip_header=pnum+1, max_rows=natoms, usecols=[1])  
-            y = np.genfromtxt(rst_file, dtype=np.float64, 
-                                      skip_header=pnum+1, max_rows=natoms, usecols=[2])
-            z = np.genfromtxt(rst_file, dtype=np.float64,
-                                      skip_header=pnum+1, max_rows=natoms, usecols=[3])
+            x = np.genfromtxt(rst_file, dtype=np.float64, skip_header=pnum+1, max_rows=natoms, usecols=[1])  
+            y = np.genfromtxt(rst_file, dtype=np.float64, skip_header=pnum+1, max_rows=natoms, usecols=[2])
+            z = np.genfromtxt(rst_file, dtype=np.float64, skip_header=pnum+1, max_rows=natoms, usecols=[3])
                                       
-            vx = np.genfromtxt(rst_file, dtype=np.float64,
-                                       skip_header=vnum+1, max_rows=natoms, usecols=[1])  
-            vy = np.genfromtxt(rst_file, dtype=np.float64,
-                                       skip_header=vnum+1, max_rows=natoms, usecols=[2])
-            vz = np.genfromtxt(rst_file, dtype=np.float64,
-                                       skip_header=vnum+1, max_rows=natoms, usecols=[3])
+            vx = np.genfromtxt(rst_file, dtype=np.float64, skip_header=vnum+1, max_rows=natoms, usecols=[1])  
+            vy = np.genfromtxt(rst_file, dtype=np.float64, skip_header=vnum+1, max_rows=natoms, usecols=[2])
+            vz = np.genfromtxt(rst_file, dtype=np.float64, skip_header=vnum+1, max_rows=natoms, usecols=[3])
                                        
             if not tera_mpi == 0:
                 #CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)                   
-                CiVecs = np.genfromtxt(rst_file, dtype=np.float64,
-                                           skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
+                CiVecs = np.genfromtxt(rst_file, dtype=np.float64, skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
                 #MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
-                MO = np.genfromtxt(rst_file, dtype=np.float64,
-                                           skip_header=monum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
+                MO = np.genfromtxt(rst_file, dtype=np.float64, skip_header=monum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
                 #blob = np.zeros((blob_size),dtype=np.float64)
-                blob = np.genfromtxt(rst_file, dtype=np.float64,
-                                           skip_header=blobnum+1, max_rows=blob_size, usecols=0)                             
+                blob = np.genfromtxt(rst_file, dtype=np.float64, skip_header=blobnum+1, max_rows=blob_size, usecols=0)                             
         except Exception as expt:
             print(expt)
             error_exit(16)
