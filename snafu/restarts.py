@@ -17,25 +17,25 @@ except KeyError as ke:
     print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
     tera_mpi = 0
 if tera_mpi:
-    from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
+    from tera_propagates import (global_except_hook)
     sys.excepthook = global_except_hook  
 
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------         
 def check_restart_files(restart, cwd):
-    rst_file = "restart.in"  
+    rst_file = "restart.in"
     rst_file_path = os.path.join(cwd, rst_file)
     if restart < 0:
         error_exit(11, "(restart < 0)")
     #  elif restart == 0 dealt in check_output_files
-    elif restart == 1:
-        rst_file_path = os.path.join(cwd, rst_file)
-        if (os.path.isfile(rst_file_path)):
-            print("Restart={}, start from the last completed".format(restart),
-                  "step.\nRestart file {} found.".format(rst_file))
-        else:
-            error_exit(10, "({})".format(rst_file))
-    elif restart > 1:
+    #elif restart == 1:
+    #    rst_file_path = os.path.join(cwd, rst_file)
+    #    if (os.path.isfile(rst_file_path)):
+    #        print("Restart={}, start from the last completed".format(restart),
+    #              "step.\nRestart file {} found.".format(rst_file))
+    #    else:
+    #        error_exit(10, "({})".format(rst_file))
+    elif restart > 0:
         rst_file = "restart_{}.in".format(restart)
         rst_file_path = os.path.join(cwd, rst_file)
         if (os.path.isfile(rst_file_path)):
@@ -49,95 +49,47 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
     # TO DO: should be done with far less condiotion, however there would have to be another convertion from disctionary to variables of different types
     err = "0"
     rst_file = rst_file_path
+    #step, state, Ekin, Epot, Etot, Etot_init, pnum, vnum, fnum, peanum, blob_size, civec_size, nbf_size, monum, civecnum, blobnum = None
     with open(rst_file_path, 'r') as rstf:
         for num, line in enumerate(rstf):
-            print(enumerate(rstf))
-            print(num, line)        
-            
             if re.search(r'Step', str(line)):
                 step = int(line.split()[1])
-            else:
-                 err = " Step"
-            
             if re.search(r'State', str(line)):
                 state = int(line.split()[1])
-            else:
-                err = " State"
-            
             if re.search(r'Ekin', str(line)):
                 Ekin = float(line.split()[1])
-            else:
-                err = " Ekin"
-            
             if re.search(r'Epot', str(line)):
                 Epot = float(line.split()[1])
-            else:
-                err = " Epot"
-            
             if re.search(r'Etot', str(line)):
                 Etot = float(line.split()[1])
-            else:
-                err = " Etot"                 
-            
             if re.search(r'Etot_init', str(line)):
-                Etot_init = float(line.split()[1])             
-            else:
-                err = " Etot_init"
-                
+                Etot_init = float(line.split()[1])   
             if re.search(r'Positions', str(line)):
                 pnum = num
-            else:
-                err = " Position"
-            
             if re.search(r'Velocities', str(line)):
                 vnum = num
-            else:
-                err = " Velocities"
-            
             if re.search(r'Forces', str(line)):
                 fnum = num
-            else:
-                err = " Forces"
-            
             if re.search(r'Pot_eners_array', str(line)):
                 peanum = num 
-            else:
-                err = " Pot_eners_array"
-            
             # TC WF
             if re.search(r'blob_size', str(line)):
                 blob_size= int(line.split()[1])
-            else:
-                err = " blob_size"
-            
             if re.search(r'civec_size', str(line)):
                 civec_size = int(line.split()[1])  
-            else:
-                err = " civec_size"                               
-            
             if re.search(r'nbf_size', str(line)):
                 nbf_size= int(line.split()[1])  
-            else:
-                err = " nbf_size"  
-            
             if re.search(r'MO', str(line)):
                 monum = num
-            else:
-                err = " MO line"    
-
             if re.search(r'CiVecs', str(line)):
                 civecnum = num
-            else:
-                err = " CiVecs line" 
-
-            if (re.match(r"blob:$", str(line))):
+            if (re.search(r'Blob:$', str(line))):
                 blobnum = num
-            else:
-                err = " blob line"  
-
-        print(err)
-        if not err == "0":
-            error_exit(17, err)
+        try: 
+            if not None in (step, state, Ekin, Epot, Etot, Etot_init, pnum, vnum, fnum, peanum, blob_size, civec_size, nbf_size, monum, civecnum, blobnum):
+                print("ALL RESTARTION OPTIONS FOUND. READING RESTART DATA:")  
+        except Exception as ne:
+            error_exit(17, str(ne))
         try:          
             atnames = np.genfromtxt(rst_file, dtype=np.dtype('str'),
                                     skip_header=pnum+1, max_rows=natoms, usecols=[0])
@@ -262,10 +214,10 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
             rsf.write("CiVecs:\n")
             np.savetxt(rsf, CiVecs, fmt="%20.10f", delimiter=' ', newline='\n')
             
-            rsf.write("blob:\n")
+            rsf.write("Blob:\n")
             np.savetxt(rsf, blob, fmt="%20.10f", delimiter=' ', newline='\n')
     
-        rsf.flush()  # need to flush, cause it is still open and buffer probably not full yet, otherwise we copy empty file
+        rsf.flush()  # OLD: need to flush, cause it is still open and buffer probably not full yet
         
     return()
     

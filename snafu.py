@@ -32,7 +32,7 @@ except KeyError as ke:
 try: 
     tera_mpi = int(os.environ['MPI_TERA'])
     if tera_mpi:
-        from tera_propagates import (finish_tera, tera_init, global_except_hook)
+        from tera_propagates import (finish_tera, tera_connect, tera_init, global_except_hook)
         sys.excepthook = global_except_hook    
 except KeyError as ke:
      print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
@@ -80,18 +80,18 @@ except ImportError as ime:
               "\nOr check import in the wrong module")
         error_exit(19, "Some python file probably missing {}".format(ime))
 else:
-    print("All modules loaded succesfully.\n \n")
     print_snafu()
+    print("\nAll modules loaded succesfully.")
 
 # ---------------INIT--------------------------------------------------------
 
 if __name__ == "__main__":
   
     print("Simulation started at: {}".format(startTime),
-          "\nPython base: {}".format(sys.base_exec_prefix),
+          "\nPython: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
-          "\nSystem platform: {}".format(sys.platform),
-          "\nSystem path: {}\n".format(sys.path[0]),
+          # "\nSystem platform: {}".format(sys.platform),
+          "\nSystem path: {}".format(sys.path[0]),
           "\n".join(sys.path[1:]) 
           )
     
@@ -105,7 +105,6 @@ if __name__ == "__main__":
 
     # FILE CHECK - OBTAIN PATH TO FILES
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
-    print(liner)
 
     #  READ INPUT OPTIONS AND SET THEM AS VARIABLES:
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
@@ -123,7 +122,7 @@ if __name__ == "__main__":
         restart_freq = int(restart_freq)
         tera_mpi = int(tera_mpi)
         write_freq = int(write_freq)          
-        print("Simulation will start with the following parameters:\n",
+        print("Simulation parameters read from input.in:\n",
               "{} = {}\n".format("natoms", natoms),
               "{} = {}\n".format("maxsteps",maxsteps),
               "{} = {}\n".format("initial state", state),
@@ -141,12 +140,7 @@ if __name__ == "__main__":
     except ValueError as VE:
         error_exit(9, str(VE))
     
-    if tera_mpi:
-        comm = tera_connect()       
-
-    fx, fy, fz, fx_new, fy_new, fz_new, \
-    pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
-    sys.stdout.flush()
+    fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
     # READ INITIAL OR RESTART DATA
     if restart == 0:
         if init_vel:
@@ -166,6 +160,7 @@ if __name__ == "__main__":
         
         # CALC INITIAL ENERGIES AND GRADIENTS
         if tera_mpi: 
+            comm = tera_connect()  
             MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
              
         fx, fy, fz, pot_eners, \
@@ -194,6 +189,7 @@ if __name__ == "__main__":
         # if init_step = maxsteps:
         # error_exit(18, "Reaachem mxium number of steps")
         if tera_mpi:
+            comm = tera_connect()  
             temp_MO, temp_CiVecs, temp_NAC, temp_blob, temp_SMatrix, temp_civec_size, \
             temp_nbf_size, temp_blob_size, temp_qmcharges, temp_TDip, temp_Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
         

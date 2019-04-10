@@ -23,10 +23,14 @@ except ImportError as ime:
     
 # ---------------------------------------------------------------------------------------------------------------------------------------------    
 def finish_tera(comm):
-    print("All MPI communication done.\nDisconnecting Terachem communication.")
-    comm.Send(str.encode("0"), dest=0, tag=0 )  # MPI_TAG_EXIT = 0
-    # also  MPI_TAG_ERROR = 13 if error occus
-    comm.Disconnect()
+    try:
+        comm.Send(str.encode("0"), dest=0, tag=0 )  # MPI_TAG_EXIT = 0
+        # also  MPI_TAG_ERROR = 13 if error occus
+        comm.Disconnect()
+    except Exception:
+        error_exit(15, "Failed to disconnect, Calling MPI abort")
+    else:
+        print("TC MPI Disconnected.")
     return()
     
 def global_except_hook(exctype, value, traceback):
@@ -36,17 +40,16 @@ def global_except_hook(exctype, value, traceback):
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
     
     # "If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
-    raise RuntimeError("EXCEPT_HOOK_ERROR FOR MPI INTERFACE:")
-    sys.stdout.write("\nTERA_MPI=1. Calling MPI ABORT....\n") 
+    raise RuntimeError("EXCEPTION_HOOK_ERROR FOR MPI INTERFACE.")
+    sys.stdout.write("\nCalling MPI ABORT....\n") 
     sys.stdout.flush() 
-    try: 
-        print("lala")
-       # traceback.print_exception()
+    try:   
+        traceback.print_exception()
     except Exception:
         print("No traceback, user-input exception.")
     finally:
-        MPI.COMM_WORLD.Abort() 
-        sys.exit(1)  
+       MPI.COMM_WORLD.Abort() 
+       sys.exit(1)  
     return() 
  
 def exit_tera(comm):
@@ -93,7 +96,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                 error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-        pot_eners  
+        #pot_eners  
         #print("Energies received\n")
         #sys.stdout.flush() 
         comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status) 
@@ -125,12 +128,12 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                         fy_new[iat] = np.float64(NAC[xyz+1])
                         fz_new[iat] = np.float64(NAC[xyz+2])
                         xyz = xyz + 3
-                    print(st1, st2, NAC) 
+                    #print(st1, st2, NAC) 
     except Exception as excpt:
         print(traceback.format_exc())
         error_exit(15, "Problem during receiving data from Terachem: {}".format(excpt))
     else:
-        print("MPI RECEIVED \nEnergies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
+        #print("MPI RECEIVED \nEnergies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
         return(fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob)
     
 def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
@@ -159,7 +162,7 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     #  We need to send only upper-triangle matrix, diagonal elements are gradients, other NACs
     tocacl = np.zeros((nstates, nstates), dtype=np.intc, order='C')
     uti = np.triu_indices(nstates)   #  upper-triangle indices
-    tocacl[state][state] = 1 # gradients for the current state only, no NACs
+    tocacl[state][state] = 1         #  gradients for the current state only, no NACs
 
     # Send time
     # Send coordinates
@@ -181,8 +184,8 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     except Exception as excpt:
         print(traceback.format_exc())
         error_exit(15, "Problem during sending data from Terachem: {}".format(excpt))
-    else:
-        print("MPI SEND OK".format(sim_time))
+  # else:
+  #     print("MPI SEND OK".format(sim_time))
         return()
     
 def alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates=4):
