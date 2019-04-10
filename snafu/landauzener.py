@@ -1,12 +1,22 @@
-
+import os
+import sys
+import numpy as np  
+import random 
+import math
 try:
-    import numpy as np  
-    import random 
-    import math
     from constants import *
     from errors import  error_exit
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
+
+try:
+    tera_mpi = int(os.environ['MPI_TERA'])
+except KeyError as ke:
+    print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
+    tera_mpi = 0
+if tera_mpi:
+    from tera_propagates import (global_except_hook)
+    sys.excepthook = global_except_hook      
     
 def calc_hopp(method, state, pot_eners,
               pot_eners_array, Ekin, dt, hop_thresh):

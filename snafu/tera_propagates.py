@@ -30,7 +30,7 @@ def finish_tera(comm):
     except Exception:
         error_exit(15, "Failed to disconnect, Calling MPI abort")
     else:
-        print("TC MPI Disconnected.")
+        print("TC MPI Disconnected.")                    
     return()
     
 def global_except_hook(exctype, value, traceback):
@@ -38,16 +38,16 @@ def global_except_hook(exctype, value, traceback):
     # https://github.com/chainer/chainermn/issues/236
     # NOTE: mpi4py must be imported inside exception handler, not globally.
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
-    
     # "If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
-    raise RuntimeError("EXCEPTION_HOOK_ERROR FOR MPI INTERFACE.")
-    sys.stdout.write("\nCalling MPI ABORT....\n") 
+    sys.stdout.write("\nCalling MPI ABORT....\n")   
+    sys.exc_info()  
     sys.stdout.flush() 
+    raise RuntimeError("syntax error raise")
     try:   
-        traceback.print_exception()
+        print(traceback.format_exc())
     except Exception:
         print("No traceback, user-input exception.")
-    finally:
+    finally:  
        MPI.COMM_WORLD.Abort() 
        sys.exit(1)  
     return() 
@@ -96,9 +96,10 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                 error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
-        #pot_eners  
+        print(pot_eners, pot_eners.shape) 
         #print("Energies received\n")
         #sys.stdout.flush() 
+        print(TDip)
         comm.Recv([TDip, (nstates-1)*3, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status) 
         #print("TDip received\n")
         #sys.stdout.flush() 
@@ -269,4 +270,4 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         print("TC INIT DONE\n")
         return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
 
-sys.excepthook = global_except_hook
+

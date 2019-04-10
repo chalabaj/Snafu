@@ -26,7 +26,7 @@ except KeyError as ke:
     print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
     tera_mpi = 0
 if tera_mpi:
-    from tera_propagates import global_except_hook
+    from tera_propagates import global_except_hook, finish_tera
     sys.excepthook = global_except_hook  
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------    
@@ -72,7 +72,8 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
     if not tera_mpi:
         # GRADIENT/FORCES check
         if re.search(r'g09', ab_initio_file_path) or re.search(r'gaus', ab_initio_file_path) or re.search(r'forces', ab_initio_file_path):
-                grad = 1   # gaus exports forces -1                   
+                grad = 1   # gaus exports forces -1   
+        #print("grad",grad)                
         # Create geom file for which the forces will be calculated
         abinit_geom_file = "abinit_geom.xyz"
         with open (abinit_geom_file, "w") as agf:
@@ -111,8 +112,6 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             fy_new = grad*fy_new
             fz_new = grad*fz_new
         except Exception as excpt:
-            print("Something went wrong during MPI SEND/RECEIVE.",
-                  "\n{}".format(excpt))
             finish_tera(comm)
             error_exit(15, str("Error during sending/receive TC data {}".format(excpt)))
         

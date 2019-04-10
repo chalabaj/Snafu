@@ -7,7 +7,7 @@ def error_exit(error_number, error_desc=" "):
     Exiting SNAFU simulation.
     MPI4PY implementation of MPI is currently not perfect when dealing with errors and can cause deadlocks. Hence MPI checking.
     """
-
+    #  tera_mpi = 0
     err = ("0 - File input.in not found in folder.\n",
            "1 - File geom.in not found in folder.\n",
            "2 - Number of atoms in geoms.in and input.in is not consistent. Please check geom.in and input.in and check XYZ format.\n",
@@ -37,12 +37,11 @@ def error_exit(error_number, error_desc=" "):
     # prevent MPI deadlock without raiseing runtime error which is caught by excepthook, does not create traceback
     try:
         tera_mpi = int(os.environ['MPI_TERA'])
-    except KeyError:
+    except Exception:
         tera_mpi = 0
     if tera_mpi:
          from tera_propagates import global_except_hook
          sys.excepthook = global_except_hook 
-    
-    raise RuntimeError("USER/INPUT ERROR.")
+         raise RuntimeError("USER/INPUT ERROR.")
     sys.exit(1)    
     return()

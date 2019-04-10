@@ -190,17 +190,17 @@ if __name__ == "__main__":
         # error_exit(18, "Reaachem mxium number of steps")
         if tera_mpi:
             comm = tera_connect()  
-            temp_MO, temp_CiVecs, temp_NAC, temp_blob, temp_SMatrix, temp_civec_size, \
-            temp_nbf_size, temp_blob_size, temp_qmcharges, temp_TDip, temp_Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
+            # using MO, CiVecs and blob data from restart --> temp_ prevent overwrite
+            temp_MO, temp_CiVecs, NAC, temp_blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
         
         # Check the shape of INIT and RESTART arrays - must equal
-        dim_match = "{d}:{d}\n{d}:{d}\n{d}:{d}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
-        if not (temp_MO.shape == MO.shape and 
-                temp_CiVecs.shape == CiVecs.shape and
-                temp_blob.shape == blob.shape):
-            error_exit(18, dim_match)
-        else:
-            print("Restart and init dimensions match\n",dim_match)
+            dim_match = "{}:{}\n{}:{}\n{}:{}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
+            if not (temp_MO.shape == MO.shape and 
+                    temp_CiVecs.shape == CiVecs.shape and
+                    temp_blob.shape == blob.shape):
+                error_exit(18, dim_match)
+            else:
+                print("Restart and init dimensions match\n",dim_match)
                             
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 

@@ -12,7 +12,7 @@ step=$5
 input=input
 nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g**"  
+basis="6-31g"  
                # don't use Dunning basis sets, you won't get NACME
 nelectrons=9   # total number of electrons
 spin=1         # 0 for singlet, 1 for dublet etc.

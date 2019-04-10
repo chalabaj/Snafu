@@ -80,9 +80,9 @@ def read_input(cwd, input_file_path):
 
 def check_output_file(cwd, natoms, restart, init_step, write_freq):
     if (restart == 1):
-        backup_output_files(cwd)
+        backup_output_files(cwd, restart)
     elif (restart > 1):
-        backup_output_files(cwd)
+        backup_output_files(cwd, restart)
         truncate_output_files(init_step-1, write_freq, natoms) #  -1 because init_step is set for restart (MD) loop with step +1
     elif (restart == 0):
         if (os.path.isfile("movie.xyz")):

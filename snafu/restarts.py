@@ -224,7 +224,7 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
 def truncate_output_files(init_step, write_freq, natoms):
 # movie.xyz energies.dat input.in state.dat snafu.out velocities.xyz PES.dat 
 # init_step is read from restart file
-    print("\nOutput files will be truncated".format(init_step))
+    # print("\nOutput files will be truncated".format(init_step))
     natoms_lines = (natoms+2)*init_step/write_freq  #  header
     step_lines = (init_step/write_freq)+1     
            
@@ -248,12 +248,12 @@ def truncate_output_files(init_step, write_freq, natoms):
             print("File {} was truncated after {} steps.".format(input_file,init_step))
     return()
 
-def backup_output_files(cwd):
+def backup_output_files(cwd, restart):
     # RESTART PART - CREATING BACKUP OF OUTPUT FILES
-    print(liner)    
+    print(liner)  
     N=0
     while os.path.isdir(os.path.join(cwd,"PREV_RUN"+str(N))):
-        print("{} backup folder already exists".format("PREV_RUN"+str(N)))
+        #  print("{} backup folder already exists".format("PREV_RUN"+str(N)))
         N += 1
     else:
         backup_folder = os.path.join(cwd,"PREV_RUN"+str(N))
@@ -266,15 +266,14 @@ def backup_output_files(cwd):
     output_files.append("energies.dat")
     output_files.append("state.dat")
     #  output_files.append("snafu.out") file is rewritten upon restart
-    output_files.append("restart.in")
     rest_files = os.listdir(os.getcwd())
     restart_files = [ rf for rf in rest_files if re.search(r'restart', rf)]
     backup_files = output_files + restart_files
     for bf in backup_files:
         try:
             shutil.copy(bf,backup_folder)
-            print("File {} was not backed-up.".format(bf))
         except FileNotFoundError as FNT:
             print("Warning: file {} was not found and was not be backed-up!!!".format(FNT.filename))
-    print("Old output data were backed-up:\n{}".format(os.listdir(backup_folder)))
+        else:
+            print("File {} was backed-up.".format(bf))
     return()
