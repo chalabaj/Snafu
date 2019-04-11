@@ -34,7 +34,7 @@ def calc_hopp(method, state, pot_eners,
 
     # add last calculated pot energies to evaluate hop 
     # vstack along row , axis = 0
-    print(pot_eners_array.shape, pot_eners.shape)  
+    #print(pot_eners_array.shape, pot_eners.shape)  
     pot_eners_array = np.vstack((pot_eners_array, pot_eners))
     
     #print("Pot_eners_array HOP:\n",

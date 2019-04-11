@@ -10,7 +10,6 @@ e.g. x[0] is x position of 1st atom, fx[1] force in x direction on 2 atom, etc.
 import sys
 import os
 import configparser
-import traceback
 import numpy as np
 current_module = sys.modules[__name__]
 try:
@@ -114,7 +113,7 @@ def read_geoms(natoms, geom_file_path):
      except ValueError as VE:
         error_exit(14, str(VE))
      if not (int(atoms) == natoms):  error_exit(2, " ")                         
-     garbage = igf.readline()  # comment 
+     igf.readline()  # comment line
      for iat in range(0, natoms):
         line = igf.readline().split()
         at_names.append(capitalize_2th(str(line[0])))

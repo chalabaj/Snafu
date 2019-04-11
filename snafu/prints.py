@@ -1,6 +1,4 @@
 import os
-import numpy as np
-import shutil
 import sys
 try:
     from constants import *

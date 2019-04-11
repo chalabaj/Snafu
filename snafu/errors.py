@@ -24,7 +24,7 @@ def error_exit(error_number, error_desc=" "):
            "13 - Error in TeraChem interface.Error:{}".format(error_desc),
            "14 - Wrong format of geom.in or veloc.in. Should be XYZ format with geometry in Angstrom and velocities in atomic units.\nError:{}.".format(error_desc),
            "15 - {}".format(error_desc),
-           "16 - Error when reading data from restart file.",
+           "16 - Error when reading data from restart file. {}".format(error_desc),
            "17 - Error when reading restart file. Option \"{}\" not found.".format(error_desc),
            "18 - User called ABORT {}.".format(error_desc),
            "19 - Import error: {}.".format(error_desc)

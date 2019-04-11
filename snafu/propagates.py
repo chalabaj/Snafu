@@ -3,10 +3,8 @@ This module contain MD integrator parts: update velocities and position.
 Function "calc_forces" calls external ab initio program to calculate forces and then read the forces
 Velocity verlet integrator scheme
 """
-import math
 import sys
 import os
-import random
 import time
 import subprocess
 import re
@@ -86,7 +84,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         abinit_inputs = "{} {}  {}  {} {} {}".format(ab_initio_file_path, abinit_geom_file, natoms, state, nstates, step)
     
         try:
-            abinit_proc = subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
+            subprocess.run(abinit_inputs, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
             #print(
             error_exit(4,str("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr)))
@@ -118,7 +116,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
     return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)
 
 def calc_energies(
-    step, time, natoms, am, state, pot_eners, 
+    step, natoms, am, state, pot_eners, 
     vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
 
     Ekin = 0.000

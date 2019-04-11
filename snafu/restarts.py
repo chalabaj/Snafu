@@ -107,26 +107,27 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
             vy = np.genfromtxt(rst_file, dtype=np.float64, skip_header=vnum+1, max_rows=natoms, usecols=[2])
             vz = np.genfromtxt(rst_file, dtype=np.float64, skip_header=vnum+1, max_rows=natoms, usecols=[3])
                                        
-            if not tera_mpi == 0:
+            if tera_mpi:
                 #CiVecs = np.zeros((civec_size, nstates),dtype=np.float64)                   
                 CiVecs = np.genfromtxt(rst_file, dtype=np.float64, skip_header=civecnum+1, max_rows=civec_size, usecols=(x for x in range(nstates)))
                 #MO = np.zeros((nbf_size, nbf_size),dtype=np.float64)
                 MO = np.genfromtxt(rst_file, dtype=np.float64, skip_header=monum+1, max_rows=nbf_size, usecols=(x for x in range(nbf_size))) 
                 #blob = np.zeros((blob_size),dtype=np.float64)
-                blob = np.genfromtxt(rst_file, dtype=np.float64, skip_header=blobnum+1, max_rows=blob_size, usecols=0)                             
+                blob = np.genfromtxt(rst_file, dtype=np.float64, skip_header=blobnum+1, max_rows=blob_size, usecols=0)
+            else:
+                CiVecs, MO, blob = 0, 0, 0                               
         except Exception as expt:
-            print(expt)
-            error_exit(16)
+            error_exit(16, str(expt))
            
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
-    print("Reading restart data:")
-    print(at_names)
-    print("XYZ:\n{}".format(np.dstack((x,y,z))))
-    print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
-    print("FX FY FZ:\n{}".format(np.dstack((fx,fy,fz))))
-    print("Pot ener step-1/step \n{}".format(pot_eners_array))
+    print("Reading restart data...")
+    #print(at_names)
+    #print("XYZ:\n{}".format(np.dstack((x,y,z))))
+    #print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
+    #print("FX FY FZ:\n{}".format(np.dstack((fx,fy,fz))))
+    #print("Pot ener step-1/step \n{}".format(pot_eners_array))
     return(step, at_names, state, x, y, z, vx, vy, vz, 
            fx, fy, fz, Ekin, Epot, Etot, Etot_init, pot_eners_array, CiVecs, MO, blob, civec_size, nbf_size, blob_size)
 
@@ -191,7 +192,7 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
                                                                    ffz[iat])
                 rsf.write(f_line)
                 
-        if not tera_mpi == 0:
+        if tera_mpi:
             rsf.write("MO:\n")
             np.savetxt(rsf, MO, fmt="%20.10f", delimiter=' ', newline='\n')
             
@@ -200,7 +201,9 @@ def print_restart(step, sim_time, natoms, at_names, state, timestep,
             
             rsf.write("Blob:\n")
             np.savetxt(rsf, blob, fmt="%20.10f", delimiter=' ', newline='\n')
-    
+        else:
+            rsf.write("MO:\nCiVecs:\nBlob:\n")
+            
         rsf.flush()  # OLD: need to flush, cause it is still open and buffer probably not full yet
         
     return()
@@ -224,7 +227,7 @@ def truncate_output_files(init_step, write_freq, natoms):
         input_file = input_files[xx][0]
         cmd_trunc = "head -n{} {} > temp_file && mv temp_file {} ".format(nlines, input_file, input_file)  #  && = and if True
         try:
-            trim_file = subprocess.run(cmd_trunc, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
+            subprocess.run(cmd_trunc, stdout=None, stderr=subprocess.PIPE, shell = True, check = True)	
         except subprocess.CalledProcessError as cpe: 
             print("Warning: error during output {} file truncations process: \n{}".format(input_file,cpe.stderr),
                   "\nFile was probably moved somewhere else.")
@@ -234,7 +237,7 @@ def truncate_output_files(init_step, write_freq, natoms):
 
 def backup_output_files(cwd, restart):
     # RESTART PART - CREATING BACKUP OF OUTPUT FILES
-    print(liner)  
+  
     N=0
     while os.path.isdir(os.path.join(cwd,"PREV_RUN"+str(N))):
         #  print("{} backup folder already exists".format("PREV_RUN"+str(N)))

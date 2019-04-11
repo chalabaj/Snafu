@@ -6,15 +6,10 @@ Run Velocity verlet integrator MD with LZ hopping algorithm at each step
 """
 
 # SYSTEM IMPORTS:
-import math
 import sys
 import os
-import random
-import time
-import re
 import numpy as np
 from datetime import datetime
-
 startTime = datetime.now()
 
 # ENVIRONMENT LAYER 
@@ -30,7 +25,7 @@ except KeyError as ke:
           "See '.bashrc' file in your home directory",
           "or use 'env' command and make sure $SNAFU_DIR is exported.",
           "\nHint: export SNAFU_DIR=/path/to/SNAFU")
-    exit(1)
+    sys.exit(1)
 
 # TERA MPI INTERFACE SMOOTH EXIT:    
 # load excepthook as soon as possible in order to prevent ancaught exceptions which can cause MPI deadlock state
@@ -88,7 +83,7 @@ except ImportError as ime:
         error_exit(19, "Some python file probably missing {}".format(ime))
 else:
     print_snafu()
-    print("\nAll modules loaded succesfully.")
+    print("\nAll modules loaded.")
 
 # ---------------INITIALIZATION PART--------------------------------------------------------
 
@@ -180,7 +175,7 @@ if __name__ == "__main__":
 
         pot_eners_array = np.copy(pot_eners)      
         
-        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
+        Ekin, Epot, Etot, dE, dE_step = calc_energies(step, natoms, am,
                                                       state, pot_eners,
                                                       vx, vy, vz, Etot_init,
                                                       Etot_prev, ener_thresh)
@@ -214,24 +209,23 @@ if __name__ == "__main__":
                             
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
-    print("{}\nInitial geometry:\nAt       X           Y            Z           MASS:".format(liner))
+    print("{}\nInitial geometry:\nAt       X           Y            Z           MASS     [ANGSTROMS, AMU]".format(liner))
     xx = (x*BOHR_ANG).tolist()
     yy = (y*BOHR_ANG).tolist()
     zz = (z*BOHR_ANG).tolist()
     for iat in range(0, natoms):
-        print("{} {:12.8f}".format(at_names[iat], xx[iat]),
+        print(" {} {:12.8f}".format(at_names[iat], xx[iat]),
               "{:12.8f} {:12.8f}".format(yy[iat], zz[iat]),
               "{:12.8f}".format(am[iat]/AMU))
 
-    print("Initial velocities:\n At    VX      VY      VZ")
+    print("Initial velocities:\nAt    VX      VY          VZ [ATOMIC UNITS]")
     for iat in range(0, natoms):
-        print("".join("%2s" "   " "%3.3f" % (at_names[iat], vx[iat])),
-              " %3.3f    %3.3f " % (vy[iat], vz[iat]))
+        print("".join("%2s" "   " "%6.4f" % (at_names[iat], vx[iat])),
+              " %6.4f    %6.4f " % (vy[iat], vz[iat]))
    
     print("{}".format(liner),
-          "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
+          "\nSTEP    TIME/FS  DE_DRIFT/EV   DE_STEP/EV    HOP  STATE\n{}".format(liner)) 
     
-    print(liner)
     # Should open only once, otherwise intesive I/O overload disk
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
@@ -307,7 +301,7 @@ if __name__ == "__main__":
     
 
             Etot_prev = Etot
-            Ekin, Epot, Etot, dE, dE_step = calc_energies(step, sim_time, natoms, am,
+            Ekin, Epot, Etot, dE, dE_step = calc_energies(step, natoms, am,
                                                           state, pot_eners,
                                                           vx, vy, vz, Etot_init,
                                                           Etot_prev, ener_thresh)
