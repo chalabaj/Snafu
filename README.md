@@ -19,12 +19,12 @@ Create a folder containing input files and ABINITIO folder:
 **ABINITIO** folder has to contain one of the .sh script from the INTERFACES folder or a terachem input file (or you can add your own interface, see bellow). Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
 
 **Current implemented interfaces:**    
-CASSCF in MOLPRO (2015.1)  
-CASPT2 in MOLPRO 
+CASSCF in MOLPRO (2015.1)   
+CASPT2 in MOLPRO   
 TDDFT  in ORCA(4.0.1) & GAUSSIAN 09 (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0, one needs to check this on the run)
-OM3    in MNDO99 
-FOMO-CASCI in TERACHEM (works through MPI interface through FMS interface (see TC manual))
-BOMD: in Gaussian09 (MP2/DFT) or MOLPRO(MP2)
+OM3    in MNDO99   
+FOMO-CASCI in TERACHEM (works through MPI interface through FMS interface (see TC manual))  
+BOMD: in Gaussian09 (MP2/DFT) or MOLPRO(MP2)  
  
 **Input files**
 In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
