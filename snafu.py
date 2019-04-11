@@ -1,3 +1,10 @@
+"""
+This is main file which runs the LZ simulations.
+Import required module.
+Read inputs (input option, geometry, velocities, restarts)
+Run Velocity verlet integrator MD with LZ hopping algorithm at each step
+"""
+
 # SYSTEM IMPORTS:
 import math
 import sys
@@ -66,10 +73,10 @@ try:
     from restarts import (
         print_restart, check_restart_files, read_restart
     )
-    from constants import *   #  import conversion factors and default values
-    from defaults import *    #  import all default values, only here, later it can be setted by user
+    from constants import *   #  conversion factors (e.g. BOHR to ANG units)
+    from defaults import *    #  All default values for the code, import only here
 except ImportError as ime:
-    # if some of the imports fail during in-modules import ImportError rais None
+    # if some of the following imports fail during in-modules-import: ImportError raise None
     # module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
         error_exit(19, "Import or internal error in some module {}.".format(ime))
@@ -83,7 +90,7 @@ else:
     print_snafu()
     print("\nAll modules loaded succesfully.")
 
-# ---------------INIT--------------------------------------------------------
+# ---------------INITIALIZATION PART--------------------------------------------------------
 
 if __name__ == "__main__":
   
@@ -95,7 +102,7 @@ if __name__ == "__main__":
           "\n".join(sys.path[1:]) 
           )
     
-    # Local runs dont create HOSTNAME var, qsub SGE system does
+    # Local runs dont create HOSTNAME variable, qsub SGE system does
     try:
         print("Working directory: {}".format(cwd),
               "on {}.".format(os.environ['HOSTNAME']))
@@ -103,16 +110,17 @@ if __name__ == "__main__":
         print("Working directory: {}".format(cwd))
     print(liner)
 
-    # FILE CHECK - OBTAIN PATH TO FILES
+    # FILE CHECK - OBTAIN PATHS TO ALL FILES
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
 
     #  READ INPUT OPTIONS AND SET THEM AS VARIABLES:
+    # with exception of natoms, nstates, following option can be changed by restart
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
     globals().update(input_vars)
     try:
         natoms = int(natoms)
         maxsteps = int(maxsteps)
-        state = int(init_state)   # initial or restart state
+        state = int(init_state)   
         dt = float(timestep)
         nstates = int(nstates)
         ener_thresh = float(ener_thresh)
@@ -140,9 +148,10 @@ if __name__ == "__main__":
     except ValueError as VE:
         error_exit(9, str(VE))
     
+    # ALLOCATE ALL NUMPY ARRAYS
     fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
     
-    # READ INITIAL OR RESTART DATA
+    # READ INITIAL/RESTART DATA
     if restart == 0:
         if init_vel:
             print("Initial velocities read from {}".format(vel_file_path)) 
@@ -191,17 +200,17 @@ if __name__ == "__main__":
         # error_exit(18, "Reaachem mxium number of steps")
         if tera_mpi:
             comm = tera_connect()  
-            # using MO, CiVecs and blob data from restart --> temp_ prevent overwrite
+            #  temp_ PREVENT overwrite of MO, CiVecs and blob data from restart 
             temp_MO, temp_CiVecs, NAC, temp_blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
         
         # Check the shape of INIT and RESTART arrays - must equal
-            dim_match = "{}:{}\n{}:{}\n{}:{}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
+            #dim_match = "{}:{}\n{}:{}\n{}:{}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
             if not (temp_MO.shape == MO.shape and 
                     temp_CiVecs.shape == CiVecs.shape and
                     temp_blob.shape == blob.shape):
                 error_exit(18, dim_match)
-            else:
-                print("Restart and init dimensions match\n",dim_match)
+            # else:
+            #    print("Restart and init dimensions match\n",dim_match)
                             
     check_output_file(cwd, natoms, restart, init_step, write_freq)
 
@@ -223,13 +232,14 @@ if __name__ == "__main__":
           "\nStep    Time/fs  dE_drift/eV   dE_step/eV    Hop  State") 
     
     print(liner)
+    # Should open only once, otherwise intesive I/O overload disk
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
          open('velocities.dat', 'a') as vel_file, \
          open('state.dat', 'a') as state_file:
 
-    #-------------------MAIN LOOP----------------------------------------------------------------
+    #-------------------MAIN VERLET LOOP----------------------------------------------------------------
         
          for step in range(init_step, maxsteps + 1):
             sim_time = step * dt * AU_FS
@@ -260,7 +270,7 @@ if __name__ == "__main__":
                                                            fx, fy, fz,
                                                            fx_new, fy_new, fz_new) 
     
-                        # FXFYFZ for  XYZ(t = hop) in the new state already
+                        # FXFYFZ for XYZ(t = hop) in the NEW state
                         fx = np.copy(fx_new)
                         fy = np.copy(fy_new)
                         fz = np.copy(fz_new)
@@ -270,7 +280,7 @@ if __name__ == "__main__":
                             EE = EE + (0.5 * am[iat] * vvv)
                         print("Old Ekin: {} \nScaled/Adjusted Ekin {}\n.".format(Ekin, EE))
     
-                        # now finish the propagation step on new PES
+                        # now finish the propagation step on new PES (FXFYFZ for new state)
                         x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
                                                                vx, vy, vz, fx_new, fy_new, fz_new)
     

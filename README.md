@@ -16,7 +16,7 @@ Snafu is python-based code. It was developed and tested on Linux/Debian 4.7.2-5 
 
 Create a folder containing input files and ABINITIO folder:    
 
-**ABINITIO** folder has to contain one of the .sh script from the INTERFACES folder or a terachem input file (or you can add your own interface, see bellow). Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
+**ABINITIO** folder has to contain one of the .sh script from the INTERFACES folder or a terachem input file (or you can add your own interface, see bellow). Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh and script ABINITIO/molpro-casscf.sh must exist, same apply to terachem input file).
 
 **Current implemented interfaces:**    
 * CASSCF in MOLPRO (2015.1)   
@@ -77,8 +77,8 @@ The launcher:
 - copy data back to folder
 
 
-During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable. This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI which are also exported here. Environment variables for particular ab-initio code are exported in the interfaces scripts and have to be adjusted to your machine environment (see interface scripts in INTERFACE folder).
-
+During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable. This variable points to the folder with the **snafu.py** file and **snafu** subfolder containing all the modules. The variable is exported in the SNAFUS launcher script and should be modified depending on where you keep the code. The same applies for Terachem/MPI variable which are also exported here.   
+Environment variables for particular ab-initio code are exported in the interfaces scripts and have to be adjusted to your machine environment (see interface scripts in INTERFACE folder).
 
 The launchSNAFU is not needed when running SNAFU directly without que (nodes). If that is the case, export **SNAFU_DIR** and MPI_TERA env variables:  
 ```bash
