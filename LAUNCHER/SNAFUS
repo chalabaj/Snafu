@@ -12,7 +12,7 @@ delscratch="true"
 
 export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
 export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python
-export SNAFU_DIR="/home/chalabaj/SNAFU-DEV"  #folder with python files, needs to be set
+export SNAFU_DIR="/home/chalabaj/SNAFU"  #folder with python files, needs to be set
 export RUN_DIR=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
 export MPI_TERA=0
