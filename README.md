@@ -112,14 +112,19 @@ write_freq = 100           # how often print output (default 10)
 ---
 
 ### Adding new ab initio interface  
-It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step (see examples in INTERFACE folder). This file is created by an interface script after an ab initio code completes energy and gradient calculations. Interface script greps energies and gradients to the gradients.dat file in a running directory with the following structure:  
-energy-gs  
-energy-1ex state  
-....  
-energy-nstate  
-grad_x(1at) grad_y(1at) grad_z(1at)  
-....  
+It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step (see examples in INTERFACE folder). This file is created by an interface script after an ab initio code completes energy and gradient calculations. Interface script greps energies and gradients to the gradients.dat file in a running directory with the following structure (I states and N atoms):  
+
+```bash
+energy ground  
+energy 1ex state  
+...
+...
+energy i_state  
+grad_x(1at)  grad_y(1at)  grad_z(1at)  
+...
+...  
 grad_x(n_at) grad_y(n_at) grad_z(n_at)  
+```
 
 Be carefull: the code expects gradients to be extracted, not forces (e.g. Gaussian code). If your ab initio code print forces, you can either grep the negative values of forces to get the gradients (F = - grad(E)) or rename your interface script so that the script name contains one the words forces,gaus or g09 ,separated by dot or minus sign (e.g. forces.sh, forces-gaus.sh, forces-abinitiocode.sh etc), SNAFU will then transform forces into gradients forces.
 **NOTE** as the SNAFU is PYTHON based, so the states starts from 0 (ground state). Hence, if an ab initio code denotes ground state as 1, there should be modification in the interface skript (see e.g. molpro examples). 
