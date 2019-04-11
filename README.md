@@ -64,13 +64,13 @@ SNAFU simulation with TeraChem interface can be launched by:
 
 If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:  
   <code>
-   export SNAFU_DIR="path/to/snafu/dir"  
+   export SNAFU_DIR="path/to/snafu/dir"  \
    export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used  
   </code>  
 and then run the code:  
  <code>
  python snafu.py > snafu.out
- </code> 
+ </code>   
 This will not work for TeraChem jobs, where terachem runs in background and awaits MPI communication with SNAFU (see TERASNAFUS). 
 File snafu.out file is copied during restart for backup. If you used other output filename, it will not becopied during restart backup process.  
  
