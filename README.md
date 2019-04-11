@@ -1,8 +1,8 @@
-#### SNAFU 
+# SNAFU 
 
 ## **ab initio** nonadiabatic MD without calculating non-adiabatic couplings
 
-# Theory:
+### Theory:
 
 adiabatic-potential-based formula derived within Landau-Zener:
 
