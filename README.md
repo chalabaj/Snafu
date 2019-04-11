@@ -1,10 +1,8 @@
 # SNAFU 
 
-## **ab initio** nonadiabatic MD without calculating non-adiabatic couplings
+## surface hopping **ab initio** nonadiabatic molecular dynamics without non-adiabatic couplings based on adiabatic-potential-based formula derived within Landau-Zener approach
 
-### Theory:
-
-adiabatic-potential-based formula derived within Landau-Zener:
+**Theory:** 
 
 AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.014701**  
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**  
