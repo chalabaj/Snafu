@@ -78,6 +78,7 @@ and then run the code:
 This will not work for **TeraChem** jobs, in which the TeraChem runs in background and awaits MPI communication with snafu (see TERASNAFUS). 
  
 ---
+
 ## How to restart dynamics
 
 You can restart dynamics from the XXth step depending on how often you wrote restart files during the original simulation.  
@@ -85,9 +86,10 @@ The **restart_XX.in** file contains all needed information from the XX simulatio
 
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
 
-If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten). However, during the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends a on number of previous restarts (PREV_RUN0 folder contains original simulation data).
+If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten). However, during the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends a on number of previous restarts (PREV_RUN0 folder contains original simulation data).  
 
 The output files are opened in the "append" mode. This will ensure the continuation of the output files. The restart procedure truncate all the output files after XX step, but the original data are still preserved in a PREV_RUN folder.
+
 ---
 ## Input.in options:
 ```bash
