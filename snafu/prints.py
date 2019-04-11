@@ -92,4 +92,14 @@ def print_snafu():
    print( "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F:::::::FF             UU:::::::::::::UU  ")
    print( "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F:::::::FF               UU:::::::::UU    ")
    print( " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFF                 UUUUUUUUU      \n")
+   print( "Version 1.0, Author: J. Chalabala, 2018-2019")
+   try:
+       import time
+       lastmodified= os.stat(sys.argv[0]).st_mtime
+       print("Last change: {}.".format(time.ctime(lastmodified)))
+       import git
+       repo = git.Repo(os.getcwd())
+       commit = repo.head.commit
+   except Exception:
+       pass  
    return()
