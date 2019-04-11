@@ -67,7 +67,7 @@ This will not work for **TeraChem** jobs, in which the TeraChem runs in backgrou
   
 ```bash
 launchSNAFU 1 quename tera
-```bash
+```
 
 ---
 
