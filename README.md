@@ -4,10 +4,9 @@
 
 **Theory:** 
 
-```
 AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.014701**  
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**  
-```
+
 
 Snafu is python-based code. It was developed and tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package (python 3.6.8). MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
 
