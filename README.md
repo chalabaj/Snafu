@@ -1,14 +1,16 @@
-## SNAFU 
+#### SNAFU 
 
-### **ab initio** nonadiabatic MD without calculating non-adiabatic couplings
+## **ab initio** nonadiabatic MD without calculating non-adiabatic couplings
 
-### Theory
+# Theory:
 
-1) adiabatic-potential-based formula derived within Landau-Zener:
+adiabatic-potential-based formula derived within Landau-Zener:
 
-AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.014701**
-AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**
+AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.014701**  
+AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**  
+
 ---
+
 ## How to run
 1) System requirements:
 The code was tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package. MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
@@ -72,7 +74,7 @@ If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:
 and then run the code:  
 ```bash
  python snafu.py > snafu.out
-```bash
+```
 This will not work for **TeraChem** jobs, in which the TeraChem runs in background and awaits MPI communication with snafu (see TERASNAFUS). 
  
 ---
@@ -88,7 +90,7 @@ If you restart from some step, existing restart files with the same name will be
 The output files are opened in the "append" mode. This will ensure the continuation of the output files. The restart procedure truncate all the output files after XX step, but the original data are still preserved in a PREV_RUN folder.
 ---
 ## Input.in options:
-
+```bash
 [Settings]  
 natoms  = 3                # number of atoms in system  
 nstates = 3                # number of electronic states  
@@ -105,7 +107,7 @@ restart = 0                # N - restart from N-th step, restart_N.in must exist
                            # 0 - unset but writes restart information
 restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
 write_freq = 100           # how often print output (default 10) 
-
+```
 
 * Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
 
