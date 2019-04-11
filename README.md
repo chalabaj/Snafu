@@ -8,17 +8,17 @@ AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.01470
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**  
 
 
-Snafu is python-based code. It was developed and tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package (python 3.6.8). MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0. Mpi4py module has to be build with the same mpich as Terachem. 
+Snafu is python-based code. It was developed and tested on Linux/Debian 4.7.2-5 platform and Anaconda 3.6 package (python 3.6.8). MPI parallel environment for TeraChem-1.9 point-to-point communication was tested with mpich-3.1.3 and mpi4py-3.0.0 package. MPI4PY has to be build with the same mpich version as TeraChem. 
 
 ---
 
 ## How to run
 
 Create a folder containing input files and ABINITIO folder:    
-**ABINITIO** folder has to contain one of the .sh script from the INTERFACES folder or a terachem input file (or you can add your own interface, see bellow) .  
-Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
 
-**Current implemented interfaces:  **  
+**ABINITIO** folder has to contain one of the .sh script from the INTERFACES folder or a terachem input file (or you can add your own interface, see bellow). Option **abinitio** in input.in must equal to the name of the interface script (e.g. abinitio = molpro-casscf.sh). Interface file script ABINITIO/molpro-casscf.sh must exist. Same apply to terachem input file.
+
+**Current implemented interfaces:**    
 CASSCF in MOLPRO (2015.1)  
 CASPT2 in MOLPRO 
 TDDFT  in ORCA(4.0.1) & GAUSSIAN 09 (thresh needs to be set otherwise some tddft vectors might not fully converge and still gaussian exits with 0, one needs to check this on the run)
