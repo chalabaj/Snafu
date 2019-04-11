@@ -111,7 +111,7 @@ write_freq = 100           # how often print output (default 10)
 
 ---
 
-## Adding new ab initio interface  
+### Adding new ab initio interface  
 It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step (see examples in INTERFACE folder). This file is created by an interface script after an ab initio code completes energy and gradient calculations. Interface script greps energies and gradients to the gradients.dat file in a running directory with the following structure:  
 energy-gs  
 energy-1ex state  
