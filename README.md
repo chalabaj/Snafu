@@ -38,8 +38,36 @@ water molecule in angstorm units
  H     0.000000     0.000000     0.947000
  H     0.892841     0.000000    -0.315663  
 ```
- 
-**Running**  
+
+## Input.in options:
+
+```bash
+[Settings]  
+natoms  = 3                # number of atoms in system  
+nstates = 3                # number of electronic states  
+init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state  
+timestep = 6               # in atomic unit, 1 au = 0.024 fs   
+maxsteps = 600             # total number of steps  
+method  = lz               # lz (default)/bomd on selected state(no hops allowed)
+abinitio  = molpro-casscf.sh  # name of ab initio interface file in the ABINITIO folder
+vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
+ener_thresh = 1.0          # threshold for max energy drift (in eV)     
+hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
+restart = 0                # N - restart from N-th step, restart_N.in must exist
+                           # 1 - restart from the last completed step (i.e. restart.in)
+                           # 0 - unset but writes restart information
+restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
+write_freq = 100           # how often print output (default 10) 
+```
+
+* Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
+
+* Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
+
+* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
+
+
+### Running  
 You can use launchers in the LAUNCHER folder and launchSNAFU and SNAFUS bash scripts which will start the simulation. These are customized for Linux cluster-type computers with queuing systems (here SGE) and should be adjusted to your environment and folder. 
 The launcher:  
 - submit the job to a que
@@ -83,33 +111,6 @@ If you restart from some step, existing restart files with the same name will be
 The output files are opened in the "append" mode. This will ensure the continuation of the output files. The restart procedure truncate all the output files after XX step, but the original data are still preserved in a PREV_RUN folder.
 
 ---
-## Input.in options:
-```bash
-[Settings]  
-natoms  = 3                # number of atoms in system  
-nstates = 3                # number of electronic states  
-init_state = 2             # initial electronic state, 0 => ground state, 1 => first ex. state  
-timestep = 6               # in atomic unit, 1 au = 0.024 fs   
-maxsteps = 600             # total number of steps  
-method  = lz               # lz (default)/bomd on selected state(no hops allowed)
-abinitio  = molpro-casscf.sh  # name of ab initio interface file in the ABINITIO folder
-vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
-ener_thresh = 1.0          # threshold for max energy drift (in eV)     
-hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
-restart = 0                # N - restart from N-th step, restart_N.in must exist
-                           # 1 - restart from the last completed step (i.e. restart.in)
-                           # 0 - unset but writes restart information
-restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
-write_freq = 100           # how often print output (default 10) 
-```
-
-* Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
-
-* Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
-
-* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
-
----
 
 ### Adding new ab initio interface  
 It is straight forward to implement a new ab initio interface as the code reads the gradients.dat file at each step (see examples in INTERFACE folder). This file is created by an interface script after an ab initio code completes energy and gradient calculations. Interface script greps energies and gradients to the gradients.dat file in a running directory with the following structure (I states and N atoms):  
@@ -126,7 +127,7 @@ grad_x(1at)  grad_y(1at)  grad_z(1at)
 grad_x(n_at) grad_y(n_at) grad_z(n_at)  
 ```
 
-Be carefull: the code expects gradients to be extracted, not forces (e.g. Gaussian code). If your ab initio code print forces, you can either grep the negative values of forces to get the gradients (F = - grad(E)) or rename your interface script so that the script name contains one the words forces,gaus or g09 ,separated by dot or minus sign (e.g. forces.sh, forces-gaus.sh, forces-abinitiocode.sh etc), SNAFU will then transform forces into gradients forces.
+Be carefull: the code expects **gradients** to be extracted, not forces (e.g. Gaussian code). If your ab initio code print forces, you can either grep the negative values of forces to get the gradients (F = - grad(E)) or rename your interface script so that the script name contains one the words forces,gaus or g09 ,separated by dot or minus sign (e.g. forces.sh, forces-gaus.sh, forces-abinitiocode.sh etc), SNAFU will then transform forces into gradients forces.
 **NOTE** as the SNAFU is PYTHON based, so the states starts from 0 (ground state). Hence, if an ab initio code denotes ground state as 1, there should be modification in the interface skript (see e.g. molpro examples). 
 
 ## TODO:
