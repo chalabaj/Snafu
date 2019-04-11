@@ -64,8 +64,8 @@ SNAFU simulation with TeraChem interface can be launched by:
 
 If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:  
   <code>
-   export SNAFU_DIR="path/to/snafu/dir"
-   export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used
+   export SNAFU_DIR="path/to/snafu/dir"  
+   export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used  
   </code>  
 and then run the code:  
  <code>
