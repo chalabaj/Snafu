@@ -11,8 +11,6 @@ AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.01470
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**
 
 
-## Status
-The code is in **development** stage with no guarantees of its accuracy, precision or fitness. 
 
 * Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
 
@@ -20,7 +18,6 @@ The code is in **development** stage with no guarantees of its accuracy, precisi
 
 * Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
 
-* Hops are only allowed for pot. energy differences with less than 0.5 eV by default. Higher energy transitions generally lead to poor energy conservation.
 
 ## How to run
 1) System requirements:
