@@ -7,17 +7,7 @@
 1) adiabatic-potential-based formula derived within Landau-Zener:
 
 AK Belyaev, PHYSICAL REVIEW A 84, 014701 (2011), **doi:10.1103/PhysRevA.84.014701**
-
 AK Belyaev, The Journal of Chemical Physics 147, 234301 (2017); **doi:10.1063/1.5000718**
-
-
-
-* Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
-
-* Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
-
-* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
-
 
 ## How to run
 1) System requirements:
@@ -72,12 +62,12 @@ During initial checks, SNAFU requires to find **SNAFU_DIR** environment variable
 SNAFU simulation with TeraChem interface can be launched by:  
 </code>launchSNAFU 1 aq-gpu-gtx980 tera </code>
 
-If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:
+If the launcher is not used, export **SNAFU_DIR** and MPI_TERA:  
   <code>
    export SNAFU_DIR="path/to/snafu/dir"
    export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used
-  </code>
-and then run the code:
+  </code>  
+and then run the code:  
  <code>
  python snafu.py > snafu.out
  </code> 
@@ -88,17 +78,15 @@ Environment variables for particular ab-initio code are exported in the interfac
 
 ## How to restart dynamics
 
-You can restart dynamics from the step XX depending on how often you wrote restart file during the original simulation.  
-The **restart_XX.in** file contains all needed information from the XX simulation step. Option **restart_freq = XX** sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). Before restart, do NOT change the **input.in** file with an exception to extend the simulation time by increasing the **maxsteps** option.   
+You can restart dynamics from the XXth step depending on how often you wrote restart files during the original simulation.  
+The **restart_XX.in** file contains all needed information from the XX simulation step. Option **restart_freq = XX** sets the interval for writing a restart file (restart_freq = 100=> restart_100.in, restart_200.in,restart_300.in,...). 
 
-* To restart simuluation from the last completed step, set **restart = 1** and restart.in file must be in executing folder.
 * To restart simuluation from XX step, set **restart = XX** and restart_XX.in file must be in executing folder.
 
-If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten)..
+If you restart from some step, existing restart files with the same name will be overwritten (e.g. if you restart from 10th step, all restart files after that step will be overwritten). However, during the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends a on number of previous restarts (PREV_RUN0 folder contains original simulation data).
 
-During the restart process, all previous output files (i.e. movie.xyz, energies.dat, restart*.in files, state.dat, snafu.out, velocities.xyz and PES.dat) will be copied to the folder named **PREV_RUN${N}** where N depends a on number of previous restarts (PREV_RUN0 folder contains original simulation data). If you redirect simulation output (python snafu.py > snafu.out) to a file other than the snafu.out, it will not be backed-up. 
+The output files are opened in the "append" mode. This will ensure the continuation of the output files. The restart procedure truncate all the output files after XX step, but the original data are still preserved in a PREV_RUN folder.
 
-The output files are opened in the "append" mode. This will ensure the continuation of output files, however, the original files will rather be backed-up. This is important since the restart procedure truncate all the output files (except of the snafu.out output file which start from empty file) after XX step.
 ## Input.in options:
 
 [Settings]  
@@ -118,6 +106,12 @@ restart = 0                # N - restart from N-th step, restart_N.in must exist
 restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
 write_freq = 100           # how often print output (default 10) 
 
+
+* Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
+
+* Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
+
+* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
 
 ## TODO:
 add diabatization scheme: Le Yu, Phys.Chem.Chem.Phys., 2014, 16, 25883; **doi:10.1039/C4CP03498H**  
