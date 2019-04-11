@@ -26,7 +26,7 @@ Create a folder containing input files and ABINITIO folder:
 * FOMO-CASCI in TERACHEM (works through MPI interface through FMS interface (see TC manual))  
 * BOMD: in Gaussian09 (MP2/DFT) or MOLPRO(MP2)  
  
-**Input files**
+**Input files:**  
 In order to run the code, **geom.in** with the initial geometry and **input.in** files have to present in a running folder.
 The **veloc.in*** file with initial velocities is not mandatory. If there are no initial velocities, a simulation will start with zero velocities.
 The geom.in and veloc.in files have to be in the XYZ format. Positions are in **ANGSTROM** units (so you can modify it with e.g. molden), but velocities have to be in the **ATOMIC** units:  
@@ -56,13 +56,15 @@ The launchSNAFU is not needed when running SNAFU directly without que (nodes). I
 ```bash
    export SNAFU_DIR="path/to/snafu/dir"\
    export MPI_TERA=0  # MPI_TERA=1 if Terachem interface is used  
-```
+```  
+
 and then run the code:  
 ```bash
  python snafu.py > snafu.out
 ```
 
-This will not work for **TeraChem** jobs, in which the TeraChem runs in background and awaits MPI communication with snafu (see TERASNAFUS). SNAFU simulation with TeraChem interface can be launched by:    
+This will not work for **TeraChem** jobs, in which the TeraChem runs in background and awaits MPI communication with snafu (see TERASNAFUS). SNAFU simulation with TeraChem interface can be launched by:  
+  
 ```bash
 launchSNAFU 1 quename tera
 ```bash
