@@ -12,7 +12,7 @@ Snafu is python-based code. It was developed and tested on Linux/Debian 4.7.2-5 
 
 ---
 
-## How to run
+## How to run:  
 
 Create a folder containing input files and ABINITIO folder:    
 
@@ -39,7 +39,7 @@ water molecule in angstorm units
  H     0.892841     0.000000    -0.315663  
 ```
 
-## Input.in options:
+### Input.in options:
 
 ```bash
 [Settings]  
