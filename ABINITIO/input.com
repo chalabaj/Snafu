@@ -7,7 +7,7 @@ Angstrom
 
 geometry=../abinit_geom.xyz
 
-basis=6-31g**
+basis=6-31g
 
 !-for simple CASSCF, you don't need to modify anything below this
 
@@ -32,7 +32,7 @@ maxiter,40;
 ORBITAL,2140.2;
 NOEXTRA;
 
-cpmcscf,grad,2.1,ACCU=1d-9,save=5101.2; 
+cpmcscf,grad,0.1,ACCU=1d-9,save=5101.2; 
 forces;samc,5101.2;
 
 if (status.lt.0) then

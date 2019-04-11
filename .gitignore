@@ -1,8 +1,13 @@
 *.xyz
 *.dat
-restart*
+abinit_geom.xyz
+input.in
+movie.xyz
+energies.dat
+
 ABINITIO/input.*
 restart*.in
+snafu/__pycache__/
 snafu/__pycache__/**
 *.in
 PREV_RUN*/
