@@ -4,7 +4,7 @@ abinit_geom.xyz
 input.in
 movie.xyz
 energies.dat
-ABINITIO/scratch/*
+ABINITIO/scratch/**
 ABINITIO/input.*
 
 snafu/__pycache__/

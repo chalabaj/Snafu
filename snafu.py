@@ -86,9 +86,7 @@ else:
     print("\nAll modules loaded.")
 
 # ---------------INITIALIZATION PART--------------------------------------------------------
-
 if __name__ == "__main__":
-  
     print("Simulation started at: {}".format(startTime),
           "\nPython: {}".format(sys.base_exec_prefix),
           "version: {}".format(sys.version[:5]),
@@ -96,7 +94,6 @@ if __name__ == "__main__":
           "\nSystem path: {}".format(sys.path[0]),
           "\n".join(sys.path[1:]) 
           )
-    
     # Local runs dont create HOSTNAME variable, qsub SGE system does
     try:
         print("Working directory: {}".format(cwd),
@@ -198,8 +195,8 @@ if __name__ == "__main__":
             #  temp_ PREVENT overwrite of MO, CiVecs and blob data from restart 
             temp_MO, temp_CiVecs, NAC, temp_blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip = tera_init(comm, at_names, natoms, nstates, x, y, z)
         
-        # Check the shape of INIT and RESTART arrays - must equal
-            #dim_match = "{}:{}\n{}:{}\n{}:{}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
+            # Check the shape of INIT and RESTART arrays - must equal
+            # dim_match = "{}:{}\n{}:{}\n{}:{}\n ".format(temp_MO.shape, MO.shape, temp_CiVecs.shape, CiVecs.shape, temp_blob.shape, blob.shape)
             if not (temp_MO.shape == MO.shape and 
                     temp_CiVecs.shape == CiVecs.shape and
                     temp_blob.shape == blob.shape):
@@ -226,7 +223,7 @@ if __name__ == "__main__":
     print("{}".format(liner),
           "\nSTEP    TIME/FS  DE_DRIFT/EV   DE_STEP/EV    HOP  STATE\n{}".format(liner)) 
     
-    # Should open only once, otherwise intesive I/O overload disk
+    # open only once, otherwise intesive I/O disk trafic, especially for very fast ab initio calculations
     with open('movie.xyz', 'a') as mov_file, \
          open('energies.dat', 'a') as eners_file, \
          open('PES.dat', 'a') as pes_file, \
@@ -234,7 +231,6 @@ if __name__ == "__main__":
          open('state.dat', 'a') as state_file:
 
     #-------------------MAIN VERLET LOOP----------------------------------------------------------------
-        
          for step in range(init_step, maxsteps + 1):
             sim_time = step * dt * AU_FS
             x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, vx, vy, vz, fx, fy, fz)
@@ -327,14 +323,13 @@ if __name__ == "__main__":
 
     # FINAL PRINTS
     print(liner)
-    print("#####JOB DONE.############")
+    print("SIMULATION DONE")
     if tera_mpi:
         finish_tera(comm)   
-    print("See output files:",
-          "\nmovie.xyz, velocities.xyz,\nPES.dat, energies.dat,\nstate.dat")
-    print(liner)
+    print("Output files: movie.xyz, velocities.xyz, PES.dat, energies.dat, state.dat")
     stopTime = datetime.now()
     calc_time = (datetime.now() - startTime)
     print("Simulation ended at: {}".format(stopTime))
     print("Overall simulation sim_time (hh:mm:ss): {}".format(calc_time))
+    print(liner)
 exit(0) 

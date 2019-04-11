@@ -20,7 +20,6 @@ if tera_mpi:
     
 def calc_hopp(method, state, pot_eners,
               pot_eners_array, Ekin, dt, hop_thresh):
-    
     """
     Calculate hopping probability according to the following paper
     Landau Zener type surface hopping algorithms
@@ -28,22 +27,19 @@ def calc_hopp(method, state, pot_eners,
     The Journal of Chemical Physics 140, 224108 (2014) 
     Also factor for velocity rescaling is determined by energy conservation
     """
-
     hop = False             
     instate = state
-
     # add last calculated pot energies to evaluate hop 
     # vstack along row , axis = 0
-    #print(pot_eners_array.shape, pot_eners.shape)  
-    pot_eners_array = np.vstack((pot_eners_array, pot_eners))
     
-    #print("Pot_eners_array HOP:\n",
-    #      "{}".format(pot_eners_array))
+    pot_eners_array = np.vstack((pot_eners_array, pot_eners))
+    #print(pot_eners_array.shape, pot_eners.shape)  
+    #print("Pot_eners_array HOP:\n"{}".format(pot_eners_array))
 
     probs = [calc_prob(instate, outstate, pot_eners_array, dt) 
              for outstate in range(0, len(pot_eners)) if outstate != instate]
 
-    max_prob_row = (np.argmax(probs, axis = 0)[3])  # row with max probaBILITY 
+    max_prob_row = (np.argmax(probs, axis = 0)[3])  # simple model - select only highest probability 
     max_prob = probs[max_prob_row][3]
     theta = random.random()
     #print("Max probability: {}".format(probs[max_prob_row][3]))
