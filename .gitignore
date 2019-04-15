@@ -6,7 +6,6 @@ movie.xyz
 energies.dat
 ABINITIO/**
 ABINITIO/
-
 snafu/__pycache__/
 *.in
 PREV_RUN*/
