@@ -9,7 +9,7 @@ abinitio  = molpro-casscf.sh  # ab initio interface file, has to start:  g09, mo
 vel_adj = 1                # 0  - simple scaling K = sqrt(1+-dE/Ekin), 1- forces from new surface are included into velocity at hop point
 ener_thresh = 5.0          # threshold for max energy drift in eV
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)
-restart = 0                # N - restart from N-th step, restart_N.in must exist
+restart = 5                # N - restart from N-th step, restart_N.in must exist
 restart_freq = 5         # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
 tera_mpi = 0               # use Terachem abinitio interface via MPI
 write_freq = 1           # how often print output, default 10

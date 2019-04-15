@@ -13,9 +13,6 @@ current_module = sys.modules[__name__]
 try:
     from errors import error_exit
     from constants import *
-    from tera_propagates import (
-        receive_tera, send_tera, exit_tera
-    )
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime,current_module))
 try:
@@ -24,7 +21,7 @@ except KeyError as ke:
     print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
     tera_mpi = 0
 if tera_mpi:
-    from tera_propagates import global_except_hook, finish_tera
+    from tera_propagates import global_except_hook,  receive_tera, send_tera, exit_tera, finish_tera
     sys.excepthook = global_except_hook  
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------    
@@ -62,8 +59,8 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
                 pot_eners, ab_initio_file_path, 
                 tera_mpi, comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip):
     """ 
-    Call and collect an external script to calculate ab initio properties (force, energies)
-    state = current state - PES for the forces to calc 
+    Call external script to calculate ab initio properties (force, energies)
+    state = current state at current PES
     """
     natoms = len(x)
     grad = -1
@@ -71,7 +68,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         # GRADIENT/FORCES check
         if re.search(r'g09', ab_initio_file_path) or re.search(r'gaus', ab_initio_file_path) or re.search(r'forces', ab_initio_file_path):
                 grad = 1   # gaus exports forces -1   
-        #print("grad",grad)                
+              
         # Create geom file for which the forces will be calculated
         abinit_geom_file = "abinit_geom.xyz"
         with open (abinit_geom_file, "w") as agf:
@@ -131,10 +128,7 @@ def calc_energies(
     dE_step = (Etot - Etot_prev)
 
     if abs(dE * AU_EV) >= ener_thresh and step > 1: 
-        print("Total energy change since start {} ".format(dE * AU_EV),
-              "larger then threshold {}.".format(ener_thresh))
-        error_exit(7)
-
+        error_exit(7, "Total energy change since start {} larger then threshold {}.".format(dE * AU_EV, ener_thresh))
     return(Ekin, Epot, Etot, dE, dE_step)
 
 def rescale_velocities(vx, vy, vz, v_scaling_fac):

@@ -15,7 +15,7 @@ def error_exit(error_number, error_desc=" "):
            "4 - Ab initio calculations failed.\n",
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
            "6 - Hopping probability larger than 1, something went wrong.\n",
-           "7 - Too large energy drift.\n",
+           "7 - {}.".format(error_desc),
            "8 - File {} exists, but the restart option is turned off (restart = 0). Either remove file or change the restart option.\n".format(error_desc),
            "9 - Input varible(s) is not properly set. See input.in.\n{}".format(error_desc),
            "10 - Restart file {} was not found.".format(error_desc),

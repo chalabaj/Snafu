@@ -91,7 +91,6 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
             time.sleep(1) 
             cc += 1 
             if cc >= max_terachem_time:
-                exit_tera(comm)   
                 error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
