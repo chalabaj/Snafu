@@ -14,7 +14,7 @@ nsample=100	           # number of trajectories
 folder=SNAFU           # Name of the folder with trajectories
 inputdir=TEMPLATE-$folder   # Directory with input files for ABIN
 abin_input=$inputdir/input.in   # main input file for ABIN
-launch_script=$inputdir/SNAFUS	# this is the file that is submitted by qsub
+launch_script=$inputdir/SNAFUS	# this is the file that is submitted by qsub - copy of file SNAFU/SNAFUS
 submit="qsub -q nq-16-8 -V -cwd  " # comment this line if you don't want to submit to queue yet
 rewrite=0                          # if =1 -> rewrite trajectories that already exist
 jobs=8                             # number of batch jobs to submit. Trajectories will be distributed accordingly.
