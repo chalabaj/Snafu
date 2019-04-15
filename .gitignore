@@ -4,8 +4,8 @@ abinit_geom.xyz
 input.in
 movie.xyz
 energies.dat
-ABINITIO/**
-ABINITIO/
+/ABINITIO/**
+/ABINITIO/
 snafu/__pycache__/
 *.in
 PREV_RUN*/
