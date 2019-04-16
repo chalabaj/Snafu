@@ -75,8 +75,8 @@ echo " _/ /  / /    _/ / ___/ /   ___/ / /|  / ___ |/ __/ / /_/ /  / /_/ / ___ |
 echo "/___/ /_/    /___//____/   /____/_/ |_/_/  |_/_/    \____/  /_____/_/  |_/_/   ";
 echo " ";
 echo "_____________________________________________________________________________ ";
-echo "Launching SNAFU job for $input using $nproc processors."
-echo "Results will be saved to $name.out, job.log can be used to fetchabin.sh data."
+echo "Launching SNAFU job using $nproc processors."
+echo "Results will be saved to snafu.out, job.log can be used to fetchabin.sh data."
 echo "qsub -cwd -V -q $queue -pe shm $nproc r.$name"
 qsub -q $queue r.$name
 echo "_____________________________________________________________________________ ";
