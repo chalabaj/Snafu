@@ -250,8 +250,8 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
             time.sleep(1) 
             cc += 1 
             if cc >= max_terachem_time:
-                error_exit(15, "Didn't receive data from TC in time during initial communication.") 
-        
+                print("Didn't receive data from TC in time during initial communication.") 
+                MPI.COMM_WORLD.Abort()  
         #   civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
         #  .tobytes() or buffer = bytearray(32*3)
         #   Call MPI_Recv( bufints, 3, MPI_INTEGER, MPI_ANY_SOURCE, & MPI_ANY_TAG, newcomm, status, ierr)
