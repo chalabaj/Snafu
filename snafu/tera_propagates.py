@@ -57,7 +57,6 @@ def exit_tera(comm):
         print(traceback.format_exc())
         print("MPI ERROR")
         sys.stdout.flush() 
-        time.sleep(1)
     finally:
         MPI.COMM_WORLD.Abort()   
     # comm.Abort()   ABORT kills all execution and does not flush the buffer unless flush called
@@ -92,7 +91,8 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
             time.sleep(1) 
             cc += 1 
             if cc >= max_terachem_time:
-                error_exit(15, "Didn't receive data from TC in time during initial comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py") 
+                print("Didn't receive data from TC in time during receive comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py")
+                MPI.COMM_WORLD.Abort()  
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
         #print(pot_eners, pot_eners.shape) 
@@ -130,7 +130,8 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
                     #print(st1, st2, NAC) 
     except Exception as excpt:
         print(traceback.format_exc())
-        error_exit(15, "Problem during receiving data from Terachem: {}".format(excpt))
+        print("Problem during receiving data from Terachem: {}".format(excpt))
+        MPI.COMM_WORLD.Abort()  
     else:
         #print("MPI RECEIVED \nEnergies: {}, Nstates: {}".format(pot_eners.tolist(), nstates))
         return(fx_new, fy_new, fz_new, pot_eners, MO, CiVecs, blob)
@@ -182,7 +183,8 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
         #print(MPI.Status().Get_error())
     except Exception as excpt:
         print(traceback.format_exc())
-        error_exit(15, "Problem during sending data from Terachem: {}".format(excpt))
+        print("Problem during sending data from Terachem: {}".format(excpt))
+        MPI.COMM_WORLD.Abort()  
   # else:
   #     print("MPI SEND OK".format(sim_time))
         return()
@@ -262,8 +264,8 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
         qmcharges, TDip, Dip = alloc_tera_arrays(civec_size, nbf_size, blob_size, natoms, nstates)      
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
-        print(traceback.format_exc())
-        error_exit(15, str("Error during sending initial TC data {}".format(excpt)))
+        print("Error during sending initial TC data {}".format(excpt))
+        MPI.COMM_WORLD.Abort()  
     else:
         print("TC INIT DONE\n")
         return(MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)

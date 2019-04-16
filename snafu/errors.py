@@ -37,11 +37,12 @@ def error_exit(error_number, error_desc=" "):
     # prevent MPI deadlock without raiseing runtime error which is caught by excepthook, does not create traceback
     try:
         tera_mpi = int(os.environ['MPI_TERA'])
-    except Exception:
-        tera_mpi = 0
-    if tera_mpi:
+        if tera_mpi:
          from tera_propagates import global_except_hook
          sys.excepthook = global_except_hook 
          raise RuntimeError("USER/INPUT ERROR.")
+    except Exception:
+        tera_mpi = 0
+    
     sys.exit(1)    
     return()
