@@ -1,6 +1,7 @@
 *.xyz
 *.dat
 abinit_geom.xyz
+geom.in
 input.in
 movie.xyz
 energies.dat
