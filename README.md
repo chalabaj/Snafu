@@ -50,21 +50,21 @@ timestep = 6               # in atomic unit, 1 au = 0.024 fs
 maxsteps = 600             # total number of steps  
 method  = lz               # lz (default)/bomd on selected state(no hops allowed)
 abinitio  = molpro-casscf.sh  # name of ab initio interface file in the ABINITIO folder
-vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity at hop point    
-ener_thresh = 1.0          # threshold for max energy drift (in eV)     
+vel_adj = 0                # 0  - simple scaling K = sqrt(1+-dE/Ekin) default, 1- forces from new surface are included into velocity after hopping event    
+ener_thresh = 1.0          # threshold for max energy drift from start (in eV)     
 hop_thresh = 0.5           # energy threshold for hopping between the states with energy difference less than this (in eV)    
 restart = 0                # N - restart from N-th step, restart_N.in must exist
-                           # 1 - restart from the last completed step (i.e. restart.in)
-                           # 0 - unset but writes restart information
+                           # 0 - regular run, writes restart information
 restart_freq = 100         # writes restart_N.in file each N-th step, here N = 100 (100, 200, etc.) (default = 100)  
 write_freq = 100           # how often print output (default 10) 
 ```
+* SNAFU is PYTHON based, so the states starts from 0 (ground state)
 
 * Energy conservation from tests is about 10^-4 - 10^-1 eV between hops  and 10^-5 eV for the regions without hops. 
 
 * Velocity adjustment after hops seems to be more stable when the velocities are scaled by the simple factor K = sqrt(1+-dE/Ekin), where dE is difference between potential energies, for which the hop occured, and Ekin is the kinetic energy at the moment of a hop. Another option is to apply new forces of the final state after hop, however, this requires extra calculations of the forces and the energy conservation appears to be less stable.
 
-* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be sufficient.
+* Timestep of 4 au appears to be most suitable for hopping algorithm, but that depend on the PES complexity and some testing is always recommended as to minimize the number of hops. Timestep between 2-8 au should be fine.
 
 
 ### Running  
