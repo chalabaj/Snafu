@@ -14,26 +14,37 @@ function PrintHelp {
 name="snafu"
         
 nproc=$1
-echo $nproc
+
 
 if ! [[ $nproc =~ ^[1-9]+$ ]] ; then
-   echo "error: Nproc is not an integer number" 
-   PrintHelp
+    echo "ERROR: Nproc is not an integer." 
+    PrintHelp
 fi
 
 if [[ $# -lt 2 ]];then
-echo "Wrong number of parameters: <2"
+    echo "ERROR: Wrong number of parameters."
+    PrintHelp
 fi
 
+if [[ ! -f input.in ]];then
+    echo "ERROR: input.in not found. Exiting."
+    exit 1
+fi
+if [[ ! -f geom.in ]];then
+    echo "ERROR: geom.in not found.  Exiting."
+    exit 1
+fi
 # WHICH QUEUE:
 queue=$2
 
 # FILE SUBMITTED TO QUE (SGE-like)
 if [[ $# -eq 3 ]] || [[ $3 == "tera" ]];then
+  
   if [[ ! -f ABINITIO/tera.inp ]];then
-  echo "tera.inp not found"
+  echo "ERROR: tera.inp not found"
   exit 1
   else
+
   cat > r.$name << EOF
 #!/bin/bash
   
@@ -56,26 +67,18 @@ cat > r.$name << EOF
 SNAFUS $input
 EOF
 fi
-
-echo "   SSSSSSSSSSSSSSS NNNNNNNN        NNNNNNNN               AAA               FFFFFFFFFFFFFFFFFFFFFFUUUUUUUU     UUUUUUUU";
-echo " SS:::::::::::::::SN:::::::N       N::::::N              A:::A              F::::::::::::::::::::FU::::::U     U::::::U";
-echo "S:::::SSSSSS::::::SN::::::::N      N::::::N             A:::::A             F::::::::::::::::::::FU::::::U     U::::::U";
-echo "S:::::S     SSSSSSSN:::::::::N     N::::::N            A:::::::A            FF::::::FFFFFFFFF::::FUU:::::U     U:::::UU";
-echo "S:::::S            N::::::::::N    N::::::N           A:::::::::A             F:::::F       FFFFFF U:::::U     U:::::U ";
-echo "S:::::S            N:::::::::::N   N::::::N          A:::::A:::::A            F:::::F              U:::::D     D:::::U ";
-echo " S::::SSSS         N:::::::N::::N  N::::::N         A:::::A A:::::A           F::::::FFFFFFFFFF    U:::::D     D:::::U ";
-echo "  SS::::::SSSSS    N::::::N N::::N N::::::N        A:::::A   A:::::A          F:::::::::::::::F    U:::::D     D:::::U ";
-echo "    SSS::::::::SS  N::::::N  N::::N:::::::N       A:::::A     A:::::A         F:::::::::::::::F    U:::::D     D:::::U ";
-echo "       SSSSSS::::S N::::::N   N:::::::::::N      A:::::AAAAAAAAA:::::A        F::::::FFFFFFFFFF    U:::::D     D:::::U ";
-echo "            S:::::SN::::::N    N::::::::::N     A:::::::::::::::::::::A       F:::::F              U:::::D     D:::::U ";
-echo "            S:::::SN::::::N     N:::::::::N    A:::::AAAAAAAAAAAAA:::::A      F:::::F              U::::::U   U::::::U ";
-echo "SSSSSSS     S:::::SN::::::N      N::::::::N   A:::::A             A:::::A   FF:::::::FF            U:::::::UUU:::::::U ";
-echo "S::::::SSSSSS:::::SN::::::N       N:::::::N  A:::::A               A:::::A  F::::::::FF             UU:::::::::::::UU  ";
-echo "S:::::::::::::::SS N::::::N        N::::::N A:::::A                 A:::::A F::::::::FF               UU:::::::::UU    ";
-echo " SSSSSSSSSSSSSSS   NNNNNNNN         NNNNNNNAAAAAAA                   AAAAAAAFFFFFFFFFFF                 UUUUUUUUU      "
-
+echo " "
+echo "    __________   _________    _____ _   _____    ________  __   ____  _____  __";
+echo "   /  _/_  __/  /  _/ ___/   / ___// | / /   |  / ____/ / / /  / __ \/   \ \/ /";
+echo "   / /  / /     / / \__ \    \__ \/  |/ / /| | / /_  / / / /  / / / / /| |\  / ";
+echo " _/ /  / /    _/ / ___/ /   ___/ / /|  / ___ |/ __/ / /_/ /  / /_/ / ___ |/ /  ";
+echo "/___/ /_/    /___//____/   /____/_/ |_/_/  |_/_/    \____/  /_____/_/  |_/_/   ";
+echo " ";
+echo "_____________________________________________________________________________ ";
 echo "Launching SNAFU job for $input using $nproc processors."
-echo "Results will be saved to $name.out, JOB information in $name.log"
+echo "Results will be saved to $name.out, job.log can be used to fetchabin.sh data."
 echo "qsub -cwd -V -q $queue -pe shm $nproc r.$name"
-echo "-----------------------------------------"
 qsub -q $queue r.$name
+echo "_____________________________________________________________________________ ";
+
+

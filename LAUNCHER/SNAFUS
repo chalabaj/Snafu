@@ -11,13 +11,13 @@ jobfile=job.log
 delscratch="true"
 
 export SCRDIR="/scratch/$USER/SNAFU-${JOB_ID}"
-export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python
-export SNAFU_DIR="/home/chalabaj/SNAFU"  #folder with python files, needs to be set
+export PATH="/home/chalabaj/prog/Anaconda3-5.1.0-Linux-x86_64/bin:$PATH"  # path to python, see stable-environment.yaml if troubles with packages
+export SNAFU_DIR="/home/chalabaj/SNAFU"  # folder with python files, needs to be set
 export RUN_DIR=$PWD                      # PBS queing system shoud use var PBS_O_WORKDIR
 export OMP_NUM_THREADS=1
 export MPI_TERA=0
-uname -n     >  $jobfile  #if the scratch is on other node
-echo "${SCRDIR}"    >>  $jobfile
+uname -n     >  $jobfile                 # NODE NAME 
+echo "${SCRDIR}"    >>  $jobfile         # works with fetchabin.sh
 
 if [[ -d $SCRDIR ]];then
    echo "Job direcory $SCRDIR already exist!"
@@ -47,7 +47,7 @@ function clean_scratch {
 }
 trap clean_scratch SIGUSR2  #if qdel JOBID then copy current data to RUN_DIR
 
-python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # errors also to output
+python $SNAFU_DIR/snafu.py $OUTFILE> $OUTFILE 2>&1   # stdout, stderr -> output
 
 cp -pr $SCRDIR/* $RUN_DIR/.
 

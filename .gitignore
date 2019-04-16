@@ -9,4 +9,6 @@ energies.dat
 /snafu/__pycache__/
 *.in
 PREV_RUN*/
-/TESTS
+TESTS/*
+*__pycache__*
+*.pyc
