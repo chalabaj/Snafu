@@ -107,9 +107,12 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             fy_new = grad*fy_new
             fz_new = grad*fz_new
         except Exception as excpt:
-            finish_tera(comm)
-            error_exit(15, str("Error during sending/receive TC data {}".format(excpt)))
-        
+            try:
+                finish_tera(comm)
+                print("Error during sending/receive TC data {}".format(excpt))
+            finally:
+                exit_tera()
+                
     return(fx_new , fy_new, fz_new, pot_eners, MO, CiVecs, blob)
 
 def calc_energies(

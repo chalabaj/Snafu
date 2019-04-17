@@ -28,9 +28,11 @@ def finish_tera(comm):
         # also  MPI_TAG_ERROR = 13 if error occus
         comm.Disconnect()
     except Exception:
-        error_exit(15, "Failed to disconnect, Calling MPI abort")
+        print("Failed to disconnect, Calling MPI abort")
     else:
-        print("TC MPI Disconnected.")                    
+        print("TC MPI Disconnected.")      
+    finally:
+        MPI.COMM_WORLD.Abort()                
     return()
     
 def global_except_hook(exctype, value, traceback):
@@ -39,23 +41,20 @@ def global_except_hook(exctype, value, traceback):
     # NOTE: mpi4py must be imported inside exception handler, not globally.
     # If the errors comes from user (e.g. inputs, wrong restart etc) there is no traceback, for syntax error we want to catch Traceback __excepthook__ 
     # "If there is no additional info or traceback, there is most likely a syntax error - try to run the code without Terachem interface.\n")
-    sys.stdout.write("\nCalling MPI ABORT....\n")   
-    sys.exc_info()  
-    sys.stdout.flush() 
-    # raise RuntimeError("syntax error raise")
-    try:   
+    try: 
         print(traceback.format_exc())
+        print("CALLING MPI ABORT.")
+        sys.stdout.flush() 
     except Exception:
         print("No traceback, user-input exception.")
     finally:  
-       MPI.COMM_WORLD.Abort() 
-       sys.exit(1)  
+        MPI.COMM_WORLD.Abort()  
     return() 
  
-def exit_tera(comm):
+def exit_tera():
     try: 
         print(traceback.format_exc())
-        print("MPI ERROR")
+        print("CALLING MPI ABORT.")
         sys.stdout.flush() 
     finally:
         MPI.COMM_WORLD.Abort()   

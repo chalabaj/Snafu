@@ -38,9 +38,8 @@ def error_exit(error_number, error_desc=" "):
     try:
         tera_mpi = int(os.environ['MPI_TERA'])
         if tera_mpi:
-         from tera_propagates import global_except_hook
-         sys.excepthook = global_except_hook 
-         raise RuntimeError("USER/INPUT ERROR.")
+          from tera_propagates import exit_tera
+          exit_tera()
     except Exception:
         tera_mpi = 0
     
