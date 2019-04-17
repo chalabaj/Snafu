@@ -29,10 +29,10 @@ def finish_tera(comm):
         comm.Disconnect()
     except Exception:
         print("Failed to disconnect, Calling MPI abort")
+        sys.stdout.flush()
+        MPI.COMM_WORLD.Abort()   
     else:
         print("TC MPI Disconnected.")      
-    finally:
-        MPI.COMM_WORLD.Abort()                
     return()
     
 def global_except_hook(exctype, value, traceback):
@@ -67,10 +67,10 @@ def tera_connect():
     try:
         mpi_port = os.environ['MPI_TERA_PORT']
         comm = MPI.COMM_WORLD.Connect(mpi_port, MPI.INFO_NULL, 0)    
-    except KeyError as PE:
-        error_exit(15, "MPI port for communication with TERAPORT was not exported. Check tera.out.\n{}".format(PE)) 
     except Exception as ANYE:
-        error_exit(15, "MPI connection to Terachem failed\n{}".format(ANYE))   
+        print( "MPI connection to Terachem failed\n{}".format(ANYE))
+        sys.stdout.flush()
+        MPI.COMM_WORLD.Abort() 
     else:
         print("TC connection established using port: {}.".format(mpi_port))          
     return(comm)
@@ -183,6 +183,7 @@ def send_tera(comm, natoms, nstates, state, sim_time, x ,y, z,
     except Exception as excpt:
         print(traceback.format_exc())
         print("Problem during sending data from Terachem: {}".format(excpt))
+        sys.stdout.flush()
         MPI.COMM_WORLD.Abort()  
   # else:
   #     print("MPI SEND OK".format(sim_time))
@@ -250,6 +251,7 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
             cc += 1 
             if cc >= max_terachem_time:
                 print("Didn't receive data from TC in time during initial communication.") 
+                sys.stdout.flush()                
                 MPI.COMM_WORLD.Abort()  
         #   civec = np.frombuffer(buffer,dtype=np.intc,count=-1)[0] buffer=bytearray(32*3) 32byte*3fields
         #  .tobytes() or buffer = bytearray(32*3)
