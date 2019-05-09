@@ -12,12 +12,14 @@ import sys
 import time
 current_module = sys.modules[__name__]
 # This is temporary location hack
-sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
-from mpi4py import MPI
+
 try:
     from errors import error_exit
     from defaults import max_terachem_time, liner
     from constants import * 
+    # temporary solution, not for general use
+    sys.path.append('/home/srsen/bin/PYTHON/MPI4PY/mpi4py-3.0.0/build/lib.linux-x86_64-3.6/')
+    from mpi4py import MPI
 except ImportError as ime:
     error_exit(19, "Module {} in {} not found.".format(ime, current_module))
     
