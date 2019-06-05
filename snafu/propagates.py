@@ -90,7 +90,7 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
             for st in range(0, nstates):
                 pot_eners[st] = float(gef.readline()) 
             for iat in range(0, natoms):
-                line = gef.readline().split(" ")
+                line = gef.readline().split()
                 # FX FY FZ, gradient to forces 
                 fx_new[iat] = grad*np.float64(line[0])
                 fy_new[iat] = grad*np.float64(line[1])
