@@ -26,7 +26,7 @@ def error_exit(error_number, error_desc=" "):
            "15 - {}".format(error_desc),
            "16 - Error when reading data from restart file. {}".format(error_desc),
            "17 - Error when reading restart file. Option \"{}\" not found.".format(error_desc),
-           "18 - User called ABORT {}.".format(error_desc),
+           "18 - User called MPI ABORT {}.".format(error_desc),
            "19 - Import error: {}.".format(error_desc)
           )
     print("-------------------------------------------------------------------")

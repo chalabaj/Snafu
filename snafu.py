@@ -200,7 +200,7 @@ if __name__ == "__main__":
             if not (temp_MO.shape == MO.shape and 
                     temp_CiVecs.shape == CiVecs.shape and
                     temp_blob.shape == blob.shape):
-                error_exit(18, dim_match)
+                error_exit(18, "dim_miss_match")
             # else:
             #    print("Restart and init dimensions match\n",dim_match)
                             
