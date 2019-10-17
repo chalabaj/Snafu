@@ -93,6 +93,7 @@ def receive_tera(comm, natoms, nstates, state, pot_eners, fx_new, fy_new, fz_new
             cc += 1 
             if cc >= max_terachem_time:
                 print("Didn't receive data from TC in time during receive comminucation. If you need more time for TC to finish, change option max_terachem_time = XXX in default.py")
+                sys.stdout.flush()
                 MPI.COMM_WORLD.Abort()  
     try:
         comm.Recv([pot_eners, nstates, MPI.DOUBLE], source=MPI.ANY_SOURCE, tag=MPI.ANY_TAG, status=status)
@@ -268,6 +269,7 @@ def tera_init(comm, at_names, natoms, nstates, x,y,z):
     except Exception as excpt:
         # any error => RAISE => MPI.ABORT => KILL TERA
         print("Error during sending initial TC data {}".format(excpt))
+        sys.stdout.flush()  
         MPI.COMM_WORLD.Abort()  
     else:
         print("TC INIT DONE\n")

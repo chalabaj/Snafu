@@ -1,18 +1,20 @@
 """
-This is main file which runs the LZ simulations.
-Import required module.
-Read inputs (input option, geometry, velocities, restarts)
-Run Velocity verlet integrator MD with LZ hopping algorithm at each step
+This is main file which runs the LZ simulations from command line python snafu.py.
+All functions are in module snafu
+1. Check environment, import modules, check MPI
+2. Read inputs (input option, geometry, velocities) or restart file
+3. Run Velocity verlet integrator MD with LZ hopping algorithm at each step
+   - dump restart data, movie, energies
 """
 
-# SYSTEM IMPORTS:
+#  SYSTEM IMPORTS:
 import sys
 import os
 import numpy as np
 from datetime import datetime
 startTime = datetime.now()
 
-# ENVIRONMENT LAYER 
+#  ENVIRONMENT LAYER 
 try:
     cwd = os.getcwd()
     sys.path.append(cwd)
@@ -20,17 +22,17 @@ try:
     sys.path.append(os.path.join(SNAFU_EXE, "snafu"))
     sys.path.append(SNAFU_EXE)
 except KeyError as ke:
-    # SNAFU_DIR=/path/to/SNAFU/snafu variable must be set before launch
+#  SNAFU_DIR=/path/to/SNAFU/snafu variable must be set before launch
     print("SNAFU_DIR is not set.",
           "See '.bashrc' file in your home directory",
           "or use 'env' command and make sure $SNAFU_DIR is exported.",
           "\nHint: export SNAFU_DIR=/path/to/SNAFU")
     sys.exit(1)
 
-# TERA MPI INTERFACE SMOOTH EXIT:    
-# load excepthook as soon as possible in order to prevent ancaught exceptions which can cause MPI deadlock state
-# This will mainly check code and runtime errors, wrong inputs; known errors are handled in error_exit module
-# sys.excepthook has some collisions and does NOT work if syntax error is in some imported module bellow, use mangling
+#  TERA MPI INTERFACE SMOOTH EXIT:    
+#  load excepthook as soon as possible in order to prevent ancaught exceptions which can cause MPI deadlock state
+#  This will mainly check code and runtime errors, wrong inputs; known errors are handled in error_exit module
+#  sys.excepthook has some collisions and does NOT work if syntax error is in some imported module bellow, use mangling
 try: 
     tera_mpi = int(os.environ['MPI_TERA'])
     if tera_mpi:
@@ -40,7 +42,7 @@ except KeyError as ke:
      print("MPI_TERA variable was not exported, assuming MPI_TERA=0. Warning: this may cause deadlock if MPI has been already initiated")
      tera_mpi = 0
 
-# LOCAL IMPORT OF SNAFU MODULES 
+#  LOCAL IMPORT OF SNAFU MODULES 
 try:
     modules_files = ['masses.py','constants.py','landauzener.py','restarts.py','propagates.py','prints.py',
                      'errors.py','defaults.py','inits.py','tera_propagates.py']    
@@ -69,10 +71,10 @@ try:
         print_restart, check_restart_files, read_restart
     )
     from constants import *   #  conversion factors (e.g. BOHR to ANG units)
-    from defaults import *    #  All default values for the code, import only here
+    from defaults import *    #  default values for the code, import only here
 except ImportError as ime:
-    # if some of the following imports fail during in-modules-import: ImportError raise None
-    # module could have been removed or different module name, e.g. renamed in module file
+    #  if some of the following imports fails during in-modules-import: ImportError raise None
+    #  module could have been removed or different module name, e.g. renamed in module file
     if ime.name is None:  
         error_exit(19, "Import or internal error in some module {}.".format(ime))
     else:
@@ -85,7 +87,7 @@ else:
     print_snafu()
     print("\nAll modules loaded.")
 
-# ---------------INITIALIZATION PART--------------------------------------------------------
+#  ---------------INITIALIZATION PART - INPUTS--------------------------------------------------------
 if __name__ == "__main__":
     print("Simulation started at: {}".format(startTime),
           "\nPython: {}".format(sys.base_exec_prefix),
@@ -94,7 +96,7 @@ if __name__ == "__main__":
           "\nSystem path: {}".format(sys.path[0]),
           "\n".join(sys.path[1:]) 
           )
-    # Local runs dont create HOSTNAME variable, qsub SGE system does
+    #  Local (server) runs don't create $HOSTNAME, queuing (SGE, PBS) system does
     try:
         print("Working directory: {}".format(cwd),
               "on {}.".format(os.environ['HOSTNAME']))
@@ -102,13 +104,13 @@ if __name__ == "__main__":
         print("Working directory: {}".format(cwd))
     print(liner)
 
-    # FILE CHECK - OBTAIN PATHS TO ALL FILES
+    #  FILE CHECK - OBTAIN PATHS TO ALL FILES
     input_file_path, geom_file_path, vel_file_path, init_vel = file_check(cwd)
 
-    #  READ INPUT OPTIONS AND SET THEM AS VARIABLES:
-    # with exception of natoms, nstates, following option can be changed by restart
+    #  READ INPUT OPTIONS, SET THEM AS VARIABLES AND CHECK CORRECT TYPE:
+    #  with exceptions of natoms and nstates, the following options can be changed during restart
     input_vars, ab_initio_file_path = read_input(cwd, input_file_path)
-    globals().update(input_vars)
+    globals().update(input_vars)   # safety issue here, but its  just MD
     try:
         natoms = int(natoms)
         maxsteps = int(maxsteps)
@@ -140,10 +142,10 @@ if __name__ == "__main__":
     except ValueError as VE:
         error_exit(9, str(VE))
     
-    # ALLOCATE ALL NUMPY ARRAYS
+    #  ALLOCATE ALL NUMPY ARRAYS
     fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
     
-    # READ INITIAL/RESTART DATA
+    #  READ INITIAL/RESTART DATA
     if restart == 0:
         if init_vel:
             print("Initial velocities read from {}".format(vel_file_path)) 

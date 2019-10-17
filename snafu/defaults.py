@@ -15,7 +15,7 @@ Etot_init = 0.000  # setting variable , total energy at the beginning
 Etot_prev = 0.000
 prob = 0.000
 sim_time = 0.000
-max_terachem_time = 10000 # wait for 1max_terachem_time s until terachem send data, otherwise too long step
+max_terachem_time = 3600 # wait for 1max_terachem_time s until terachem send data, otherwise too long step
 liner = ("_") * 140
 
 # tera parameters for calc_forces, will be changed only if tera_mpi <>0
