@@ -97,9 +97,6 @@ def print_snafu():
        import time
        lastmodified= os.stat(sys.argv[0]).st_mtime
        print("Last change: {}.".format(time.ctime(lastmodified)))
-       import git
-       repo = git.Repo(os.getcwd())
-       commit = repo.head.commit
    except Exception:
        pass  
    return()

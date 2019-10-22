@@ -47,6 +47,7 @@ def check_restart_files(restart, cwd):
     
 def read_restart(rst_file_path, natoms, nstates, tera_mpi):
     # TO DO: should be done with far less condiotion, however there would have to be another convertion from disctionary to variables of different types
+    print("Reading restart data...")
     err = "0"
     rst_file = rst_file_path
     #step, state, Ekin, Epot, Etot, Etot_init, pnum, vnum, fnum, peanum, blob_size, civec_size, nbf_size, monum, civecnum, blobnum = None
@@ -87,7 +88,7 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
                 blobnum = num
         try: 
             if not None in (step, state, Ekin, Epot, Etot, Etot_init, pnum, vnum, fnum, peanum, blob_size, civec_size, nbf_size, monum, civecnum, blobnum):
-                print("ALL RESTARTION OPTIONS FOUND. READING RESTART DATA:")  
+                print("- all restart options found.")  
         except Exception as ne:
             error_exit(17, str(ne))
         try:          
@@ -118,11 +119,12 @@ def read_restart(rst_file_path, natoms, nstates, tera_mpi):
                 CiVecs, MO, blob = 0, 0, 0                               
         except Exception as expt:
             error_exit(16, str(expt))
+        else:
+            print("- all restart data read.")
            
     rstf.closed
     #pot_eners_array = np.loadtxt(rst_file, dtype=np.float64, delimiter=None, skiprows=8)
     np.set_printoptions(precision=10, formatter={'float': '{: 0.8f}'.format})        
-    print("Reading restart data...")
     #print(at_names)
     #print("XYZ:\n{}".format(np.dstack((x,y,z))))
     #print("VX VY VZ:\n{}".format(np.dstack((vx,vy,vz))))
