@@ -26,20 +26,21 @@ def calc_hopp(method, state, pot_eners,
     Andrey K. Belyaev, Caroline Lasser, and Giulio Trigila
     The Journal of Chemical Physics 140, 224108 (2014) 
     Also factor for velocity rescaling is determined by energy conservation
+    inputs -  method whether APLZ or diabatic, state(current), pot_eners(of current state), pot_eners_array(for localing minima)
+              Ekin check if we have enough energy in system to HOP
     """
     hop = False             
     instate = state
-    # add last calculated pot energies to evaluate hop 
-    # vstack along row , axis = 0
-    
+    # add last calculated pot energies to evaluate hop, vstack along row , axis = 0
     pot_eners_array = np.vstack((pot_eners_array, pot_eners))
+    
     #print(pot_eners_array.shape, pot_eners.shape)  
     #print("Pot_eners_array HOP:\n"{}".format(pot_eners_array))
 
     probs = [calc_prob(instate, outstate, pot_eners_array, dt) 
-             for outstate in range(0, len(pot_eners)) if outstate != instate]
+             for outstate in range(0, len(pot_eners)) if outstate != instate]  #  hopping vector
 
-    max_prob_row = (np.argmax(probs, axis = 0)[3])  # simple model - select only highest probability 
+    max_prob_row = (np.argmax(probs, axis = 0)[3])  # simple model - select only highest probability (not good for high DoS)
     max_prob = probs[max_prob_row][3]
     theta = random.random()
     #print("Max probability: {}".format(probs[max_prob_row][3]))
@@ -66,6 +67,7 @@ def calc_hopp(method, state, pot_eners,
 def calc_prob(instate, outstate, pot_eners_array, dt):
     
     """
+    Calculate probability for all posible hops
     PHYSICAL REVIEW A 84, 014701 (2011)
     Nonadiabatic nuclear dynamics of atomic 
     collisions based on branching classical trajectories
