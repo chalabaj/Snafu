@@ -139,9 +139,15 @@ if __name__ == "__main__":
               "{} = {}\n".format("write_freq",write_freq),
               "{} = {}\n".format("abinitio file",ab_initio_file_path),
               "{} = {}\n".format("method", method))
+        if state >= (nstates):
+            raise IndexError()
     except ValueError as VE:
         error_exit(9, str(VE))
-    
+    except IndexError:
+	      error_exit(15, f"Initial state {state} is higher or equal to the total number of states {nstates}.\n"\
+                       f"State ordering starts from 0, which is the ground state => "\
+                       f"the highest initial state can be {state-1}.\n"\
+                       f"Check input.in and ABINITIO files.")
     #  ALLOCATE ALL NUMPY ARRAYS
     fx, fy, fz, fx_new, fy_new, fz_new, pot_eners, x_new, y_new, z_new = init_fep_arrays(natoms, nstates)
     
