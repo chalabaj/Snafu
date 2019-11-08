@@ -12,7 +12,7 @@ def error_exit(error_number, error_desc=" "):
            "1 - File geom.in not found in folder.\n",
            "2 - Number of atoms in geoms.in and input.in is not consistent. Please check geom.in and input.in and check XYZ format.\n",
            "3 - OS error: {0}".format("Could not create necessarry files.\n"),
-           "4 - Ab initio calculations failed.\n",
+           "4 - Ab initio calculations failed.\n{}".format(error_desc),
            "5 - Ab initio interface (r.X X=gauss, molpro etc.) not found. Check ABINITIO folder.\n",
            "6 - Hopping probability larger than 1, something went wrong.\n",
            "7 - {}.".format(error_desc),

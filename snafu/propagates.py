@@ -85,17 +85,19 @@ def calc_forces(step, at_names, state, nstates, x, y, z, fx_new, fy_new, fz_new,
         except subprocess.CalledProcessError as cpe: 
             #print(
             error_exit(4,str("Return code: {}\nError: {}".format(cpe.returncode, cpe.stderr)))
-    
-        with open ("gradients.dat", "r") as gef:
-            for st in range(0, nstates):
-                pot_eners[st] = float(gef.readline()) 
-            for iat in range(0, natoms):
-                line = gef.readline().split(" ")
-                # FX FY FZ, gradient to forces 
-                fx_new[iat] = grad*np.float64(line[0])
-                fy_new[iat] = grad*np.float64(line[1])
-                fz_new[iat] = grad*np.float64(line[2])    
-        gef.closed
+        try:
+            with open ("gradients.dat", "r") as gef:
+                for st in range(0, nstates):
+                    pot_eners[st] = float(gef.readline()) 
+                for iat in range(0, natoms):
+                    line = gef.readline().split(" ")
+                    # FX FY FZ, gradient to forces 
+                    fx_new[iat] = grad*np.float64(line[0])
+                    fy_new[iat] = grad*np.float64(line[1])
+                    fz_new[iat] = grad*np.float64(line[2])    
+            gef.closed
+        except:
+            error_exit(4, "Ancaught error in ab initio. Check output file.") # e.g. molpro exit status might be overwritten by files procedures
     else:
         try:
             send_tera(comm, natoms, nstates, state, sim_time, x ,y, z, MO, CiVecs, blob, civec_size, nbf_size, blob_size)

@@ -51,35 +51,18 @@ if (lastorb.ne.MCSCF)then
    {hf;wf,$nelectrons,0,$spin}
 endif
 
-$multi;
+{$multi;
 occ,$nocc;
 closed,$nclosed;
 WF,$nelectrons,0,$spin;
 state,$nstate;
 maxiter,40;
+START,2140.2,
 ORBITAL,2140.2;
 NOEXTRA;
-
-cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2; 
+cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2;}
 forces;samc,5101.2;
 
-if (status.lt.0) then
-   text, MCSCF failed to converge.
-   text, Attempting uncoupled iterations.
-   text, Enlarging PSPACE.
-   {$multi;
-   occ,$nocc;
-   closed,$nclosed;
-   WF,$nelectrons,0,$spin;
-   ! Info about pspace: https://www.molpro.net/info/2015.1/doc/manual/node244.html
-   ! uncomment in case of convergence difficulties...
-   pspace, 2;
-   state,$nstate;
-   maxiter,40;
-   {iterations
-   do,uncouple,1,to,5}
-   }
-endif
 EOF
 
 ############################----------MOLPRO JOB-------------------------

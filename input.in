@@ -1,7 +1,7 @@
 [Settings]
 natoms  = 3                 # number of atoms in system
 nstates = 3                # number of electronic states
-init_state = 3              # initial electronic state
+init_state = 2              # initial electronic state
 timestep = 6                # in atomic unit au = 0.024 fs 
 maxsteps = 15               # total number of steps
 method  = lz-adioabatic     # bomd/lz-adibatic (Belyaev)/ lz-diabatic scheme
@@ -12,4 +12,3 @@ hop_thresh = 0.5           # energy threshold for hopping between the states wit
 restart = 0                # N - restart from N-th step, restart_N.in must exist
 restart_freq = 5           # writes restart_N.in file each N-th step, here N = 100 (100, 200, 300 etc.),default = 100
 write_freq = 1             # how often print output, default 10
-
