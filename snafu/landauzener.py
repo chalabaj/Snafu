@@ -51,13 +51,15 @@ def calc_hopp(method, state, pot_eners,
         # energy conservation criteria
         if (dEpot < Ekin) and (abs(dEpot * AU_EV) < hop_thresh): 
             hop = True
-            print("Hop {} --> {}".format(instate, outstate),
-                  "dEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin),     
-                  "\nProbability: {} ".format(probs[max_prob_row][3]),
-                  "Randon number: {}".format(theta))
+            print("--------\nProbability: {}, Randon number: {}".format(max_prob, theta),
+                  "\ndEpot {:.4f}  < Ekin: {:.4f}".format(float(dEpot), Ekin), 
+                  "\nHopping {} ---> {}".format(instate, outstate))    
             v_scaling_fac = math.sqrt(1-(dEpot / Ekin))  # lower upper
-    else:
+        else:
+            print("Not enough kinetic energy for hop.")
+    elif 0 < max_prob < theta:
         v_scaling_fac = -1
+        print(f"Randon number: {theta}")
     if not hop:
         outstate = instate
         v_scaling_fac = 1

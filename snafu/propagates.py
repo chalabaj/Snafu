@@ -121,12 +121,8 @@ def calc_energies(
     step, natoms, am, state, pot_eners, 
     vx, vy, vz, Etot_init, Etot_prev, ener_thresh):
 
-    Ekin = 0.000
 
-    for iat in range(0,natoms):
-        vv = vx[iat]**2 + vy[iat]**2 + vz[iat]**2
-        Ekin = Ekin + (0.5*am[iat]*vv)
-
+    Ekin = calc_ekin(natoms, am, vx, vy, vz)
     Epot = pot_eners[state]  # state 0(GS), 1 (1.ex. state),..
     Etot = Ekin + Epot
     dE = (Etot - Etot_init)
@@ -135,6 +131,13 @@ def calc_energies(
     if abs(dE * AU_EV) >= ener_thresh and step > 1: 
         error_exit(7, "Total energy change since start {} larger then threshold {}.".format(dE * AU_EV, ener_thresh))
     return(Ekin, Epot, Etot, dE, dE_step)
-
+    
+def calc_ekin(natoms, am, vx, vy, vz):
+    Ekin = 0.00
+    for iat in range(0,natoms):
+        vv = vx[iat]**2 + vy[iat]**2 + vz[iat]**2
+        Ekin = Ekin + (0.5*am[iat]*vv)
+    return Ekin
+    
 def rescale_velocities(vx, vy, vz, v_scaling_fac):
     return(vx*v_scaling_fac, vy*v_scaling_fac, vz*v_scaling_fac)

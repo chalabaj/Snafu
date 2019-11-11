@@ -14,20 +14,20 @@ nacaccu=9   # forces accuracy
 ####################################################################
 basis="6-31g*"  
                # don't use Dunning basis sets, you won't get NACME
-nelectrons=9   # total number of electrons
-spin=1         # 0 for singlet, 1 for dublet etc.
-nocc=6         # occupied orbitals
-nclosed=2      # closed orbitals
-memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
+nelectrons=40   # total number of electrons
+spin=0         # 0 for singlet, 1 for dublet etc.
+nocc=22         # occupied orbitals
+nclosed=18      # closed orbitals
+memory=300    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
-
+moldenfile="orbitals${step}.molden"
 #if [ -e ../gradients.dat ];then
 #rm -f ../gradients.dat
 #fi
 ###################################################################################
 cat > $input.com << EOF
 memory, $memory,m;
-file, 2, $input.wfu,unknown
+file, 2, wf22_18_5st_631gp.wfu,unknown
 PUNCH, $input.pun,new
 gprint, orbital,civector
 symmetry,nosym
@@ -37,19 +37,11 @@ geometry=../$abinit_geom_file
 
 basis=$basis
 
-!-for simple CASSCF, you don't need to modify anything below this
+!data,truncate,2,5101
 
-!-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
-!-otherwise, the forces and NACME are wrong for the following reason
-!-cpmscf will not rewrite itself it but ather write into following records
-!-but the subsequent call to forces would read from old records -> wrong numbers
-!-we use file 2 for forces and NACME due to df-casscf
-
-data,truncate,2,5101
-
-if (lastorb.ne.MCSCF)then
-   {hf;wf,$nelectrons,0,$spin}
-endif
+!if (lastorb.ne.MCSCF)then
+!   {hf;wf,$nelectrons,0,$spin}
+!endif
 
 {$multi;
 occ,$nocc;
@@ -60,7 +52,10 @@ maxiter,40;
 START,2140.2,
 ORBITAL,2140.2;
 NOEXTRA;
-cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2;}
+cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2}
+if ($step.lt.20) then
+put,molden,$moldenfile;
+end if
 forces;samc,5101.2;
 
 EOF
@@ -71,9 +66,16 @@ export TMPDIR=$PWD/scratch
 
 if [[ ! -d $TMPDIR ]]; then
 mkdir $TMPDIR
+if [[ $step -eq 0 ]]; then
+cp wf22_18_5st_631gp.wfu $TMPDIR
+fi
 fi
 
 $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
+
+if [[ $step  -lt 20 ]];then
+cp $input.com.out $input.com.out_step${step}
+fi
 
 # Check whether all is OK.
 # If it is some other error, do nothing. It's up to ABIN to decide what to do.

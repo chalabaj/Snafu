@@ -64,7 +64,8 @@ try:
     from propagates import (           # main MD routines
         calc_forces, calc_energies,
         update_velocities, update_positions, 
-        rescale_velocities, adjust_velocities
+        rescale_velocities, adjust_velocities,
+        calc_ekin
     )
     from landauzener import (          # LZ Hopping algorithm
         calc_hopp
@@ -276,17 +277,14 @@ if __name__ == "__main__":
                                                            vx, vy, vz,
                                                            fx, fy, fz,
                                                            fx_new, fy_new, fz_new) 
-    
+                        EEkin = calc_ekin(natoms, am, vx, vy, vz)
+                        print(f"Old Ekin: {Ekin} New Ekin {EEkin}\n-------")
+                       
                         # FXFYFZ for XYZ(t = hop) in the NEW state
                         fx = np.copy(fx_new)
                         fy = np.copy(fy_new)
                         fz = np.copy(fz_new)
-                        EE = 0
-                        for iat in range(0,natoms):
-                            vvv = vx[iat] ** 2 + vy[iat] ** 2 + vz[iat] ** 2
-                            EE = EE + (0.5 * am[iat] * vvv)
-                        print("Old Ekin: {} \nScaled/Adjusted Ekin {}\n.".format(Ekin, EE))
-    
+
                         # now finish the propagation step on new PES (FXFYFZ for new state)
                         x_new, y_new, z_new = update_positions(dt, am, x, y, z, x_new, y_new, z_new, 
                                                                vx, vy, vz, fx_new, fy_new, fz_new)
