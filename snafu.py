@@ -270,13 +270,9 @@ if __name__ == "__main__":
                                                  tera_mpi,comm, sim_time, MO, CiVecs, NAC, blob, SMatrix, civec_size, nbf_size, blob_size, qmcharges, TDip, Dip)
     
                         #  simple scaling or update velocities with new state forces (new state forces are better for large dE hops)
-                        if not vel_adj:
-                            vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
-                        else:
-                            vx, vy, vz = adjust_velocities(dt, am,
-                                                           vx, vy, vz,
-                                                           fx, fy, fz,
-                                                           fx_new, fy_new, fz_new) 
+                        vx, vy, vz = rescale_velocities(vx, vy, vz, v_scal_fac)
+                        # vx, vy, vz = adjust_velocities(dt, am,vx, vy, vz,fx, fy, fz,fx_new, fy_new, fz_new) 
+
                         EEkin = calc_ekin(natoms, am, vx, vy, vz)
                         print(f"Old Ekin: {Ekin} New Ekin {EEkin}\n-------")
                        

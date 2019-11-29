@@ -12,15 +12,15 @@ step=$5
 input=input
 nacaccu=9   # forces accuracy
 ####################################################################
-basis="6-31g**"  
+basis="6-31+g*"  
                # don't use Dunning basis sets, you won't get NACME
-nelectrons=9   # total number of electrons
-spin=1         # 0 for singlet, 1 for dublet etc.
-nocc=6         # occupied orbitals
-nclosed=2      # closed orbitals
-memory=1000    # molpro memory in MegaWords (1MW = 8 MB)
+nelectrons=40   # total number of electrons
+spin=0         # 0 for singlet, 1 for dublet etc.
+nocc=22         # occupied orbitals
+nclosed=17      # closed orbitals
+memory=300    # molpro memory in MegaWords (1MW = 8 MB)
 multi="multi"  # use  "df-casscf" for density fitting version
-
+moldenfile="orbitals${step}.molden"
 #if [ -e ../gradients.dat ];then
 #rm -f ../gradients.dat
 #fi
@@ -35,20 +35,18 @@ Angstrom
 
 geometry=../$abinit_geom_file
 
+data,truncate,2,5101
 basis=$basis
 
-!-for simple CASSCF, you don't need to modify anything below this
-
-!-we need to get rid of the SAMC records in file 2 (input.wfu,restart file)
-!-otherwise, the forces and NACME are wrong for the following reason
-!-cpmscf will not rewrite itself it but ather write into following records
-!-but the subsequent call to forces would read from old records -> wrong numbers
-!-we use file 2 for forces and NACME due to df-casscf
-
-data,truncate,2,5101
-
-if (lastorb.ne.MCSCF)then
-   {hf;wf,$nelectrons,0,$spin}
+if ($step.eq.0)then
+{hf;wf,$nelectrons,0,$spin}
+{$multi;
+occ,21;
+closed,17;
+WF,40,0,0;
+state,5;
+maxiter,40;
+}
 endif
 
 {$multi;
@@ -57,10 +55,11 @@ closed,$nclosed;
 WF,$nelectrons,0,$spin;
 state,$nstate;
 maxiter,40;
-START,2140.2,
-ORBITAL,2140.2;
 NOEXTRA;
-cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2;}
+cpmcscf,grad,$state.1,ACCU=1d-$nacaccu,save=5101.2}
+IF ($step.EQ.0.OR.MOD($step,25).EQ.0) then
+put,molden,$moldenfile;
+end if
 forces;samc,5101.2;
 
 EOF
@@ -75,11 +74,17 @@ fi
 
 $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 
+exit_status=$? # otherwise we would lose no-WF restart below
+
+if [[ $step  -lt 20 ]];then
+cp $input.com.out $input.com.out_step${step}
+fi
+
 # Check whether all is OK.
-# If it is not - restart without previous WF
-if [[ $? -ne 0 ]];then
+# If it is some other error, do nothing. It's up to ABIN to decide what to do.
+if [[ $exit_status -ne 0 ]];then
     cp $input.com.out $input.com.out.error.$step
-    rm $input.pun $input.wfu 
+    rm $input.pun $inpun.wfu
     $MOLPROEXE -s --no-xml-output -I $PWD -W $TMPDIR >& $input.com.out <$input.com
 fi 
 if [[ $? -ne 0 ]];then
